@@ -6,9 +6,9 @@
     ],
     "openTasks": 1,
     "latestDocumentId": "login",
-    "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json"
+    "latestTaskFile": "<workspace>/.wirespec/reviews/login.agent-tasks.json"
   },
-  "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json",
+  "latestTaskFile": "<workspace>/.wirespec/reviews/login.agent-tasks.json",
   "latestDocumentId": "login",
   "nextTask": {
     "taskId": "task:ann-login-error-copy",

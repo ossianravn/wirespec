@@ -15,7 +15,12 @@ await mkdir(workspace, { recursive: true });
 const sourceMap = JSON.parse(await readFile(path.join(root, "fixtures/login.targets.json"), "utf8"));
 const sidecar = JSON.parse(await readFile(path.join(root, "fixtures/login.seed.annotations.json"), "utf8"));
 
-const bridge = startReviewBridgeServer({ workspaceRoot: workspace });
+let nextEventId = 1;
+const bridge = startReviewBridgeServer({
+  workspaceRoot: workspace,
+  now: () => "2026-04-14T10:00:00.000Z",
+  createId: (prefix) => `${prefix}-example-${String(nextEventId++).padStart(2, "0")}`,
+});
 const listener = await bridge.listen(0);
 
 const captured = [];

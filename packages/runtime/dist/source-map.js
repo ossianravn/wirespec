@@ -1,5 +1,7 @@
 import { classifyScope, nodeLabel, roleForNode, screenIdFromNode, semanticTargetId, } from "./utils.js";
 import { resolveDocument } from "./resolver.js";
+import reviewContract from "../../review-contract/index.js";
+const { SOURCE_MAP_VERSION } = reviewContract;
 function variantKey(selection) {
     const parts = [];
     if (selection.mode)
@@ -218,7 +220,7 @@ export function buildSourceMap(document, options = {}) {
         return left.targetId.localeCompare(right.targetId);
     });
     return {
-        version: "0.1",
+        version: SOURCE_MAP_VERSION,
         documentId,
         entryFile: options.entryFile ?? document.sourceFile,
         generatedAt: options.generatedAt ?? new Date().toISOString(),

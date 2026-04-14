@@ -1,11 +1,7 @@
 import { latestMessageBody } from "./annotation-sidecar.js";
+import reviewContract from "../../review-contract/index.js";
 
-const severityRank = {
-  must: 0,
-  should: 1,
-  could: 2,
-  question: 3,
-};
+const { AGENT_TASK_EXPORT_VERSION, reviewSeverityRank } = reviewContract;
 
 function sourceSpanAnchor(thread) {
   return (thread.target.anchors || []).find((anchor) => anchor.type === "source-span");
@@ -26,7 +22,7 @@ export function buildEditorOpenRequest(thread) {
 
 export function exportAgentTasks(store) {
   return {
-    version: "0.1",
+    version: AGENT_TASK_EXPORT_VERSION,
     documentId: store.documentId,
     exportedAt: new Date().toISOString(),
     tasks: store.threads.map((thread) => ({
@@ -34,7 +30,7 @@ export function exportAgentTasks(store) {
       threadId: thread.id,
       status: thread.status,
       severity: thread.severity,
-      severityRank: severityRank[thread.severity] ?? 99,
+      severityRank: reviewSeverityRank(thread.severity),
       screenId: thread.target.screenId,
       scope: thread.target.scope,
       targetId: thread.target.targetId,

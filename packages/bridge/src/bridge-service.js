@@ -32,6 +32,8 @@ export class ReviewBridgeService extends EventEmitter {
     this.workspaceRoot = path.resolve(options.workspaceRoot);
     this.reviewDir = options.reviewDir || ".wirespec/reviews";
     this.eventLogRelative = options.eventLogPath || `${this.reviewDir}/events.ndjson`;
+    this.now = options.now || nowIso;
+    this.createId = options.createId || shortId;
   }
 
   defaultPaths(documentId) {
@@ -91,14 +93,14 @@ export class ReviewBridgeService extends EventEmitter {
     await mkdir(path.dirname(paths.eventLog.absolute), { recursive: true });
 
     const event = {
-      eventId: shortId("evt"),
+      eventId: this.createId("evt"),
       kind: "review-saved",
       documentId,
       annotationPath: paths.annotation.relative,
       taskPath: paths.tasks.relative,
       activeThreads: counts.active,
       totalThreads: counts.total,
-      createdAt: nowIso(),
+      createdAt: this.now(),
     };
     await appendFile(paths.eventLog.absolute, `${JSON.stringify(event)}\n`, "utf8");
     this.emit("event", event);
@@ -169,7 +171,7 @@ export class ReviewBridgeService extends EventEmitter {
     let store = sidecarToReviewStore(loaded.sidecar);
     store = updateThreadStatus(store, payload.threadId, payload.status, {
       resolutionNote: payload.resolutionNote,
-      updatedAt: nowIso(),
+      updatedAt: this.now(),
     });
     const result = await this.saveReview({
       ...payload,
@@ -183,14 +185,14 @@ export class ReviewBridgeService extends EventEmitter {
     });
 
     const event = {
-      eventId: shortId("evt"),
+      eventId: this.createId("evt"),
       kind: "thread-status-updated",
       documentId: loaded.documentId,
       threadId: payload.threadId,
       status: payload.status,
       annotationPath: result.paths.annotationPath,
       taskPath: result.paths.taskPath,
-      createdAt: nowIso(),
+      createdAt: this.now(),
     };
     const paths = this.resolvePaths(loaded.documentId, payload);
     await appendFile(paths.eventLog.absolute, `${JSON.stringify(event)}\n`, "utf8");

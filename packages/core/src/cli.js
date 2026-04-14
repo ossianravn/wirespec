@@ -39,6 +39,8 @@ async function main(argv = process.argv.slice(2)) {
       }
       result = handleTaskFileChange(workspaceRoot, path.resolve(args["task-file"]), {
         writeAudit: args["write-audit"] !== "false",
+        timestamp: args.timestamp,
+        eventId: args["event-id"],
       });
       break;
     case "open-latest":
@@ -54,6 +56,9 @@ async function main(argv = process.argv.slice(2)) {
       result = resolveOnSave(workspaceRoot, path.resolve(args["saved-file"]), parseRangeSpec(args.ranges || ""), {
         keepResolvedTasksInTaskFile: Boolean(args["keep-resolved-tasks"]),
         author: args.author,
+        timestamp: args.timestamp,
+        eventId: args["event-id"],
+        messageId: args["message-id"],
       });
       break;
     default:

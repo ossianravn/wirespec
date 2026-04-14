@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "documentId": "login",
   "source": {
     "wireFile": "fixtures/login.wirespec.md"
   },
   "threads": [
     {
-      "id": "ann-60cd9c982887",
+      "id": "ann-login-primary-actions",
       "title": "Keep the primary action above the fold",
       "status": "open",
       "severity": "must",
@@ -43,7 +43,7 @@
       },
       "messages": [
         {
-          "id": "msg-26361d66bd01",
+          "id": "msg-login-primary-actions-1",
           "author": "reviewer",
           "authorRole": "human",
           "body": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without making the card feel like a dashboard shell.",
@@ -54,7 +54,7 @@
       "updatedAt": "2026-04-11T18:40:00.000Z"
     },
     {
-      "id": "ann-89941564d89f",
+      "id": "ann-login-form-error",
       "title": "Error copy should preserve recovery confidence",
       "status": "open",
       "severity": "should",
@@ -94,7 +94,7 @@
       },
       "messages": [
         {
-          "id": "msg-7799f64b1d04",
+          "id": "msg-login-form-error-1",
           "author": "reviewer",
           "authorRole": "human",
           "body": "The inline error should stay direct and calm. It should acknowledge failure without sounding punitive or hiding the recovery path.",

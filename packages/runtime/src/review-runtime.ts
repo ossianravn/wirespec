@@ -24,6 +24,17 @@ import {
 } from "./review-store.js";
 import { exportAgentTasks } from "./task-export.js";
 import { escapeHtml } from "./utils.js";
+import reviewContract from "../../review-contract/index.js";
+
+const {
+  REVIEW_UI_COPY,
+  isClosedReviewStatus,
+  reviewCountSummary,
+  reviewPinTitle,
+  reviewStatusLabel,
+  reviewThreadStatusAction,
+  reviewThreadsButtonLabel,
+} = reviewContract;
 
 export interface ReviewRuntimeOptions {
   sourceMap: SourceMapDocument;
@@ -310,16 +321,6 @@ function scopeLabel(scope: ReviewThread["target"]["scope"]): string {
   }
 }
 
-function statusActionLabel(thread: ReviewThread): string {
-  return thread.status === "resolved" || thread.status === "wontfix"
-    ? "Reopen"
-    : "Resolve";
-}
-
-function nextStatus(thread: ReviewThread): ReviewThread["status"] {
-  return thread.status === "resolved" || thread.status === "wontfix" ? "open" : "resolved";
-}
-
 function editorUri(
   sourceMap: SourceMapDocument,
   thread: ReviewThread,
@@ -383,36 +384,36 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
 
   const bar = document.querySelector(".ws-review-bar") as HTMLDivElement | null;
   const actionSlot = bar?.querySelector("[data-ws-review-bar-actions]") as HTMLDivElement | null;
-  const threadsButton = makeButton(`Threads ${activeThreadCount(store)}`);
+  const threadsButton = makeButton(reviewThreadsButtonLabel(activeThreadCount(store)));
   threadsButton.setAttribute("data-ws-review-runtime-button", "threads");
   threadsButton.setAttribute("aria-expanded", "false");
   actionSlot?.append(threadsButton);
 
   const drawer = document.createElement("aside");
   drawer.className = "ws-review-drawer";
-  drawer.setAttribute("aria-label", "Review threads");
+  drawer.setAttribute("aria-label", REVIEW_UI_COPY.drawerLabel);
   drawer.innerHTML = `
     <div class="ws-review-drawer-header">
       <div class="ws-review-drawer-title-row">
         <div>
-          <h2 class="ws-review-drawer-title">Review threads</h2>
+          <h2 class="ws-review-drawer-title">${REVIEW_UI_COPY.drawerTitle}</h2>
           <p class="ws-review-drawer-meta" data-role="meta"></p>
         </div>
-        <button type="button" data-action="close">Close</button>
+        <button type="button" data-action="close">${REVIEW_UI_COPY.close}</button>
       </div>
       <div class="ws-review-drawer-filter">
-        <button type="button" class="ws-review-filter-chip" data-filter="active" aria-pressed="true">Active</button>
-        <button type="button" class="ws-review-filter-chip" data-filter="all" aria-pressed="false">All</button>
+        <button type="button" class="ws-review-filter-chip" data-filter="active" aria-pressed="true">${REVIEW_UI_COPY.activeFilter}</button>
+        <button type="button" class="ws-review-filter-chip" data-filter="all" aria-pressed="false">${REVIEW_UI_COPY.allFilter}</button>
         <span class="ws-review-drawer-meta" data-role="filter-target"></span>
       </div>
     </div>
     <div class="ws-review-drawer-body" data-role="body"></div>
     <div class="ws-review-drawer-footer">
       <div class="ws-review-export-actions">
-        <button type="button" data-action="export-annotations" data-primary="true">Export annotations</button>
-        <button type="button" data-action="export-tasks">Agent tasks</button>
-        <button type="button" data-action="import">Import</button>
-        <button type="button" data-action="clear-local">Reset local</button>
+        <button type="button" data-action="export-annotations" data-primary="true">${REVIEW_UI_COPY.exportAnnotations}</button>
+        <button type="button" data-action="export-tasks">${REVIEW_UI_COPY.exportTasks}</button>
+        <button type="button" data-action="import">${REVIEW_UI_COPY.importAnnotations}</button>
+        <button type="button" data-action="clear-local">${REVIEW_UI_COPY.resetLocal}</button>
       </div>
     </div>
   `;
@@ -485,7 +486,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       if (filterTargetId && thread.target.targetId !== filterTargetId) {
         return false;
       }
-      if (!showClosed && (thread.status === "resolved" || thread.status === "wontfix")) {
+      if (!showClosed && isClosedReviewStatus(thread.status)) {
         return false;
       }
       return true;
@@ -516,14 +517,14 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
         </div>
         <p>${escapeHtml(body)}</p>
         <div class="ws-review-thread-meta">
-          <span class="ws-review-status-pill">${escapeHtml(thread.status)}</span>
+          <span class="ws-review-status-pill">${escapeHtml(reviewStatusLabel(thread.status))}</span>
           ${variant}
         </div>
         ${orphaned}
         <div class="ws-review-thread-actions">
-          <button type="button" data-action="focus-target" data-thread-id="${escapeHtml(thread.id)}">Focus target</button>
-          ${uri ? `<a href="${escapeHtml(uri)}">Open source</a>` : ""}
-          <button type="button" data-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(statusActionLabel(thread))}</button>
+          <button type="button" data-action="focus-target" data-thread-id="${escapeHtml(thread.id)}">${REVIEW_UI_COPY.focusTarget}</button>
+          ${uri ? `<a href="${escapeHtml(uri)}">${REVIEW_UI_COPY.openSource}</a>` : ""}
+          <button type="button" data-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(reviewThreadStatusAction(thread.status).label)}</button>
         </div>
       </article>
     `;
@@ -534,7 +535,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       return;
     }
     const counts = reviewCounts(store);
-    metaNode.textContent = `${counts.active} active · ${counts.total} total`;
+    metaNode.textContent = reviewCountSummary(counts);
     filterNode.textContent = filterTargetId
       ? `Filtered to ${labelForTarget(options.sourceMap, filterTargetId)}`
       : "";
@@ -544,7 +545,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     const entries = currentThreads();
     bodyNode.innerHTML = entries.length
       ? entries.map(renderThreadCard).join("")
-      : `<p class="ws-review-empty">No threads in this view.</p>`;
+      : `<p class="ws-review-empty">${REVIEW_UI_COPY.emptyThreads}</p>`;
   };
 
   const clearPins = (): void => {
@@ -555,7 +556,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     clearPins();
     const counts = new Map<string, number>();
     for (const thread of store.threads) {
-      if (thread.status === "resolved" || thread.status === "wontfix") {
+      if (isClosedReviewStatus(thread.status)) {
         continue;
       }
       const previous = counts.get(thread.target.targetId) ?? 0;
@@ -569,7 +570,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       }
       const pin = makeButton(String(count));
       pin.className = "ws-review-pin";
-      pin.title = `${count} active review ${count === 1 ? "thread" : "threads"}`;
+      pin.title = reviewPinTitle(count);
       pin.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -581,7 +582,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
   };
 
   const render = (): void => {
-    threadsButton.textContent = `Threads ${activeThreadCount(store)}`;
+    threadsButton.textContent = reviewThreadsButtonLabel(activeThreadCount(store));
     threadsButton.setAttribute("aria-expanded", drawerOpen ? "true" : "false");
     drawer.classList.toggle("is-open", drawerOpen);
     renderDrawer();
@@ -616,7 +617,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       return;
     }
     if (action === "toggle-status") {
-      setStore(updateThreadStatus(store, thread.id, nextStatus(thread)));
+      setStore(updateThreadStatus(store, thread.id, reviewThreadStatusAction(thread.status).nextStatus));
     }
   };
 

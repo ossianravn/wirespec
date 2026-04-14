@@ -1,12 +1,12 @@
 {
   "version": "0.1",
   "documentId": "login",
-  "exportedAt": "2026-04-13T16:29:26.761Z",
+  "exportedAt": "2026-04-14T20:15:42.698Z",
   "tasks": [
     {
       "taskId": "task:ann-fa94e2410f77",
       "threadId": "ann-fa94e2410f77",
-      "status": "resolved",
+      "status": "open",
       "severity": "must",
       "severityRank": 0,
       "screenId": "login",
@@ -31,7 +31,7 @@
     {
       "taskId": "task:ann-0a9fa3ed2a17",
       "threadId": "ann-0a9fa3ed2a17",
-      "status": "resolved",
+      "status": "open",
       "severity": "should",
       "severityRank": 1,
       "screenId": "login",

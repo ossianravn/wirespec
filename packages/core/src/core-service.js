@@ -6,7 +6,10 @@ const { resolveThreadsForFile } = require("./thread-resolution");
 const { normalizePath, resolveWorkspaceRelative, toWorkspaceRelative } = require("./path-utils");
 const { normalizeChangedRanges } = require("./changed-ranges");
 
-function eventId() {
+function eventId(options = {}) {
+  if (options.eventId) {
+    return options.eventId;
+  }
   return `evt-${crypto.randomUUID()}`;
 }
 
@@ -39,12 +42,12 @@ function handleTaskFileChange(workspaceRoot, taskFilePath, options = {}) {
 
   if (options.writeAudit !== false) {
     appendAuditEvent(workspaceRoot, {
-      eventId: eventId(),
+      eventId: eventId(options),
       kind: "task-file-changed",
       documentId: pair.documentId,
       taskFile: toWorkspaceRelative(workspaceRoot, pair.taskFilePath),
       openTasks: (pair.tasks?.tasks || []).filter((task) => ["open", "accepted", "in_progress", "in-progress"].includes(task.status)).length,
-      createdAt: new Date().toISOString(),
+      createdAt: options.timestamp || new Date().toISOString(),
     });
   }
 
@@ -109,7 +112,7 @@ function resolveOnSave(workspaceRoot, savedFile, changedRanges, options = {}) {
     updatedTaskFiles.push(toWorkspaceRelative(workspaceRoot, resolution.pair.taskFilePath));
 
     eventPath = appendAuditEvent(workspaceRoot, {
-      eventId: eventId(),
+      eventId: eventId(options),
       kind: "threads-resolved",
       documentId: resolution.pair.documentId,
       threadIds: resolution.resolvedThreadIds,

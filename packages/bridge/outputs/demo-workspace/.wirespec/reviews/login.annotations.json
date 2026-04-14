@@ -8,7 +8,7 @@
     {
       "id": "ann-fa94e2410f77",
       "title": "Keep the primary action above the fold",
-      "status": "resolved",
+      "status": "open",
       "severity": "must",
       "motivation": "blocking",
       "category": "responsive",
@@ -51,12 +51,12 @@
         }
       ],
       "createdAt": "2026-04-11T18:40:00.000Z",
-      "updatedAt": "2026-04-13T14:49:51.510Z"
+      "updatedAt": "2026-04-11T18:40:00.000Z"
     },
     {
       "id": "ann-0a9fa3ed2a17",
       "title": "Error copy should preserve recovery confidence",
-      "status": "resolved",
+      "status": "open",
       "severity": "should",
       "motivation": "change-request",
       "category": "copy",
@@ -102,7 +102,7 @@
         }
       ],
       "createdAt": "2026-04-11T18:41:00.000Z",
-      "updatedAt": "2026-04-13T14:49:52.708Z"
+      "updatedAt": "2026-04-11T18:41:00.000Z"
     }
   ]
 }

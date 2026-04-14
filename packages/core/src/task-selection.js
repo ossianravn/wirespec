@@ -1,9 +1,10 @@
 const { ACTIVE_STATUSES } = require("./thread-resolution");
+const { isActiveReviewStatus, reviewSeverityRank } = require("../../review-contract");
 
 function severityRank(task) {
   return typeof task?.severityRank === "number"
     ? task.severityRank
-    : ({ must: 0, should: 1, could: 2, question: 3 }[task?.severity] ?? 99);
+    : reviewSeverityRank(task?.severity);
 }
 
 function sortPairsByMtime(pairs) {
@@ -11,7 +12,7 @@ function sortPairsByMtime(pairs) {
 }
 
 function pickNextOpenTask(pair) {
-  const active = (pair?.tasks?.tasks || []).filter((task) => ACTIVE_STATUSES.has(task.status));
+  const active = (pair?.tasks?.tasks || []).filter((task) => isActiveReviewStatus(task.status));
   if (!active.length) {
     return null;
   }
@@ -26,7 +27,7 @@ function pickNextOpenTask(pair) {
 function buildSummary(pairs) {
   const normalized = sortPairsByMtime(pairs);
   const documents = Array.from(new Set(normalized.map((pair) => pair.documentId)));
-  const openTasks = normalized.reduce((sum, pair) => sum + (pair.tasks?.tasks || []).filter((task) => ACTIVE_STATUSES.has(task.status)).length, 0);
+  const openTasks = normalized.reduce((sum, pair) => sum + (pair.tasks?.tasks || []).filter((task) => isActiveReviewStatus(task.status)).length, 0);
   return {
     taskFiles: normalized.length,
     documents,

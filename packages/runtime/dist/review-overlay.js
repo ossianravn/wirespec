@@ -1,3 +1,5 @@
+import reviewContract from "../../review-contract/index.js";
+const { REVIEW_UI_COPY } = reviewContract;
 const overlayCss = `
 .ws-review-bar,
 .ws-review-bar *,
@@ -225,18 +227,18 @@ function createComposer(target, onClose) {
     composer.className = "ws-review-composer";
     composer.setAttribute("role", "dialog");
     composer.setAttribute("aria-modal", "true");
-    composer.setAttribute("aria-label", "New review note");
+    composer.setAttribute("aria-label", REVIEW_UI_COPY.newNoteLabel);
     composer.innerHTML = `
     <div class="ws-review-composer-header">
-      <h2>New review note</h2>
+      <h2>${REVIEW_UI_COPY.composerTitle}</h2>
       <p class="ws-review-target-meta">${target.scope} · ${target.kind} · ${target.label}</p>
     </div>
     <label>
-      <span>Title</span>
+      <span>${REVIEW_UI_COPY.titleField}</span>
       <input name="title" type="text" placeholder="Summarize the change">
     </label>
     <label>
-      <span>Severity</span>
+      <span>${REVIEW_UI_COPY.severityField}</span>
       <select name="severity">
         <option value="must">Must</option>
         <option value="should" selected>Should</option>
@@ -245,12 +247,12 @@ function createComposer(target, onClose) {
       </select>
     </label>
     <label>
-      <span>Comment</span>
+      <span>${REVIEW_UI_COPY.commentField}</span>
       <textarea name="body" placeholder="Describe what should change and why."></textarea>
     </label>
     <div class="ws-review-composer-actions">
-      <button type="button" data-action="cancel">Cancel</button>
-      <button type="button" data-action="submit" data-primary="true" disabled>Create note</button>
+      <button type="button" data-action="cancel">${REVIEW_UI_COPY.cancel}</button>
+      <button type="button" data-action="submit" data-primary="true" disabled>${REVIEW_UI_COPY.createNote}</button>
     </div>
   `;
     const titleInput = composer.querySelector('input[name="title"]');
@@ -287,9 +289,9 @@ export function mountReviewOverlay(options = {}) {
     ensureStyle();
     const bar = document.createElement("div");
     bar.className = "ws-review-bar";
-    bar.setAttribute("aria-label", "Review tools");
+    bar.setAttribute("aria-label", REVIEW_UI_COPY.toolbarLabel);
     bar.innerHTML = `
-    <button type="button" data-action="toggle" aria-pressed="${options.commentModeDefault ? "true" : "false"}">Comment</button>
+    <button type="button" data-action="toggle" aria-pressed="${options.commentModeDefault ? "true" : "false"}">${REVIEW_UI_COPY.comment}</button>
     <div data-ws-review-bar-actions></div>
     <span class="ws-review-hint">${options.hintText ?? "Alt-click targets a parent section"}</span>
   `;

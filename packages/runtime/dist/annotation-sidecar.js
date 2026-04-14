@@ -1,5 +1,7 @@
 import { resolveTarget } from "./source-map.js";
 import { createEmptyReviewStore, replaceThreads } from "./review-store.js";
+import reviewContract from "../../review-contract/index.js";
+const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = reviewContract;
 function shortId(prefix) {
     const globalCrypto = globalThis.crypto;
     if (globalCrypto && typeof globalCrypto.randomUUID === "function") {
@@ -49,14 +51,38 @@ export function buildAnchorsForTarget(target) {
     }
     return anchors;
 }
-function targetRefForTarget(target, variantKey) {
+function anchorKey(anchor) {
+    return JSON.stringify(anchor);
+}
+function preservedImplementationAnchors(existingAnchors, target) {
+    return (existingAnchors ?? []).filter((anchor) => {
+        if (anchor.type === "source-span") {
+            return anchor.file !== target.span.file;
+        }
+        return anchor.type === "render-region";
+    });
+}
+function targetRefForTarget(target, variantKey, existingAnchors) {
+    const anchors = [];
+    const seen = new Set();
+    for (const anchor of [
+        ...preservedImplementationAnchors(existingAnchors, target),
+        ...buildAnchorsForTarget(target),
+    ]) {
+        const key = anchorKey(anchor);
+        if (seen.has(key)) {
+            continue;
+        }
+        seen.add(key);
+        anchors.push(anchor);
+    }
     return {
         targetId: target.targetId,
         screenId: target.screenId,
         scope: target.scope,
         wireId: target.wireId,
         variantKey,
-        anchors: buildAnchorsForTarget(target),
+        anchors,
     };
 }
 function latestMessageBody(thread) {
@@ -116,7 +142,7 @@ function toReviewMessage(message) {
 }
 export function reviewStoreToSidecar(store, sourceMap, options = {}) {
     return {
-        schemaVersion: "0.2.0",
+        schemaVersion: ANNOTATION_SIDECAR_SCHEMA_VERSION,
         documentId: store.documentId,
         source: {
             wireFile: options.wireFile ?? sourceMap.entryFile,
@@ -228,7 +254,7 @@ export function relinkStoreAgainstSourceMap(store, sourceMap) {
             return {
                 ...thread,
                 orphaned: resolution.status === "orphaned" ? true : false,
-                target: targetRefForTarget(resolution.target, thread.target.variantKey),
+                target: targetRefForTarget(resolution.target, thread.target.variantKey, thread.target.anchors),
             };
         }
         const matchedByAnchor = matchByAnchors(sourceMap, thread.target);
@@ -236,7 +262,7 @@ export function relinkStoreAgainstSourceMap(store, sourceMap) {
             return {
                 ...thread,
                 orphaned: false,
-                target: targetRefForTarget(matchedByAnchor, thread.target.variantKey),
+                target: targetRefForTarget(matchedByAnchor, thread.target.variantKey, thread.target.anchors),
             };
         }
         return {

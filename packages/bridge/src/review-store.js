@@ -1,5 +1,10 @@
+import reviewContract from "../../review-contract/index.js";
+
+const { REVIEW_STORE_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
+
 export function createEmptyReviewStore(documentId) {
   return {
+    version: REVIEW_STORE_VERSION,
     documentId,
     threads: [],
   };
@@ -7,9 +12,8 @@ export function createEmptyReviewStore(documentId) {
 
 function sortThreads(threads) {
   return [...threads].sort((a, b) => {
-    const severityOrder = { must: 0, should: 1, could: 2, question: 3 };
-    const aRank = severityOrder[a.severity] ?? 99;
-    const bRank = severityOrder[b.severity] ?? 99;
+    const aRank = reviewSeverityRank(a.severity);
+    const bRank = reviewSeverityRank(b.severity);
     if (aRank !== bRank) {
       return aRank - bRank;
     }
@@ -46,7 +50,7 @@ export function updateThreadStatus(store, threadId, status, options = {}) {
 }
 
 export function activeThreadCount(store) {
-  return store.threads.filter((thread) => thread.status === "open" || thread.status === "in_progress").length;
+  return store.threads.filter((thread) => isActiveReviewStatus(thread.status)).length;
 }
 
 export function reviewCounts(store) {

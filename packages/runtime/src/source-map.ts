@@ -17,6 +17,9 @@ import {
   sourceSpan,
 } from "./utils.js";
 import { resolveDocument } from "./resolver.js";
+import reviewContract from "../../review-contract/index.js";
+
+const { SOURCE_MAP_VERSION } = reviewContract;
 
 export interface BuildSourceMapOptions {
   entryFile?: string;
@@ -290,7 +293,7 @@ export function buildSourceMap(
     });
 
   return {
-    version: "0.1",
+    version: SOURCE_MAP_VERSION,
     documentId,
     entryFile: options.entryFile ?? document.sourceFile,
     generatedAt: options.generatedAt ?? new Date().toISOString(),

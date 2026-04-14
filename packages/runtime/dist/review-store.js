@@ -1,13 +1,8 @@
-const severityRank = {
-    must: 0,
-    should: 1,
-    could: 2,
-    question: 3,
-};
-const activeStatuses = new Set(["open", "accepted", "in-progress"]);
+import reviewContract from "../../review-contract/index.js";
+const { REVIEW_STORE_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
 function sortThreads(threads) {
     return [...threads].sort((left, right) => {
-        const severityDiff = severityRank[left.severity] - severityRank[right.severity];
+        const severityDiff = reviewSeverityRank(left.severity) - reviewSeverityRank(right.severity);
         if (severityDiff !== 0) {
             return severityDiff;
         }
@@ -19,7 +14,7 @@ function sortThreads(threads) {
 }
 export function createEmptyReviewStore(documentId, screenId) {
     return {
-        version: "0.2",
+        version: REVIEW_STORE_VERSION,
         documentId,
         screenId,
         threads: [],
@@ -64,7 +59,7 @@ export function updateThreadStatus(store, threadId, status, options = {}) {
         : thread));
 }
 export function activeThreadCount(store) {
-    return store.threads.filter((thread) => activeStatuses.has(thread.status)).length;
+    return store.threads.filter((thread) => isActiveReviewStatus(thread.status)).length;
 }
 export function targetThreadCount(store, targetId, includeResolved = false) {
     return store.threads.filter((thread) => {
@@ -74,7 +69,7 @@ export function targetThreadCount(store, targetId, includeResolved = false) {
         if (includeResolved) {
             return true;
         }
-        return activeStatuses.has(thread.status);
+        return isActiveReviewStatus(thread.status);
     }).length;
 }
 export function threadsForTarget(store, targetId, options = {}) {
@@ -84,7 +79,7 @@ export function threadsForTarget(store, targetId, options = {}) {
         if (thread.target.targetId !== targetId) {
             return false;
         }
-        if (!includeResolved && !activeStatuses.has(thread.status)) {
+        if (!includeResolved && !isActiveReviewStatus(thread.status)) {
             return false;
         }
         if (!requestedVariant) {
@@ -94,7 +89,7 @@ export function threadsForTarget(store, targetId, options = {}) {
     }));
 }
 export function reviewCounts(store) {
-    const active = store.threads.filter((thread) => activeStatuses.has(thread.status)).length;
+    const active = store.threads.filter((thread) => isActiveReviewStatus(thread.status)).length;
     const resolved = store.threads.filter((thread) => thread.status === "resolved").length;
     const wontfix = store.threads.filter((thread) => thread.status === "wontfix").length;
     return {

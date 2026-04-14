@@ -9,18 +9,14 @@ import {
 } from "./types.js";
 import { buildEditorOpenRequest } from "./editor-links.js";
 import { resolveTarget } from "./source-map.js";
+import reviewContract from "../../review-contract/index.js";
 
 export interface ExportOptions {
   workspaceRoot?: string;
   includeStatuses?: ReviewStatus[];
 }
 
-const severityRank: Record<ReviewSeverity, number> = {
-  must: 0,
-  should: 1,
-  could: 2,
-  question: 3,
-};
+const { AGENT_TASK_EXPORT_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
 
 function latestMessageBody(thread: ReviewThread): string {
   const latestMessage = thread.messages[thread.messages.length - 1];
@@ -47,7 +43,7 @@ function toTask(
     threadId: thread.id,
     status: thread.status,
     severity: thread.severity,
-    severityRank: severityRank[thread.severity],
+    severityRank: reviewSeverityRank(thread.severity),
     screenId: thread.target.screenId,
     scope: thread.target.scope,
     targetId: resolution.target?.targetId ?? thread.target.targetId,
@@ -86,11 +82,13 @@ export function exportAgentTasks(
   options: ExportOptions = {},
 ): AgentTaskExport {
   const includeStatuses = new Set(
-    options.includeStatuses ?? ["open", "accepted", "in-progress"],
+    options.includeStatuses ?? [],
   );
 
   const tasks = store.threads
-    .filter((thread) => includeStatuses.has(thread.status))
+    .filter((thread) =>
+      includeStatuses.size ? includeStatuses.has(thread.status) : isActiveReviewStatus(thread.status),
+    )
     .map((thread) => toTask(thread, sourceMap, options.workspaceRoot))
     .sort((a, b) => {
       if (a.severityRank !== b.severityRank) {
@@ -100,7 +98,7 @@ export function exportAgentTasks(
     });
 
   return {
-    version: "0.1",
+    version: AGENT_TASK_EXPORT_VERSION,
     documentId: store.documentId,
     exportedAt: new Date().toISOString(),
     tasks,

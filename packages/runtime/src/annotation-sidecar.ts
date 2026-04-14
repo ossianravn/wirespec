@@ -14,6 +14,9 @@ import {
 } from "./types.js";
 import { resolveTarget } from "./source-map.js";
 import { createEmptyReviewStore, replaceThreads } from "./review-store.js";
+import reviewContract from "../../review-contract/index.js";
+
+const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = reviewContract;
 
 export interface CreateThreadOptions {
   authorId?: string;
@@ -81,17 +84,48 @@ export function buildAnchorsForTarget(target: SourceTarget): ThreadAnchor[] {
   return anchors;
 }
 
+function anchorKey(anchor: ThreadAnchor): string {
+  return JSON.stringify(anchor);
+}
+
+function preservedImplementationAnchors(
+  existingAnchors: ThreadAnchor[] | undefined,
+  target: SourceTarget,
+): ThreadAnchor[] {
+  return (existingAnchors ?? []).filter((anchor) => {
+    if (anchor.type === "source-span") {
+      return anchor.file !== target.span.file;
+    }
+    return anchor.type === "render-region";
+  });
+}
+
 function targetRefForTarget(
   target: SourceTarget,
   variantKey?: string,
+  existingAnchors?: ThreadAnchor[],
 ): ThreadTargetRef {
+  const anchors: ThreadAnchor[] = [];
+  const seen = new Set<string>();
+  for (const anchor of [
+    ...preservedImplementationAnchors(existingAnchors, target),
+    ...buildAnchorsForTarget(target),
+  ]) {
+    const key = anchorKey(anchor);
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    anchors.push(anchor);
+  }
+
   return {
     targetId: target.targetId,
     screenId: target.screenId,
     scope: target.scope,
     wireId: target.wireId,
     variantKey,
-    anchors: buildAnchorsForTarget(target),
+    anchors,
   };
 }
 
@@ -169,7 +203,7 @@ export function reviewStoreToSidecar(
   options: SidecarOptions = {},
 ): AnnotationSidecar {
   return {
-    schemaVersion: "0.2.0",
+    schemaVersion: ANNOTATION_SIDECAR_SCHEMA_VERSION,
     documentId: store.documentId,
     source: {
       wireFile: options.wireFile ?? sourceMap.entryFile,
@@ -311,7 +345,7 @@ export function relinkStoreAgainstSourceMap(
       return {
         ...thread,
         orphaned: resolution.status === "orphaned" ? true : false,
-        target: targetRefForTarget(resolution.target, thread.target.variantKey),
+        target: targetRefForTarget(resolution.target, thread.target.variantKey, thread.target.anchors),
       };
     }
 
@@ -320,7 +354,7 @@ export function relinkStoreAgainstSourceMap(
       return {
         ...thread,
         orphaned: false,
-        target: targetRefForTarget(matchedByAnchor, thread.target.variantKey),
+        target: targetRefForTarget(matchedByAnchor, thread.target.variantKey, thread.target.anchors),
       };
     }
 

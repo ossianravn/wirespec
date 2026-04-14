@@ -1,4 +1,15 @@
 import { escapeHtml } from "./browser-shared.js";
+import reviewContract from "../../review-contract/index.js";
+
+const {
+  REVIEW_UI_COPY,
+  isActiveReviewStatus,
+  isClosedReviewStatus,
+  reviewCountSummary,
+  reviewPinTitle,
+  reviewStatusLabel,
+  reviewThreadStatusAction,
+} = reviewContract;
 
 const css = `
 .ws-review-bar,
@@ -357,17 +368,17 @@ export function mountReviewOverlay(options) {
 
   const bar = document.createElement("aside");
   bar.className = "ws-review-bar";
-  bar.setAttribute("aria-label", "Review tools");
+  bar.setAttribute("aria-label", REVIEW_UI_COPY.toolbarLabel);
   bar.innerHTML = `
-    <button type="button" data-action="comment" aria-pressed="${commentMode ? "true" : "false"}">Comment</button>
-    <button type="button" data-action="threads" aria-expanded="false">Threads</button>
-    <button type="button" data-action="save" data-primary="true">Save</button>
+    <button type="button" data-action="comment" aria-pressed="${commentMode ? "true" : "false"}">${REVIEW_UI_COPY.comment}</button>
+    <button type="button" data-action="threads" aria-expanded="false">${REVIEW_UI_COPY.threads}</button>
+    <button type="button" data-action="save" data-primary="true">${REVIEW_UI_COPY.save}</button>
   `;
   document.body.append(bar);
 
   const drawer = document.createElement("aside");
   drawer.className = "ws-review-drawer";
-  drawer.setAttribute("aria-label", "Review threads");
+  drawer.setAttribute("aria-label", REVIEW_UI_COPY.drawerLabel);
   document.body.append(drawer);
 
   function setHighlight(targetElement) {
@@ -399,7 +410,7 @@ export function mountReviewOverlay(options) {
     document.querySelectorAll(".ws-review-pin").forEach((node) => node.remove());
     const counts = new Map();
     for (const thread of threads) {
-      if (thread.status === "resolved" || thread.status === "wontfix") {
+      if (isClosedReviewStatus(thread.status)) {
         continue;
       }
       counts.set(thread.target.targetId, (counts.get(thread.target.targetId) || 0) + 1);
@@ -413,7 +424,7 @@ export function mountReviewOverlay(options) {
       pin.type = "button";
       pin.className = "ws-review-pin";
       pin.textContent = String(count);
-      pin.title = `${count} open review notes`;
+      pin.title = reviewPinTitle(count);
       pin.addEventListener("click", (event) => {
         event.stopPropagation();
         openDrawer(targetId);
@@ -436,12 +447,11 @@ export function mountReviewOverlay(options) {
           .map((thread) => {
             const latest = thread.messages[thread.messages.length - 1]?.body || "";
             const targetLabel = thread.target.wireId || thread.target.targetId;
-            const statusLabel = thread.status === "wontfix" ? "Won't fix" : thread.status;
-            const statusButtons =
-              thread.status === "resolved" || thread.status === "wontfix"
-                ? `<button type="button" data-thread-action="reopen" data-thread-id="${escapeHtml(thread.id)}">Reopen</button>`
-                : `<button type="button" data-thread-action="resolve" data-thread-id="${escapeHtml(thread.id)}">Resolve</button>
-                   <button type="button" data-thread-action="wontfix" data-thread-id="${escapeHtml(thread.id)}">Won't fix</button>`;
+            const statusAction = reviewThreadStatusAction(thread.status);
+            const statusButtons = isClosedReviewStatus(thread.status)
+              ? `<button type="button" data-thread-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(statusAction.label)}</button>`
+              : `<button type="button" data-thread-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(statusAction.label)}</button>
+                 <button type="button" data-thread-action="wontfix" data-thread-id="${escapeHtml(thread.id)}">${REVIEW_UI_COPY.wontfix}</button>`;
             return `
               <article class="ws-review-thread" data-thread-id="${escapeHtml(thread.id)}">
                 <div class="ws-review-thread-head">
@@ -453,7 +463,7 @@ export function mountReviewOverlay(options) {
                 </div>
                 <p class="ws-review-thread-body">${escapeHtml(latest)}</p>
                 <div class="ws-review-thread-state">
-                  <span class="ws-review-status">${escapeHtml(statusLabel)}</span>
+                  <span class="ws-review-status">${escapeHtml(reviewStatusLabel(thread.status))}</span>
                 </div>
                 <div class="ws-review-thread-actions">
                   ${statusButtons}
@@ -466,12 +476,15 @@ export function mountReviewOverlay(options) {
 
     drawer.innerHTML = `
       <div class="ws-review-drawer-header">
-        <h2>Review threads</h2>
-        <p class="ws-review-label">${threads.length} total · ${threads.filter((thread) => thread.status === "open" || thread.status === "in_progress").length} open</p>
+        <h2>${REVIEW_UI_COPY.drawerTitle}</h2>
+        <p class="ws-review-label">${reviewCountSummary({
+          active: threads.filter((thread) => isActiveReviewStatus(thread.status)).length,
+          total: threads.length,
+        })}</p>
       </div>
       <div class="ws-review-drawer-body">${cards}</div>
       <div class="ws-review-drawer-footer">
-        <button type="button" data-action="close-drawer">Close</button>
+        <button type="button" data-action="close-drawer">${REVIEW_UI_COPY.close}</button>
       </div>
     `;
 
@@ -480,11 +493,11 @@ export function mountReviewOverlay(options) {
       button.addEventListener("click", () => {
         options.onStatusChange?.({
           threadId: button.getAttribute("data-thread-id"),
-          status: button.getAttribute("data-thread-action") === "resolve"
-            ? "resolved"
-            : button.getAttribute("data-thread-action") === "reopen"
-              ? "open"
-              : "wontfix",
+          status: button.getAttribute("data-thread-action") === "wontfix"
+            ? "wontfix"
+            : reviewThreadStatusAction(
+              threads.find((thread) => thread.id === button.getAttribute("data-thread-id"))?.status || "open",
+            ).nextStatus,
         });
       });
     });
@@ -497,18 +510,18 @@ export function mountReviewOverlay(options) {
     composer.className = "ws-review-composer";
     composer.setAttribute("role", "dialog");
     composer.setAttribute("aria-modal", "true");
-    composer.setAttribute("aria-label", "New review note");
+    composer.setAttribute("aria-label", REVIEW_UI_COPY.newNoteLabel);
     composer.innerHTML = `
       <div>
-        <h2>New review note</h2>
+        <h2>${REVIEW_UI_COPY.composerTitle}</h2>
         <p class="ws-review-label">${escapeHtml(target.scope)} · ${escapeHtml(target.kind)} · ${escapeHtml(target.label)}</p>
       </div>
       <label>
-        <span>Title</span>
+        <span>${REVIEW_UI_COPY.titleField}</span>
         <input name="title" type="text" placeholder="Summarize the change">
       </label>
       <label>
-        <span>Severity</span>
+        <span>${REVIEW_UI_COPY.severityField}</span>
         <select name="severity">
           <option value="must">Must</option>
           <option value="should" selected>Should</option>
@@ -517,12 +530,12 @@ export function mountReviewOverlay(options) {
         </select>
       </label>
       <label>
-        <span>Comment</span>
+        <span>${REVIEW_UI_COPY.commentField}</span>
         <textarea name="body" placeholder="Describe what should change and why."></textarea>
       </label>
       <div class="ws-review-actions">
-        <button type="button" data-action="cancel">Cancel</button>
-        <button type="button" data-action="submit" data-primary="true" disabled>Create note</button>
+        <button type="button" data-action="cancel">${REVIEW_UI_COPY.cancel}</button>
+        <button type="button" data-action="submit" data-primary="true" disabled>${REVIEW_UI_COPY.createNote}</button>
       </div>
     `;
     document.body.append(composer);

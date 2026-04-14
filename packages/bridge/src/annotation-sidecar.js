@@ -1,5 +1,8 @@
 import { createEmptyReviewStore, replaceThreads } from "./review-store.js";
 import { nowIso, shortId, textQuoteForTarget } from "./browser-shared.js";
+import reviewContract from "../../review-contract/index.js";
+
+const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = reviewContract;
 
 function spanAnchor(target) {
   return {
@@ -30,14 +33,38 @@ export function buildAnchorsForTarget(target) {
   return anchors;
 }
 
-function targetRefForSourceTarget(target, variantKey) {
+function anchorKey(anchor) {
+  return JSON.stringify(anchor);
+}
+
+function preservedImplementationAnchors(existingAnchors, target) {
+  return (existingAnchors || []).filter((anchor) => {
+    if (anchor.type === "source-span") {
+      return anchor.file !== target.span?.file;
+    }
+    return anchor.type === "render-region";
+  });
+}
+
+function targetRefForSourceTarget(target, variantKey, existingAnchors = []) {
+  const anchors = [];
+  const seen = new Set();
+  for (const anchor of [...preservedImplementationAnchors(existingAnchors, target), ...buildAnchorsForTarget(target)]) {
+    const key = anchorKey(anchor);
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    anchors.push(anchor);
+  }
+
   return {
     targetId: target.targetId,
     screenId: target.screenId,
     scope: target.scope,
     wireId: target.wireId,
     variantKey,
-    anchors: buildAnchorsForTarget(target),
+    anchors,
   };
 }
 
@@ -100,7 +127,7 @@ function normalizeMessageForStore(message) {
 
 export function reviewStoreToSidecar(store, options = {}) {
   return {
-    schemaVersion: "0.3.0",
+    schemaVersion: ANNOTATION_SIDECAR_SCHEMA_VERSION,
     documentId: store.documentId,
     source: {
       ...(options.wireFile ? { wireFile: options.wireFile } : {}),
@@ -193,7 +220,7 @@ export function relinkThreadAgainstSourceMap(thread, sourceMap) {
     return {
       ...thread,
       orphaned: false,
-      target: targetRefForSourceTarget(direct, thread.target.variantKey),
+      target: targetRefForSourceTarget(direct, thread.target.variantKey, thread.target.anchors),
     };
   }
 
@@ -213,7 +240,7 @@ export function relinkThreadAgainstSourceMap(thread, sourceMap) {
       return {
         ...thread,
         orphaned: false,
-        target: targetRefForSourceTarget(match, thread.target.variantKey),
+        target: targetRefForSourceTarget(match, thread.target.variantKey, thread.target.anchors),
       };
     }
   }

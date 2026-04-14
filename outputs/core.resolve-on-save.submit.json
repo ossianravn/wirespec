@@ -1,5 +1,5 @@
 {
-  "savedFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/src/features/auth/LoginCard.tsx",
+  "savedFile": "<workspace>/src/features/auth/LoginCard.tsx",
   "changedRanges": [
     {
       "start": 21,
@@ -15,7 +15,7 @@
   "updatedTaskFiles": [
     ".wirespec/reviews/login.agent-tasks.json"
   ],
-  "eventPath": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/ide.events.ndjson",
+  "eventPath": "<workspace>/.wirespec/reviews/ide.events.ndjson",
   "summary": {
     "taskFiles": 1,
     "documents": [
@@ -23,9 +23,9 @@
     ],
     "openTasks": 1,
     "latestDocumentId": "login",
-    "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json"
+    "latestTaskFile": "<workspace>/.wirespec/reviews/login.agent-tasks.json"
   },
-  "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json",
+  "latestTaskFile": "<workspace>/.wirespec/reviews/login.agent-tasks.json",
   "latestDocumentId": "login",
   "nextTask": {
     "taskId": "task:ann-login-error-copy",

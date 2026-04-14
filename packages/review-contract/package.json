@@ -1,0 +1,11 @@
+{
+  "name": "@wirespec/review-contract",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "generate:schema": "node scripts/write-schema.mjs",
+    "test": "node --test test/*.test.js"
+  }
+}

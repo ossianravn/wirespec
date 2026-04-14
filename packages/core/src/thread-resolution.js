@@ -1,6 +1,7 @@
 const { resolveWorkspaceRelative, normalizePath, toWorkspaceRelative } = require("./path-utils");
+const { ACTIVE_REVIEW_STATUSES, isActiveReviewStatus } = require("../../review-contract");
 
-const ACTIVE_STATUSES = new Set(["open", "accepted", "in_progress", "in-progress"]);
+const ACTIVE_STATUSES = new Set(ACTIVE_REVIEW_STATUSES);
 
 function nowIso() {
   return new Date().toISOString();
@@ -72,7 +73,7 @@ function updateSidecarThread(thread, metadata) {
   const messageBody = metadata.message || makeSystemResolutionMessage(metadata.relativeFilePath, metadata.changedRanges);
   const messages = Array.isArray(thread.messages) ? [...thread.messages] : [];
   messages.push({
-    id: `msg-${Math.random().toString(16).slice(2, 14)}`,
+    id: metadata.messageId || `msg-${Math.random().toString(16).slice(2, 14)}`,
     author: metadata.author || "WireSpec IDE Companion",
     authorRole: "system",
     body: messageBody,
@@ -102,7 +103,7 @@ function resolveThreadsForFile(pair, workspaceRoot, savedPath, changedRanges, op
     return {
       pair: current,
       resolvedThreadIds: [],
-      remainingOpenTasks: (current.tasks?.tasks || []).filter((task) => ACTIVE_STATUSES.has(task.status)).length,
+      remainingOpenTasks: (current.tasks?.tasks || []).filter((task) => isActiveReviewStatus(task.status)).length,
     };
   }
 
@@ -115,7 +116,7 @@ function resolveThreadsForFile(pair, workspaceRoot, savedPath, changedRanges, op
   for (const task of current.tasks.tasks || []) {
     const thread = threadById.get(task.threadId);
     const activeStatus = task.status || thread?.status;
-    if (!thread || !ACTIVE_STATUSES.has(activeStatus)) {
+    if (!thread || !isActiveReviewStatus(activeStatus)) {
       nextTasks.push(task);
       continue;
     }
@@ -140,7 +141,7 @@ function resolveThreadsForFile(pair, workspaceRoot, savedPath, changedRanges, op
     return {
       pair: current,
       resolvedThreadIds: [],
-      remainingOpenTasks: nextTasks.filter((task) => ACTIVE_STATUSES.has(task.status)).length,
+      remainingOpenTasks: nextTasks.filter((task) => isActiveReviewStatus(task.status)).length,
     };
   }
 
@@ -154,6 +155,7 @@ function resolveThreadsForFile(pair, workspaceRoot, savedPath, changedRanges, op
       changedRanges,
       relativeFilePath,
       message: options.message,
+      messageId: options.messageId,
       resolutionNote: options.resolutionNote,
     });
   });
@@ -165,7 +167,7 @@ function resolveThreadsForFile(pair, workspaceRoot, savedPath, changedRanges, op
   return {
     pair: current,
     resolvedThreadIds,
-    remainingOpenTasks: nextTasks.filter((task) => ACTIVE_STATUSES.has(task.status)).length,
+    remainingOpenTasks: nextTasks.filter((task) => isActiveReviewStatus(task.status)).length,
   };
 }
 

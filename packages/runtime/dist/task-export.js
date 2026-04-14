@@ -1,11 +1,7 @@
 import { buildEditorOpenRequest } from "./editor-links.js";
 import { resolveTarget } from "./source-map.js";
-const severityRank = {
-    must: 0,
-    should: 1,
-    could: 2,
-    question: 3,
-};
+import reviewContract from "../../review-contract/index.js";
+const { AGENT_TASK_EXPORT_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
 function latestMessageBody(thread) {
     const latestMessage = thread.messages[thread.messages.length - 1];
     return latestMessage?.body ?? "";
@@ -24,7 +20,7 @@ function toTask(thread, sourceMap, workspaceRoot = "") {
         threadId: thread.id,
         status: thread.status,
         severity: thread.severity,
-        severityRank: severityRank[thread.severity],
+        severityRank: reviewSeverityRank(thread.severity),
         screenId: thread.target.screenId,
         scope: thread.target.scope,
         targetId: resolution.target?.targetId ?? thread.target.targetId,
@@ -51,9 +47,9 @@ function toTask(thread, sourceMap, workspaceRoot = "") {
     return task;
 }
 export function exportAgentTasks(store, sourceMap, options = {}) {
-    const includeStatuses = new Set(options.includeStatuses ?? ["open", "accepted", "in-progress"]);
+    const includeStatuses = new Set(options.includeStatuses ?? []);
     const tasks = store.threads
-        .filter((thread) => includeStatuses.has(thread.status))
+        .filter((thread) => includeStatuses.size ? includeStatuses.has(thread.status) : isActiveReviewStatus(thread.status))
         .map((thread) => toTask(thread, sourceMap, options.workspaceRoot))
         .sort((a, b) => {
         if (a.severityRank !== b.severityRank) {
@@ -62,7 +58,7 @@ export function exportAgentTasks(store, sourceMap, options = {}) {
         return a.threadId.localeCompare(b.threadId);
     });
     return {
-        version: "0.1",
+        version: AGENT_TASK_EXPORT_VERSION,
         documentId: store.documentId,
         exportedAt: new Date().toISOString(),
         tasks,

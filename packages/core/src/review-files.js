@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { normalizePath, replaceSuffix } = require("./path-utils");
+const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = require("../../review-contract");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -49,7 +50,7 @@ function loadReviewPair(taskFilePath) {
   const sidecar = fs.existsSync(annotationFilePath)
     ? readJson(annotationFilePath)
     : {
-        schemaVersion: "0.3.0",
+        schemaVersion: ANNOTATION_SIDECAR_SCHEMA_VERSION,
         documentId: tasks.documentId || path.basename(absoluteTaskPath, ".agent-tasks.json"),
         threads: [],
       };

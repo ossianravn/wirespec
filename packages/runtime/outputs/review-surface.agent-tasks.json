@@ -1,11 +1,11 @@
 {
   "version": "0.1",
   "documentId": "review-surface",
-  "exportedAt": "2026-04-13T14:38:33.375Z",
+  "exportedAt": "2026-04-14T20:15:42.347Z",
   "tasks": [
     {
-      "taskId": "task:ann-170b64c3f682",
-      "threadId": "ann-170b64c3f682",
+      "taskId": "task:ann-review-surface-preview-panel",
+      "threadId": "ann-review-surface-preview-panel",
       "status": "open",
       "severity": "must",
       "severityRank": 0,
@@ -29,8 +29,8 @@
       }
     },
     {
-      "taskId": "task:ann-8015cb607f5b",
-      "threadId": "ann-8015cb607f5b",
+      "taskId": "task:ann-review-surface-open-threads",
+      "threadId": "ann-review-surface-open-threads",
       "status": "open",
       "severity": "should",
       "severityRank": 1,

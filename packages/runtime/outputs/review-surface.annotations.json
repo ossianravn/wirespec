@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "documentId": "review-surface",
   "source": {
     "wireFile": "fixtures/review-surface.wirespec.md"
   },
   "threads": [
     {
-      "id": "ann-170b64c3f682",
+      "id": "ann-review-surface-preview-panel",
       "title": "Preview should stay the dominant surface",
       "status": "open",
       "severity": "must",
@@ -43,7 +43,7 @@
       },
       "messages": [
         {
-          "id": "msg-2bc132527386",
+          "id": "msg-review-surface-preview-panel-1",
           "author": "reviewer",
           "authorRole": "human",
           "body": "Keep the preview visually primary even when there are multiple open notes. The review tooling should not permanently shrink the canvas.",
@@ -54,7 +54,7 @@
       "updatedAt": "2026-04-11T18:50:00.000Z"
     },
     {
-      "id": "ann-8015cb607f5b",
+      "id": "ann-review-surface-open-threads",
       "title": "Thread access should be obvious but quiet",
       "status": "open",
       "severity": "should",
@@ -94,7 +94,7 @@
       },
       "messages": [
         {
-          "id": "msg-bd3242177d8f",
+          "id": "msg-review-surface-open-threads-1",
           "author": "reviewer",
           "authorRole": "human",
           "body": "Make it clear where open feedback lives, but avoid turning the header into a collaboration dashboard. One calm entry point is enough.",

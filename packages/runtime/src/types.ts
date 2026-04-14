@@ -195,6 +195,15 @@ export interface SourceSpanAnchor {
   columnEnd?: number;
 }
 
+export interface WireSourceSpanAnchor {
+  type: "wire-source-span";
+  file: string;
+  lineStart: number;
+  lineEnd: number;
+  columnStart?: number;
+  columnEnd?: number;
+}
+
 export interface TextQuoteAnchor {
   type: "text-quote";
   exact: string;
@@ -214,6 +223,7 @@ export type ThreadAnchor =
   | NodeIdAnchor
   | SelectorAnchor
   | SourceSpanAnchor
+  | WireSourceSpanAnchor
   | TextQuoteAnchor
   | RenderRegionAnchor;
 
@@ -344,7 +354,7 @@ export interface AnnotationSidecarThread {
 }
 
 export interface AnnotationSidecar {
-  schemaVersion: "0.2.0";
+  schemaVersion: "0.3.0";
   documentId: string;
   source?: AnnotationSidecarSource;
   threads: AnnotationSidecarThread[];

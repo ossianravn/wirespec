@@ -27,6 +27,26 @@ function selectionKey(selection) {
   );
 }
 
+function stableIdPart(value) {
+  return String(value)
+    .replace(/^node:/, "")
+    .replace(/[^a-z0-9_-]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+}
+
+function withStableThreadIds(thread, stem, draft, index) {
+  const suffix = `${stem}-${stableIdPart(draft.targetId)}`;
+  return {
+    ...thread,
+    id: `ann-${suffix}`,
+    messages: thread.messages.map((message, messageIndex) => ({
+      ...message,
+      messageId: `msg-${suffix}-${messageIndex + 1}`,
+    })),
+  };
+}
+
 function seededStore(stem, sourceMap, variantKey) {
   const screenId =
     sourceMap.targets.find((target) => target.scope === "screen")?.screenId ?? sourceMap.documentId;
@@ -52,11 +72,11 @@ function seededStore(stem, sourceMap, variantKey) {
       },
     ];
     drafts.forEach((draft, index) => {
-      const thread = createReviewThreadFromDraft(draft, sourceMap, {
+      const thread = withStableThreadIds(createReviewThreadFromDraft(draft, sourceMap, {
         authorId: "reviewer",
         variantKey,
         now: new Date(Date.UTC(2026, 3, 11, 18, 40 + index)).toISOString(),
-      });
+      }), stem, draft, index);
       store = addThread(store, thread);
     });
     return store;
@@ -81,11 +101,11 @@ function seededStore(stem, sourceMap, variantKey) {
     },
   ];
   drafts.forEach((draft, index) => {
-    const thread = createReviewThreadFromDraft(draft, sourceMap, {
+    const thread = withStableThreadIds(createReviewThreadFromDraft(draft, sourceMap, {
       authorId: "reviewer",
       variantKey,
       now: new Date(Date.UTC(2026, 3, 11, 18, 50 + index)).toISOString(),
-    });
+    }), stem, draft, index);
     store = addThread(store, thread);
   });
   return store;
