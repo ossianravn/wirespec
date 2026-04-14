@@ -1,6 +1,6 @@
 import { buildEditorOpenRequest } from "./editor-links.js";
 import { resolveTarget } from "./source-map.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 const { AGENT_TASK_EXPORT_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
 function latestMessageBody(thread) {
     const latestMessage = thread.messages[thread.messages.length - 1];
@@ -60,7 +60,7 @@ export function exportAgentTasks(store, sourceMap, options = {}) {
     return {
         version: AGENT_TASK_EXPORT_VERSION,
         documentId: store.documentId,
-        exportedAt: new Date().toISOString(),
+        exportedAt: options.exportedAt ?? new Date().toISOString(),
         tasks,
     };
 }

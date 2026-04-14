@@ -58,7 +58,7 @@
           "createdAt": "2026-04-12T09:00:00.000Z"
         },
         {
-          "id": "msg-d13b36d1440c",
+          "id": "msg-core-resolve-submit",
           "author": "WireSpec JetBrains Companion",
           "authorRole": "system",
           "body": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 21-23.",
@@ -125,7 +125,7 @@
           "createdAt": "2026-04-12T09:02:00.000Z"
         },
         {
-          "id": "msg-cfb15ce7c7b4",
+          "id": "msg-core-resolve-copy",
           "author": "WireSpec VS Code Companion",
           "authorRole": "system",
           "body": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 17-20.",

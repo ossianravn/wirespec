@@ -1,5 +1,5 @@
 import { latestMessageBody } from "./annotation-sidecar.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
 const { AGENT_TASK_EXPORT_VERSION, reviewSeverityRank } = reviewContract;
 
@@ -20,11 +20,11 @@ export function buildEditorOpenRequest(thread) {
   };
 }
 
-export function exportAgentTasks(store) {
+export function exportAgentTasks(store, options = {}) {
   return {
     version: AGENT_TASK_EXPORT_VERSION,
     documentId: store.documentId,
-    exportedAt: new Date().toISOString(),
+    exportedAt: options.exportedAt || new Date().toISOString(),
     tasks: store.threads.map((thread) => ({
       taskId: `task:${thread.id}`,
       threadId: thread.id,

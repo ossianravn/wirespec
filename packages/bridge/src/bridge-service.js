@@ -85,7 +85,9 @@ export class ReviewBridgeService extends EventEmitter {
       component: payload.componentFile || payload.sidecar?.source?.component,
       astFile: payload.astFile || payload.sidecar?.source?.astFile,
     });
-    const tasks = exportAgentTasks(store);
+    const tasks = exportAgentTasks(store, {
+      exportedAt: this.now(),
+    });
     const counts = reviewCounts(store);
 
     await writeJsonFile(paths.annotation.absolute, normalizedSidecar);
@@ -141,7 +143,9 @@ export class ReviewBridgeService extends EventEmitter {
     if (payload.sourceMap) {
       store = relinkStoreAgainstSourceMap(store, payload.sourceMap);
     }
-    const tasks = exportAgentTasks(store);
+    const tasks = exportAgentTasks(store, {
+      exportedAt: this.now(),
+    });
     const counts = reviewCounts(store);
 
     return {

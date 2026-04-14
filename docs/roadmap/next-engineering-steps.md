@@ -35,6 +35,10 @@ The shared contract should cover annotation sidecars, agent tasks, thread status
 
 Status: first pass complete. Bridge and runtime now consume shared review UI copy and status transition helpers. Deeper consolidation of rendering/layout primitives remains open.
 
+Follow-up complete: added browser-safe review contract primitives for toolbar and composer markup. Bridge and runtime now render those shared primitives instead of carrying separate copies of the same reviewer-facing form and toolbar structure.
+
+Follow-up complete: extracted shared thread-card, badge, latest-message, summary, and thread-action primitives. Bridge and runtime still keep their own layout classes and actions, but no longer hand-roll the same annotation card markup and escaping rules.
+
 The bridge and runtime annotation UIs are still separate implementations. After the data contract is stable, consolidate the shared behavior, labels, state rules, and reviewer-facing copy so the two surfaces do not drift again.
 
 The goal is not to expose implementation detail to reviewers. The review UI should stay focused on adding notes, finding open feedback, and saving structured work for the developer loop.

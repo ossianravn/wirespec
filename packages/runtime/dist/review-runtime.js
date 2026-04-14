@@ -1,11 +1,10 @@
-import { createReviewThreadFromDraft, relinkStoreAgainstSourceMap, reviewStoreToSidecar, sidecarToReviewStore, summarizeThread, } from "./annotation-sidecar.js";
+import { createReviewThreadFromDraft, relinkStoreAgainstSourceMap, reviewStoreToSidecar, sidecarToReviewStore, } from "./annotation-sidecar.js";
 import { buildEditorOpenRequest } from "./editor-links.js";
 import { mountReviewOverlay } from "./review-overlay.js";
 import { addThread, activeThreadCount, createEmptyReviewStore, reviewCounts, updateThreadStatus, } from "./review-store.js";
 import { exportAgentTasks } from "./task-export.js";
-import { escapeHtml } from "./utils.js";
-import reviewContract from "../../review-contract/index.js";
-const { REVIEW_UI_COPY, isClosedReviewStatus, reviewCountSummary, reviewPinTitle, reviewStatusLabel, reviewThreadStatusAction, reviewThreadsButtonLabel, } = reviewContract;
+import reviewContract from "../../review-contract/browser.mjs";
+const { REVIEW_UI_COPY, isClosedReviewStatus, reviewCountSummary, reviewPinTitle, reviewScopeLabel, reviewThreadActionButtonHtml, reviewThreadActionLinkHtml, reviewThreadCardHtml, reviewThreadStatusAction, reviewThreadSummary, reviewThreadsButtonLabel, reviewVariantPillHtml, } = reviewContract;
 const runtimeCss = `
 .ws-review-drawer,
 .ws-review-drawer *,
@@ -243,25 +242,6 @@ function downloadJson(filename, payload) {
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(href), 0);
 }
-function latestMessage(thread) {
-    return thread.messages[thread.messages.length - 1]?.body ?? "";
-}
-function scopeLabel(scope) {
-    switch (scope) {
-        case "screen":
-            return "page";
-        case "section":
-            return "section";
-        case "element":
-            return "element";
-        case "prose":
-            return "prose";
-        case "acceptance":
-            return "acceptance";
-        case "region":
-            return "region";
-    }
-}
 function editorUri(sourceMap, thread, workspaceRoot) {
     const target = sourceMap.targets.find((entry) => entry.targetId === thread.target.targetId);
     if (!target) {
@@ -409,38 +389,39 @@ export function mountReviewRuntime(options) {
     const renderThreadCard = (thread) => {
         const uri = editorUri(options.sourceMap, thread, options.workspaceRoot);
         const targetLabel = labelForTarget(options.sourceMap, thread.target.targetId);
-        const summary = summarizeThread(thread);
-        const body = latestMessage(thread);
-        const variant = thread.target.variantKey
-            ? `<span class="ws-review-pill">${escapeHtml(thread.target.variantKey)}</span>`
-            : "";
         const orphaned = thread.orphaned
             ? `<p class="ws-review-thread-orphaned">Target needs relinking.</p>`
             : "";
-        return `
-      <article class="ws-review-thread-card" data-thread-id="${escapeHtml(thread.id)}" data-orphaned="${thread.orphaned ? "true" : "false"}">
-        <div class="ws-review-thread-head">
-          <div>
-            <h3 class="ws-review-thread-title">${escapeHtml(summary)}</h3>
-            <p class="ws-review-thread-target">${escapeHtml(scopeLabel(thread.target.scope))} · ${escapeHtml(targetLabel)}</p>
-          </div>
-          <div class="ws-review-thread-meta">
-            <span class="ws-review-severity-pill" data-severity="${escapeHtml(thread.severity)}">${escapeHtml(thread.severity)}</span>
-          </div>
-        </div>
-        <p>${escapeHtml(body)}</p>
-        <div class="ws-review-thread-meta">
-          <span class="ws-review-status-pill">${escapeHtml(reviewStatusLabel(thread.status))}</span>
-          ${variant}
-        </div>
-        ${orphaned}
-        <div class="ws-review-thread-actions">
-          <button type="button" data-action="focus-target" data-thread-id="${escapeHtml(thread.id)}">${REVIEW_UI_COPY.focusTarget}</button>
-          ${uri ? `<a href="${escapeHtml(uri)}">${REVIEW_UI_COPY.openSource}</a>` : ""}
-          <button type="button" data-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(reviewThreadStatusAction(thread.status).label)}</button>
-        </div>
-      </article>
-    `;
+        const statusAction = reviewThreadStatusAction(thread.status);
+        return reviewThreadCardHtml({
+            thread,
+            articleClass: "ws-review-thread-card",
+            dataOrphaned: Boolean(thread.orphaned),
+            title: reviewThreadSummary(thread),
+            titleClass: "ws-review-thread-title",
+            targetMeta: `${reviewScopeLabel(thread.target.scope)} · ${targetLabel}`,
+            targetClass: "ws-review-thread-target",
+            topMetaClass: "ws-review-thread-meta",
+            severityClass: "ws-review-severity-pill",
+            statusContainerClass: "ws-review-thread-meta",
+            statusClass: "ws-review-status-pill",
+            variantHtml: reviewVariantPillHtml(thread.target.variantKey, "ws-review-pill"),
+            trailingHtml: orphaned,
+            actionsClass: "ws-review-thread-actions",
+            actionsHtml: `
+          ${reviewThreadActionButtonHtml({
+                action: "focus-target",
+                threadId: thread.id,
+                label: REVIEW_UI_COPY.focusTarget,
+            })}
+          ${reviewThreadActionLinkHtml({ href: uri, label: REVIEW_UI_COPY.openSource })}
+          ${reviewThreadActionButtonHtml({
+                action: "toggle-status",
+                threadId: thread.id,
+                label: statusAction.label,
+            })}
+        `,
+        });
     };
     const renderDrawer = () => {
         if (!metaNode || !filterNode || !bodyNode || !activeFilterButton || !allFilterButton) {

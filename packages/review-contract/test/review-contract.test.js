@@ -20,6 +20,15 @@ test("severity ranking is shared by task exporters and core sorting", () => {
 });
 
 test("review UI helpers keep status labels and transitions consistent", () => {
+  const thread = {
+    id: "thread-1",
+    title: "",
+    status: "open",
+    severity: "must",
+    target: { targetId: "target-1", variantKey: "<desktop>" },
+    messages: [{ body: "First" }, { body: "Fix <button>" }],
+  };
+
   assert.equal(contract.reviewStatusLabel("in_progress"), "In progress");
   assert.equal(contract.reviewStatusLabel("wontfix"), "Won't fix");
   assert.deepEqual(contract.reviewThreadStatusAction("open"), {
@@ -33,6 +42,63 @@ test("review UI helpers keep status labels and transitions consistent", () => {
   assert.equal(contract.reviewCountSummary({ active: 2, total: 3 }), "2 active · 3 total");
   assert.equal(contract.reviewPinTitle(1), "1 active review thread");
   assert.equal(contract.reviewPinTitle(2), "2 active review threads");
+  assert.match(contract.reviewToolbarHtml({ includeThreads: true }), /data-action="threads"/);
+  assert.match(
+    contract.reviewComposerHtml({
+      target: { scope: "element", kind: "button", label: "<Sign in>" },
+    }),
+    /&lt;Sign in&gt;/,
+  );
+  assert.equal(contract.reviewLatestMessageBody(thread), "Fix <button>");
+  assert.equal(contract.reviewThreadSummary(thread), "Fix <button>");
+  assert.equal(contract.reviewScopeLabel("screen"), "page");
+  assert.match(contract.reviewSeverityBadgeHtml("<must>", "badge"), /data-severity="&lt;must&gt;"/);
+  assert.match(contract.reviewStatusBadgeHtml("in_progress", "status"), />In progress</);
+  assert.match(contract.reviewVariantPillHtml(thread.target.variantKey), /&lt;desktop&gt;/);
+  assert.match(
+    contract.reviewThreadActionButtonHtml({
+      action: "toggle-status",
+      actionAttribute: "data-thread-action",
+      threadId: "thread-1",
+      label: "Resolve",
+    }),
+    /data-thread-action="toggle-status"/,
+  );
+  assert.match(
+    contract.reviewThreadCardHtml({
+      thread,
+      articleClass: "thread",
+      title: "Unsafe <title>",
+      targetMeta: "element · <target>",
+      severityClass: "badge",
+      statusClass: "status",
+      statusContainerClass: "state",
+      actionsHtml: contract.reviewThreadActionButtonHtml({
+        action: "toggle-status",
+        threadId: thread.id,
+        label: "Resolve",
+      }),
+    }),
+    /Unsafe &lt;title&gt;/,
+  );
+});
+
+test("browser ESM contract exposes the same UI primitives", async () => {
+  const browserContract = await import("../browser.mjs");
+  assert.equal(browserContract.default.ANNOTATION_SIDECAR_SCHEMA_VERSION, contract.ANNOTATION_SIDECAR_SCHEMA_VERSION);
+  assert.equal(browserContract.default.reviewThreadStatusAction("resolved").nextStatus, "open");
+  assert.match(browserContract.default.reviewToolbarHtml({ includeSave: true }), /data-action="save"/);
+  assert.equal(browserContract.default.reviewLatestMessageBody({ messages: [{ body: "Latest" }] }), "Latest");
+  assert.match(browserContract.default.reviewThreadCardHtml({
+    thread: {
+      id: "thread-browser",
+      title: "Browser",
+      status: "resolved",
+      severity: "should",
+      target: { targetId: "target-browser" },
+      messages: [],
+    },
+  }), /Browser/);
 });
 
 test("annotation sidecar schema uses the canonical version and anchor names", () => {

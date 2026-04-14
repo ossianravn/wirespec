@@ -9,11 +9,12 @@ import {
 } from "./types.js";
 import { buildEditorOpenRequest } from "./editor-links.js";
 import { resolveTarget } from "./source-map.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
 export interface ExportOptions {
   workspaceRoot?: string;
   includeStatuses?: ReviewStatus[];
+  exportedAt?: string;
 }
 
 const { AGENT_TASK_EXPORT_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
@@ -100,7 +101,7 @@ export function exportAgentTasks(
   return {
     version: AGENT_TASK_EXPORT_VERSION,
     documentId: store.documentId,
-    exportedAt: new Date().toISOString(),
+    exportedAt: options.exportedAt ?? new Date().toISOString(),
     tasks,
   };
 }

@@ -2,5 +2,6 @@ import { AgentTaskExport, ReviewStatus, ReviewStore, SourceMapDocument } from ".
 export interface ExportOptions {
     workspaceRoot?: string;
     includeStatuses?: ReviewStatus[];
+    exportedAt?: string;
 }
 export declare function exportAgentTasks(store: ReviewStore, sourceMap: SourceMapDocument, options?: ExportOptions): AgentTaskExport;

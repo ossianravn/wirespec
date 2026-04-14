@@ -1,9 +1,9 @@
-const SOURCE_MAP_VERSION = "0.1";
-const REVIEW_STORE_VERSION = "0.2";
-const ANNOTATION_SIDECAR_SCHEMA_VERSION = "0.3.0";
-const AGENT_TASK_EXPORT_VERSION = "0.1";
+export const SOURCE_MAP_VERSION = "0.1";
+export const REVIEW_STORE_VERSION = "0.2";
+export const ANNOTATION_SIDECAR_SCHEMA_VERSION = "0.3.0";
+export const AGENT_TASK_EXPORT_VERSION = "0.1";
 
-const REVIEW_STATUSES = Object.freeze([
+export const REVIEW_STATUSES = Object.freeze([
   "open",
   "accepted",
   "in-progress",
@@ -11,31 +11,31 @@ const REVIEW_STATUSES = Object.freeze([
   "wontfix",
 ]);
 
-const REVIEW_STATUS_ALIASES = Object.freeze({
+export const REVIEW_STATUS_ALIASES = Object.freeze({
   in_progress: "in-progress",
 });
 
-const ACTIVE_REVIEW_STATUSES = Object.freeze([
+export const ACTIVE_REVIEW_STATUSES = Object.freeze([
   "open",
   "accepted",
   "in-progress",
 ]);
 
-const REVIEW_SEVERITIES = Object.freeze([
+export const REVIEW_SEVERITIES = Object.freeze([
   "must",
   "should",
   "could",
   "question",
 ]);
 
-const REVIEW_SEVERITY_RANK = Object.freeze({
+export const REVIEW_SEVERITY_RANK = Object.freeze({
   must: 0,
   should: 1,
   could: 2,
   question: 3,
 });
 
-const REVIEW_MOTIVATIONS = Object.freeze([
+export const REVIEW_MOTIVATIONS = Object.freeze([
   "note",
   "question",
   "change-request",
@@ -44,7 +44,7 @@ const REVIEW_MOTIVATIONS = Object.freeze([
   "blocking",
 ]);
 
-const REVIEW_SCOPES = Object.freeze([
+export const REVIEW_SCOPES = Object.freeze([
   "screen",
   "section",
   "element",
@@ -53,7 +53,7 @@ const REVIEW_SCOPES = Object.freeze([
   "region",
 ]);
 
-const THREAD_ANCHOR_TYPES = Object.freeze([
+export const THREAD_ANCHOR_TYPES = Object.freeze([
   "node-id",
   "selector",
   "source-span",
@@ -62,28 +62,28 @@ const THREAD_ANCHOR_TYPES = Object.freeze([
   "render-region",
 ]);
 
-function normalizeReviewStatus(status) {
+export function normalizeReviewStatus(status) {
   return REVIEW_STATUS_ALIASES[status] || status;
 }
 
-function isActiveReviewStatus(status) {
+export function isActiveReviewStatus(status) {
   return ACTIVE_REVIEW_STATUSES.includes(normalizeReviewStatus(status));
 }
 
-function isClosedReviewStatus(status) {
+export function isClosedReviewStatus(status) {
   const normalized = normalizeReviewStatus(status);
   return normalized === "resolved" || normalized === "wontfix";
 }
 
-function reviewSeverityRank(severity) {
+export function reviewSeverityRank(severity) {
   return REVIEW_SEVERITY_RANK[severity] ?? 99;
 }
 
-function activeReviewStatusSet() {
+export function activeReviewStatusSet() {
   return new Set(ACTIVE_REVIEW_STATUSES);
 }
 
-const REVIEW_UI_COPY = Object.freeze({
+export const REVIEW_UI_COPY = Object.freeze({
   toolbarLabel: "Review tools",
   comment: "Comment",
   threads: "Threads",
@@ -112,7 +112,7 @@ const REVIEW_UI_COPY = Object.freeze({
   emptyThreads: "No threads in this view.",
 });
 
-function reviewStatusLabel(status) {
+export function reviewStatusLabel(status) {
   const normalized = normalizeReviewStatus(status);
   if (normalized === "wontfix") {
     return "Won't fix";
@@ -123,17 +123,25 @@ function reviewStatusLabel(status) {
   return normalized;
 }
 
-function reviewThreadStatusAction(status) {
+export function reviewThreadStatusAction(status) {
   return isClosedReviewStatus(status)
     ? { label: REVIEW_UI_COPY.reopen, nextStatus: "open" }
     : { label: REVIEW_UI_COPY.resolve, nextStatus: "resolved" };
 }
 
-function reviewThreadsButtonLabel(activeCount) {
+export function reviewThreadsButtonLabel(activeCount) {
   return `${REVIEW_UI_COPY.threads} ${activeCount}`;
 }
 
-function escapeReviewHtml(value) {
+export function reviewCountSummary(counts) {
+  return `${counts.active} active · ${counts.total} total`;
+}
+
+export function reviewPinTitle(count) {
+  return `${count} active review ${count === 1 ? "thread" : "threads"}`;
+}
+
+export function escapeReviewHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -142,11 +150,11 @@ function escapeReviewHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function reviewDefaultDraftTitle(target) {
+export function reviewDefaultDraftTitle(target) {
   return `Review ${target?.label || "target"}`;
 }
 
-function reviewToolbarHtml(options = {}) {
+export function reviewToolbarHtml(options = {}) {
   const commentMode = Boolean(options.commentMode);
   const segments = [
     `<button type="button" data-action="${options.commentAction || "comment"}" aria-pressed="${commentMode ? "true" : "false"}">${REVIEW_UI_COPY.comment}</button>`,
@@ -166,7 +174,7 @@ function reviewToolbarHtml(options = {}) {
   return segments.join("\n");
 }
 
-function reviewComposerHtml(options) {
+export function reviewComposerHtml(options) {
   const target = options.target;
   const headerClass = options.headerClass ? ` class="${escapeReviewHtml(options.headerClass)}"` : "";
   const metaClass = options.metaClass || "ws-review-target-meta";
@@ -200,16 +208,16 @@ function reviewComposerHtml(options) {
   `;
 }
 
-function reviewLatestMessageBody(thread) {
+export function reviewLatestMessageBody(thread) {
   const messages = Array.isArray(thread?.messages) ? thread.messages : [];
   return messages[messages.length - 1]?.body ?? "";
 }
 
-function reviewThreadSummary(thread) {
+export function reviewThreadSummary(thread) {
   return thread?.title?.trim() || reviewLatestMessageBody(thread) || thread?.target?.targetId || "";
 }
 
-function reviewScopeLabel(scope) {
+export function reviewScopeLabel(scope) {
   switch (scope) {
     case "screen":
       return "page";
@@ -232,35 +240,35 @@ function reviewClassAttribute(className) {
   return className ? ` class="${escapeReviewHtml(className)}"` : "";
 }
 
-function reviewSeverityBadgeHtml(severity, className = "ws-review-severity-pill") {
+export function reviewSeverityBadgeHtml(severity, className = "ws-review-severity-pill") {
   return `<span${reviewClassAttribute(className)} data-severity="${escapeReviewHtml(severity)}">${escapeReviewHtml(severity)}</span>`;
 }
 
-function reviewStatusBadgeHtml(status, className = "ws-review-status-pill") {
+export function reviewStatusBadgeHtml(status, className = "ws-review-status-pill") {
   return `<span${reviewClassAttribute(className)}>${escapeReviewHtml(reviewStatusLabel(status))}</span>`;
 }
 
-function reviewVariantPillHtml(variantKey, className = "ws-review-pill") {
+export function reviewVariantPillHtml(variantKey, className = "ws-review-pill") {
   return variantKey
     ? `<span${reviewClassAttribute(className)}>${escapeReviewHtml(variantKey)}</span>`
     : "";
 }
 
-function reviewThreadActionButtonHtml(options) {
+export function reviewThreadActionButtonHtml(options) {
   const actionAttribute = options.actionAttribute === "data-thread-action"
     ? "data-thread-action"
     : "data-action";
   return `<button type="button" ${actionAttribute}="${escapeReviewHtml(options.action)}" data-thread-id="${escapeReviewHtml(options.threadId)}">${escapeReviewHtml(options.label)}</button>`;
 }
 
-function reviewThreadActionLinkHtml(options) {
+export function reviewThreadActionLinkHtml(options) {
   if (!options.href) {
     return "";
   }
   return `<a href="${escapeReviewHtml(options.href)}">${escapeReviewHtml(options.label)}</a>`;
 }
 
-function reviewThreadCardHtml(options) {
+export function reviewThreadCardHtml(options) {
   const thread = options.thread;
   const title = options.title ?? reviewThreadSummary(thread);
   const targetMeta = options.targetMeta ?? thread?.target?.targetId ?? "";
@@ -313,221 +321,7 @@ function reviewThreadCardHtml(options) {
     `;
 }
 
-function reviewCountSummary(counts) {
-  return `${counts.active} active · ${counts.total} total`;
-}
-
-function reviewPinTitle(count) {
-  return `${count} active review ${count === 1 ? "thread" : "threads"}`;
-}
-
-const lineSpanAnchorSchema = {
-  type: "object",
-  additionalProperties: false,
-  required: ["type", "file", "lineStart", "lineEnd"],
-  properties: {
-    type: { enum: ["source-span", "wire-source-span"] },
-    file: { type: "string" },
-    lineStart: { type: "integer", minimum: 1 },
-    lineEnd: { type: "integer", minimum: 1 },
-    columnStart: { type: "integer", minimum: 1 },
-    columnEnd: { type: "integer", minimum: 1 },
-  },
-};
-
-const annotationSidecarSchema = Object.freeze({
-  $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "https://wirespec.dev/schemas/wirespec-annotation-sidecar-v0.3.schema.json",
-  title: "WireSpec Annotation Sidecar v0.3",
-  type: "object",
-  additionalProperties: false,
-  required: ["schemaVersion", "documentId", "threads"],
-  properties: {
-    schemaVersion: { const: ANNOTATION_SIDECAR_SCHEMA_VERSION },
-    documentId: { type: "string" },
-    source: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        wireFile: { type: "string" },
-        astFile: { type: "string" },
-        component: { type: "string" },
-      },
-    },
-    threads: {
-      type: "array",
-      items: { $ref: "#/$defs/thread" },
-    },
-  },
-  $defs: {
-    thread: {
-      type: "object",
-      additionalProperties: false,
-      required: [
-        "id",
-        "status",
-        "severity",
-        "motivation",
-        "category",
-        "target",
-        "messages",
-        "createdAt",
-        "updatedAt",
-      ],
-      properties: {
-        id: { type: "string", pattern: "^ann-[A-Za-z0-9][A-Za-z0-9-]*$" },
-        title: { type: "string" },
-        status: { enum: REVIEW_STATUSES },
-        severity: { enum: REVIEW_SEVERITIES },
-        motivation: { enum: REVIEW_MOTIVATIONS },
-        category: { type: "string" },
-        taxonomy: {
-          type: "array",
-          items: { type: "string" },
-        },
-        orphaned: { type: "boolean" },
-        target: { $ref: "#/$defs/target" },
-        messages: {
-          type: "array",
-          minItems: 1,
-          items: { $ref: "#/$defs/message" },
-        },
-        suggestedOps: {
-          type: "array",
-          items: { $ref: "#/$defs/op" },
-        },
-        createdAt: { type: "string", format: "date-time" },
-        updatedAt: { type: "string", format: "date-time" },
-        resolvedBy: { type: "string" },
-        resolutionNote: { type: "string" },
-      },
-    },
-    target: {
-      type: "object",
-      additionalProperties: false,
-      required: ["targetId", "screenId", "scope", "anchors"],
-      properties: {
-        targetId: { type: "string" },
-        screenId: { type: "string" },
-        scope: { enum: REVIEW_SCOPES },
-        wireId: { type: "string" },
-        variantKey: { type: "string" },
-        anchors: {
-          type: "array",
-          items: { $ref: "#/$defs/anchor" },
-        },
-      },
-    },
-    anchor: {
-      oneOf: [
-        { $ref: "#/$defs/nodeIdAnchor" },
-        { $ref: "#/$defs/selectorAnchor" },
-        { $ref: "#/$defs/lineSpanAnchor" },
-        { $ref: "#/$defs/textQuoteAnchor" },
-        { $ref: "#/$defs/renderRegionAnchor" },
-      ],
-    },
-    nodeIdAnchor: {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "value"],
-      properties: {
-        type: { const: "node-id" },
-        value: { type: "string" },
-      },
-    },
-    selectorAnchor: {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "value"],
-      properties: {
-        type: { const: "selector" },
-        value: { type: "string" },
-      },
-    },
-    lineSpanAnchor: lineSpanAnchorSchema,
-    textQuoteAnchor: {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "exact"],
-      properties: {
-        type: { const: "text-quote" },
-        exact: { type: "string" },
-        prefix: { type: "string" },
-        suffix: { type: "string" },
-      },
-    },
-    renderRegionAnchor: {
-      type: "object",
-      additionalProperties: false,
-      required: ["type", "x", "y", "width", "height"],
-      properties: {
-        type: { const: "render-region" },
-        x: { type: "number" },
-        y: { type: "number" },
-        width: { type: "number", minimum: 0 },
-        height: { type: "number", minimum: 0 },
-      },
-    },
-    message: {
-      type: "object",
-      additionalProperties: false,
-      required: ["id", "author", "body", "createdAt"],
-      properties: {
-        id: { type: "string", pattern: "^msg-[A-Za-z0-9][A-Za-z0-9-]*$" },
-        author: { type: "string" },
-        authorRole: { enum: ["human", "agent", "system"] },
-        body: { type: "string" },
-        createdAt: { type: "string", format: "date-time" },
-      },
-    },
-    op: {
-      oneOf: [
-        { $ref: "#/$defs/patchOp" },
-        { $ref: "#/$defs/showHideRemoveOp" },
-        { $ref: "#/$defs/insertOp" },
-      ],
-    },
-    patchOp: {
-      type: "object",
-      additionalProperties: false,
-      required: ["op", "target", "props"],
-      properties: {
-        op: { const: "patch" },
-        target: { type: "string" },
-        props: {
-          type: "object",
-          additionalProperties: true,
-        },
-      },
-    },
-    showHideRemoveOp: {
-      type: "object",
-      additionalProperties: false,
-      required: ["op", "target"],
-      properties: {
-        op: { enum: ["show", "hide", "remove"] },
-        target: { type: "string" },
-      },
-    },
-    insertOp: {
-      type: "object",
-      additionalProperties: false,
-      required: ["op", "position", "ref", "node"],
-      properties: {
-        op: { const: "insert" },
-        position: { enum: ["before", "after", "inside-start", "inside-end"] },
-        ref: { type: "string" },
-        node: {
-          type: "object",
-          additionalProperties: true,
-        },
-      },
-    },
-  },
-});
-
-module.exports = {
+const reviewContract = {
   SOURCE_MAP_VERSION,
   REVIEW_STORE_VERSION,
   ANNOTATION_SIDECAR_SCHEMA_VERSION,
@@ -541,10 +335,9 @@ module.exports = {
   REVIEW_SCOPES,
   THREAD_ANCHOR_TYPES,
   REVIEW_UI_COPY,
-  annotationSidecarSchema,
   activeReviewStatusSet,
-  isClosedReviewStatus,
   isActiveReviewStatus,
+  isClosedReviewStatus,
   normalizeReviewStatus,
   reviewCountSummary,
   reviewComposerHtml,
@@ -566,3 +359,5 @@ module.exports = {
   reviewThreadsButtonLabel,
   reviewVariantPillHtml,
 };
+
+export default reviewContract;

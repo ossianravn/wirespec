@@ -1,6 +1,6 @@
 import { createEmptyReviewStore, replaceThreads } from "./review-store.js";
 import { nowIso, shortId, textQuoteForTarget } from "./browser-shared.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
 const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = reviewContract;
 

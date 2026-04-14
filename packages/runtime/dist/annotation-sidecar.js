@@ -1,6 +1,6 @@
 import { resolveTarget } from "./source-map.js";
 import { createEmptyReviewStore, replaceThreads } from "./review-store.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 const { ANNOTATION_SIDECAR_SCHEMA_VERSION } = reviewContract;
 function shortId(prefix) {
     const globalCrypto = globalThis.crypto;

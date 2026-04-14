@@ -1,14 +1,18 @@
-import { escapeHtml } from "./browser-shared.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
 const {
   REVIEW_UI_COPY,
   isActiveReviewStatus,
   isClosedReviewStatus,
   reviewCountSummary,
+  reviewComposerHtml,
+  reviewDefaultDraftTitle,
   reviewPinTitle,
-  reviewStatusLabel,
+  reviewToolbarHtml,
+  reviewThreadActionButtonHtml,
+  reviewThreadCardHtml,
   reviewThreadStatusAction,
+  reviewThreadSummary,
 } = reviewContract;
 
 const css = `
@@ -369,11 +373,11 @@ export function mountReviewOverlay(options) {
   const bar = document.createElement("aside");
   bar.className = "ws-review-bar";
   bar.setAttribute("aria-label", REVIEW_UI_COPY.toolbarLabel);
-  bar.innerHTML = `
-    <button type="button" data-action="comment" aria-pressed="${commentMode ? "true" : "false"}">${REVIEW_UI_COPY.comment}</button>
-    <button type="button" data-action="threads" aria-expanded="false">${REVIEW_UI_COPY.threads}</button>
-    <button type="button" data-action="save" data-primary="true">${REVIEW_UI_COPY.save}</button>
-  `;
+  bar.innerHTML = reviewToolbarHtml({
+    commentMode,
+    includeThreads: true,
+    includeSave: true,
+  });
   document.body.append(bar);
 
   const drawer = document.createElement("aside");
@@ -445,31 +449,39 @@ export function mountReviewOverlay(options) {
     const cards = filtered.length
       ? filtered
           .map((thread) => {
-            const latest = thread.messages[thread.messages.length - 1]?.body || "";
             const targetLabel = thread.target.wireId || thread.target.targetId;
             const statusAction = reviewThreadStatusAction(thread.status);
             const statusButtons = isClosedReviewStatus(thread.status)
-              ? `<button type="button" data-thread-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(statusAction.label)}</button>`
-              : `<button type="button" data-thread-action="toggle-status" data-thread-id="${escapeHtml(thread.id)}">${escapeHtml(statusAction.label)}</button>
-                 <button type="button" data-thread-action="wontfix" data-thread-id="${escapeHtml(thread.id)}">${REVIEW_UI_COPY.wontfix}</button>`;
-            return `
-              <article class="ws-review-thread" data-thread-id="${escapeHtml(thread.id)}">
-                <div class="ws-review-thread-head">
-                  <div>
-                    <h3>${escapeHtml(thread.title)}</h3>
-                    <p class="ws-review-meta">${escapeHtml(targetLabel)}${thread.target.variantKey ? ` · ${escapeHtml(thread.target.variantKey)}` : ""}</p>
-                  </div>
-                  <span class="ws-review-badge" data-severity="${escapeHtml(thread.severity)}">${escapeHtml(thread.severity)}</span>
-                </div>
-                <p class="ws-review-thread-body">${escapeHtml(latest)}</p>
-                <div class="ws-review-thread-state">
-                  <span class="ws-review-status">${escapeHtml(reviewStatusLabel(thread.status))}</span>
-                </div>
-                <div class="ws-review-thread-actions">
-                  ${statusButtons}
-                </div>
-              </article>
-            `;
+              ? reviewThreadActionButtonHtml({
+                action: "toggle-status",
+                actionAttribute: "data-thread-action",
+                threadId: thread.id,
+                label: statusAction.label,
+              })
+              : `${reviewThreadActionButtonHtml({
+                action: "toggle-status",
+                actionAttribute: "data-thread-action",
+                threadId: thread.id,
+                label: statusAction.label,
+              })}
+                 ${reviewThreadActionButtonHtml({
+                   action: "wontfix",
+                   actionAttribute: "data-thread-action",
+                   threadId: thread.id,
+                   label: REVIEW_UI_COPY.wontfix,
+                 })}`;
+            return reviewThreadCardHtml({
+              thread,
+              articleClass: "ws-review-thread",
+              title: reviewThreadSummary(thread),
+              targetMeta: `${targetLabel}${thread.target.variantKey ? ` · ${thread.target.variantKey}` : ""}`,
+              targetClass: "ws-review-meta",
+              severityClass: "ws-review-badge",
+              bodyClass: "ws-review-thread-body",
+              statusContainerClass: "ws-review-thread-state",
+              statusClass: "ws-review-status",
+              actionsHtml: statusButtons,
+            });
           })
           .join("")
       : `<div class="ws-review-empty"><p>No review notes yet.</p></div>`;
@@ -511,33 +523,11 @@ export function mountReviewOverlay(options) {
     composer.setAttribute("role", "dialog");
     composer.setAttribute("aria-modal", "true");
     composer.setAttribute("aria-label", REVIEW_UI_COPY.newNoteLabel);
-    composer.innerHTML = `
-      <div>
-        <h2>${REVIEW_UI_COPY.composerTitle}</h2>
-        <p class="ws-review-label">${escapeHtml(target.scope)} · ${escapeHtml(target.kind)} · ${escapeHtml(target.label)}</p>
-      </div>
-      <label>
-        <span>${REVIEW_UI_COPY.titleField}</span>
-        <input name="title" type="text" placeholder="Summarize the change">
-      </label>
-      <label>
-        <span>${REVIEW_UI_COPY.severityField}</span>
-        <select name="severity">
-          <option value="must">Must</option>
-          <option value="should" selected>Should</option>
-          <option value="could">Could</option>
-          <option value="question">Question</option>
-        </select>
-      </label>
-      <label>
-        <span>${REVIEW_UI_COPY.commentField}</span>
-        <textarea name="body" placeholder="Describe what should change and why."></textarea>
-      </label>
-      <div class="ws-review-actions">
-        <button type="button" data-action="cancel">${REVIEW_UI_COPY.cancel}</button>
-        <button type="button" data-action="submit" data-primary="true" disabled>${REVIEW_UI_COPY.createNote}</button>
-      </div>
-    `;
+    composer.innerHTML = reviewComposerHtml({
+      target,
+      metaClass: "ws-review-label",
+      actionsClass: "ws-review-actions",
+    });
     document.body.append(composer);
 
     const title = composer.querySelector('input[name="title"]');
@@ -557,7 +547,7 @@ export function mountReviewOverlay(options) {
       }
       options.onDraftSubmitted?.({
         targetId: target.targetId,
-        title: title.value.trim() || `Review ${target.label}`,
+        title: title.value.trim() || reviewDefaultDraftTitle(target),
         severity: severity.value,
         category: "ux",
         body: body.value.trim(),

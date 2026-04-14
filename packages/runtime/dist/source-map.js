@@ -1,6 +1,6 @@
 import { classifyScope, nodeLabel, roleForNode, screenIdFromNode, semanticTargetId, } from "./utils.js";
 import { resolveDocument } from "./resolver.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 const { SOURCE_MAP_VERSION } = reviewContract;
 function variantKey(selection) {
     const parts = [];

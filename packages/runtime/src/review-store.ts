@@ -4,7 +4,7 @@ import {
   ReviewStore,
   ReviewThread,
 } from "./types.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
 const { REVIEW_STORE_VERSION, isActiveReviewStatus, reviewSeverityRank } = reviewContract;
 

@@ -36,6 +36,7 @@ test("resolve-on-save resolves touched threads and writes audit events", () => {
 
   const first = resolveOnSave(workspaceRoot, targetFile, [{ start: 21, end: 23 }], {
     author: "WireSpec Test Companion",
+    messageId: "msg-test-submit",
   });
   assert.deepEqual(first.resolvedThreadIds, ["ann-login-submit-fold"]);
   assert.equal(first.summary.openTasks, 1);
@@ -48,4 +49,8 @@ test("resolve-on-save resolves touched threads and writes audit events", () => {
 
   const eventLog = fs.readFileSync(path.join(workspaceRoot, ".wirespec", "reviews", "ide.events.ndjson"), "utf8").trim().split("\n");
   assert.equal(eventLog.length, 2);
+
+  const sidecar = JSON.parse(fs.readFileSync(path.join(workspaceRoot, ".wirespec", "reviews", "login.annotations.json"), "utf8"));
+  const submitThread = sidecar.threads.find((thread) => thread.id === "ann-login-submit-fold");
+  assert.equal(submitThread.messages.at(-1).id, "msg-test-submit");
 });

@@ -99,6 +99,7 @@ function resolveOnSave(workspaceRoot, savedFile, changedRanges, options = {}) {
       author: options.author || "WireSpec IDE Companion",
       timestamp: options.timestamp,
       message: options.message,
+      messageId: options.messageId,
       resolutionNote: options.resolutionNote,
     });
 

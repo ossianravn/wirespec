@@ -1,7 +1,12 @@
 import { ReviewDraft, SourceMapDocument } from "./types.js";
-import reviewContract from "../../review-contract/index.js";
+import reviewContract from "../../review-contract/browser.mjs";
 
-const { REVIEW_UI_COPY } = reviewContract;
+const {
+  REVIEW_UI_COPY,
+  reviewComposerHtml,
+  reviewDefaultDraftTitle,
+  reviewToolbarHtml,
+} = reviewContract;
 
 export interface ReviewOverlayOptions {
   sourceMap?: SourceMapDocument;
@@ -256,33 +261,12 @@ function createComposer(target: TargetMeta, onClose: () => void): HTMLElement {
   composer.setAttribute("role", "dialog");
   composer.setAttribute("aria-modal", "true");
   composer.setAttribute("aria-label", REVIEW_UI_COPY.newNoteLabel);
-  composer.innerHTML = `
-    <div class="ws-review-composer-header">
-      <h2>${REVIEW_UI_COPY.composerTitle}</h2>
-      <p class="ws-review-target-meta">${target.scope} · ${target.kind} · ${target.label}</p>
-    </div>
-    <label>
-      <span>${REVIEW_UI_COPY.titleField}</span>
-      <input name="title" type="text" placeholder="Summarize the change">
-    </label>
-    <label>
-      <span>${REVIEW_UI_COPY.severityField}</span>
-      <select name="severity">
-        <option value="must">Must</option>
-        <option value="should" selected>Should</option>
-        <option value="could">Could</option>
-        <option value="question">Question</option>
-      </select>
-    </label>
-    <label>
-      <span>${REVIEW_UI_COPY.commentField}</span>
-      <textarea name="body" placeholder="Describe what should change and why."></textarea>
-    </label>
-    <div class="ws-review-composer-actions">
-      <button type="button" data-action="cancel">${REVIEW_UI_COPY.cancel}</button>
-      <button type="button" data-action="submit" data-primary="true" disabled>${REVIEW_UI_COPY.createNote}</button>
-    </div>
-  `;
+  composer.innerHTML = reviewComposerHtml({
+    target,
+    headerClass: "ws-review-composer-header",
+    metaClass: "ws-review-target-meta",
+    actionsClass: "ws-review-composer-actions",
+  });
 
   const titleInput = composer.querySelector('input[name="title"]') as HTMLInputElement | null;
   const severitySelect = composer.querySelector('select[name="severity"]') as HTMLSelectElement | null;
@@ -305,7 +289,7 @@ function createComposer(target: TargetMeta, onClose: () => void): HTMLElement {
     }
     const draft: ReviewDraft = {
       targetId: target.targetId,
-      title: titleInput?.value.trim() || `Review ${target.label}`,
+      title: titleInput?.value.trim() || reviewDefaultDraftTitle(target),
       category: "ux",
       severity: (severitySelect?.value as ReviewDraft["severity"]) || "should",
       body: bodyInput.value.trim(),
@@ -325,11 +309,12 @@ export function mountReviewOverlay(options: ReviewOverlayOptions = {}): () => vo
   const bar = document.createElement("div");
   bar.className = "ws-review-bar";
   bar.setAttribute("aria-label", REVIEW_UI_COPY.toolbarLabel);
-  bar.innerHTML = `
-    <button type="button" data-action="toggle" aria-pressed="${options.commentModeDefault ? "true" : "false"}">${REVIEW_UI_COPY.comment}</button>
-    <div data-ws-review-bar-actions></div>
-    <span class="ws-review-hint">${options.hintText ?? "Alt-click targets a parent section"}</span>
-  `;
+  bar.innerHTML = reviewToolbarHtml({
+    commentMode: options.commentModeDefault,
+    commentAction: "toggle",
+    includeRuntimeSlot: true,
+    hintText: options.hintText ?? "Alt-click targets a parent section",
+  });
   document.body.append(bar);
 
   const toggleButton = bar.querySelector('[data-action="toggle"]') as HTMLButtonElement | null;

@@ -16,6 +16,8 @@ import {
 
 const fixturesDir = new URL("../fixtures/", import.meta.url);
 const outputsDir = new URL("../outputs/", import.meta.url);
+const exampleGeneratedAt = "2026-04-14T10:00:00.000Z";
+const exampleExportedAt = "2026-04-14T10:05:00.000Z";
 
 await mkdir(outputsDir, { recursive: true });
 
@@ -133,6 +135,7 @@ async function buildFixture(filename, selections, reviewSelection = {}) {
     entryFile: `fixtures/${filename}`,
     contentHash,
     variantRefs,
+    generatedAt: exampleGeneratedAt,
   });
 
   const stem = basename(filename, ".wirespec.md");
@@ -170,7 +173,9 @@ async function buildFixture(filename, selections, reviewSelection = {}) {
   const sidecar = reviewStoreToSidecar(store, sourceMap, {
     wireFile: `fixtures/${filename}`,
   });
-  const tasks = exportAgentTasks(store, sourceMap);
+  const tasks = exportAgentTasks(store, sourceMap, {
+    exportedAt: exampleExportedAt,
+  });
 
   await writeFile(
     new URL(`${stem}.annotations.json`, outputsDir),

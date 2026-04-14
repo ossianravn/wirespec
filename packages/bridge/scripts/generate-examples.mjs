@@ -62,7 +62,7 @@ await writeFile(path.join(outputs, "bridge.events.ndjson"), eventLogText, "utf8"
 await writeFile(
   path.join(outputs, "bridge-watch.transcript.txt"),
   [
-    `Watching ${listener.url}/api/events`,
+    "Watching http://127.0.0.1:<port>/api/events",
     ...captured.map((event) => {
       const parts = [
         `[${event.kind}]`,

@@ -41,19 +41,85 @@ export const THREAD_ANCHOR_TYPES: readonly [
 
 export const REVIEW_UI_COPY: Readonly<Record<string, string>>;
 export const annotationSidecarSchema: Readonly<Record<string, unknown>>;
+export interface ReviewThreadLike {
+  id: string;
+  title?: string;
+  status: string;
+  severity: string;
+  target?: {
+    targetId?: string;
+    variantKey?: string;
+  };
+  messages?: Array<{
+    body?: string;
+  }>;
+}
+export interface ReviewThreadCardHtmlOptions {
+  thread: ReviewThreadLike;
+  title?: string;
+  targetMeta?: string;
+  body?: string;
+  articleClass?: string;
+  headClass?: string;
+  titleClass?: string;
+  targetClass?: string;
+  topMetaClass?: string;
+  severityClass?: string;
+  bodyClass?: string;
+  statusContainerClass?: string;
+  statusClass?: string;
+  variantHtml?: string;
+  trailingHtml?: string;
+  actionsClass?: string;
+  actionsHtml?: string;
+  dataOrphaned?: boolean;
+}
 export function activeReviewStatusSet(): Set<string>;
 export function isClosedReviewStatus(status: string): boolean;
 export function isActiveReviewStatus(status: string): boolean;
 export function normalizeReviewStatus(status: string): string;
 export function reviewCountSummary(counts: { active: number; total: number }): string;
+export function escapeReviewHtml(value: unknown): string;
+export function reviewComposerHtml(options: {
+  target: { scope: string; kind: string; label: string };
+  headerClass?: string;
+  metaClass?: string;
+  actionsClass?: string;
+}): string;
+export function reviewDefaultDraftTitle(target: { label?: string } | null | undefined): string;
+export function reviewLatestMessageBody(thread: ReviewThreadLike | null | undefined): string;
 export function reviewPinTitle(count: number): string;
+export function reviewScopeLabel(scope: string | null | undefined): string;
 export function reviewSeverityRank(severity: string): number;
+export function reviewSeverityBadgeHtml(severity: string, className?: string): string;
 export function reviewStatusLabel(status: string): string;
+export function reviewStatusBadgeHtml(status: string, className?: string): string;
+export function reviewToolbarHtml(options?: {
+  commentMode?: boolean;
+  commentAction?: string;
+  includeRuntimeSlot?: boolean;
+  includeThreads?: boolean;
+  includeSave?: boolean;
+  hintText?: string;
+}): string;
+export function reviewThreadActionButtonHtml(options: {
+  action: string;
+  threadId: string;
+  label: string;
+  actionAttribute?: "data-action" | "data-thread-action";
+}): string;
+export function reviewThreadActionLinkHtml(options: {
+  href?: string;
+  label: string;
+}): string;
+export function reviewThreadCardHtml(options: ReviewThreadCardHtmlOptions): string;
 export function reviewThreadStatusAction(status: string): {
   label: string;
   nextStatus: "open" | "resolved";
 };
+export function reviewThreadSummary(thread: ReviewThreadLike | null | undefined): string;
 export function reviewThreadsButtonLabel(activeCount: number): string;
+export function reviewVariantPillHtml(variantKey: string | null | undefined, className?: string): string;
 
 declare const contract: {
   SOURCE_MAP_VERSION: typeof SOURCE_MAP_VERSION;
@@ -75,11 +141,24 @@ declare const contract: {
   isActiveReviewStatus: typeof isActiveReviewStatus;
   normalizeReviewStatus: typeof normalizeReviewStatus;
   reviewCountSummary: typeof reviewCountSummary;
+  reviewComposerHtml: typeof reviewComposerHtml;
+  reviewDefaultDraftTitle: typeof reviewDefaultDraftTitle;
+  escapeReviewHtml: typeof escapeReviewHtml;
+  reviewLatestMessageBody: typeof reviewLatestMessageBody;
   reviewPinTitle: typeof reviewPinTitle;
+  reviewScopeLabel: typeof reviewScopeLabel;
   reviewSeverityRank: typeof reviewSeverityRank;
+  reviewSeverityBadgeHtml: typeof reviewSeverityBadgeHtml;
   reviewStatusLabel: typeof reviewStatusLabel;
+  reviewStatusBadgeHtml: typeof reviewStatusBadgeHtml;
+  reviewToolbarHtml: typeof reviewToolbarHtml;
+  reviewThreadActionButtonHtml: typeof reviewThreadActionButtonHtml;
+  reviewThreadActionLinkHtml: typeof reviewThreadActionLinkHtml;
+  reviewThreadCardHtml: typeof reviewThreadCardHtml;
   reviewThreadStatusAction: typeof reviewThreadStatusAction;
+  reviewThreadSummary: typeof reviewThreadSummary;
   reviewThreadsButtonLabel: typeof reviewThreadsButtonLabel;
+  reviewVariantPillHtml: typeof reviewVariantPillHtml;
 };
 
 export default contract;
