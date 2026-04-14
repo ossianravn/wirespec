@@ -1,0 +1,114 @@
+[
+  {
+    "version": "0.1",
+    "type": "wirespec.review.thread.created",
+    "occurredAt": "2026-04-11T17:31:00Z",
+    "actor": {
+      "id": "user-1",
+      "kind": "human",
+      "name": "Reviewer"
+    },
+    "screenId": "login",
+    "payload": {
+      "thread": {
+        "id": "ann-login-001",
+        "title": "Keep submit visible on short mobile heights",
+        "status": "open",
+        "severity": "must",
+        "motivation": "change-request",
+        "category": "responsive",
+        "taxonomy": [
+          "LAY-10",
+          "QA-03"
+        ],
+        "target": {
+          "targetId": "node:submit",
+          "screenId": "login",
+          "scope": "element",
+          "wireId": "submit",
+          "variantKey": "error+mobile"
+        },
+        "messages": [
+          {
+            "messageId": "ann-login-001:m1",
+            "authorId": "user-1",
+            "body": "On short mobile heights the error message pushes the primary action too low.",
+            "createdAt": "2026-04-11T17:31:00Z",
+            "kind": "comment"
+          }
+        ],
+        "suggestedOps": [
+          {
+            "op": "patch",
+            "target": "actions",
+            "props": {
+              "sticky": "bottom"
+            }
+          },
+          {
+            "op": "patch",
+            "target": "auth-card",
+            "props": {
+              "max": "fill"
+            }
+          }
+        ],
+        "createdAt": "2026-04-11T17:31:00Z",
+        "updatedAt": "2026-04-11T17:31:00Z"
+      }
+    }
+  },
+  {
+    "version": "0.1",
+    "type": "wirespec.review.thread.created",
+    "occurredAt": "2026-04-11T17:32:00Z",
+    "actor": {
+      "id": "user-1",
+      "kind": "human"
+    },
+    "screenId": "login",
+    "payload": {
+      "thread": {
+        "id": "ann-login-002",
+        "status": "open",
+        "severity": "should",
+        "motivation": "issue",
+        "category": "a11y",
+        "taxonomy": [
+          "QA-02"
+        ],
+        "target": {
+          "targetId": "acceptance:login-01",
+          "screenId": "login",
+          "scope": "acceptance"
+        },
+        "messages": [
+          {
+            "messageId": "ann-login-002:m1",
+            "authorId": "user-1",
+            "body": "Add a focus-visible acceptance rule, not only keyboard completion.",
+            "createdAt": "2026-04-11T17:32:00Z",
+            "kind": "comment"
+          }
+        ],
+        "createdAt": "2026-04-11T17:32:00Z",
+        "updatedAt": "2026-04-11T17:32:00Z"
+      }
+    }
+  },
+  {
+    "version": "0.1",
+    "type": "wirespec.review.editor.openRequested",
+    "occurredAt": "2026-04-11T17:33:00Z",
+    "actor": {
+      "id": "user-1",
+      "kind": "human"
+    },
+    "screenId": "login",
+    "payload": {
+      "targetId": "node:submit",
+      "preferredEditor": "vscode",
+      "fallbackCommand": "code -g screens/01-login.md:24:9"
+    }
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "name": "wirespec-vscode-thin-companion",
+  "displayName": "WireSpec IDE Companion",
+  "description": "Thin VS Code wrapper around the shared WireSpec core.",
+  "version": "0.5.0",
+  "main": "./extension.js",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:wirespec.openLatestTaskFile",
+    "onCommand:wirespec.openNextOpenTask",
+    "onCommand:wirespec.resolveTouchedThreadsForActiveFile"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "wirespec.openLatestTaskFile",
+        "title": "WireSpec: Open latest task file"
+      },
+      {
+        "command": "wirespec.openNextOpenTask",
+        "title": "WireSpec: Open next open task target"
+      },
+      {
+        "command": "wirespec.resolveTouchedThreadsForActiveFile",
+        "title": "WireSpec: Resolve touched threads for active file"
+      },
+      {
+        "command": "wirespec.showReviewSummary",
+        "title": "WireSpec: Show review summary"
+      }
+    ],
+    "configuration": {
+      "title": "WireSpec IDE Companion",
+      "properties": {
+        "wirespec.ide.autoOpenTaskFiles": {
+          "type": "boolean",
+          "default": true
+        },
+        "wirespec.ide.autoRevealFirstTarget": {
+          "type": "boolean",
+          "default": false
+        },
+        "wirespec.ide.nodeExecutable": {
+          "type": "string",
+          "default": "node"
+        }
+      }
+    }
+  }
+}

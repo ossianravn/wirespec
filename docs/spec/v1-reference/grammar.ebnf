@@ -1,0 +1,58 @@
+; WireSpec v1 grammar (draft, informative)
+; The Markdown host document is CommonMark-compatible.
+; Frontmatter is an optional parser extension.
+; Inside `wirespec` fenced blocks, tabs are invalid and indentation is exactly two spaces.
+
+document          = frontmatter? title section*
+frontmatter       = "---" newline frontmatter_line* "---" newline
+frontmatter_line  = !("---") text_line
+
+title             = atx_h1
+section           = prose_section / wirespec_block
+
+prose_section     = heading_2 paragraph_block*
+                   / heading_2 list_block
+heading_2         = "##" wsp text_line newline
+paragraph_block   = text_line newline (text_line newline)*
+list_block        = list_item+
+list_item         = "-" wsp text_line newline
+
+wirespec_block    = fence_open info_string newline block_body fence_close
+fence_open        = "```"
+fence_close       = "```" newline?
+info_string       = "wirespec" (wsp block_meta)*
+block_meta        = ident "=" scalar
+
+block_body        = base_body / variant_body
+
+base_body         = node newline child_node*
+child_node        = indented_node newline child_node*
+indented_node     = indent node
+indent            = "  "+
+node              = kind attr*
+kind              = ident
+attr              = wsp ident "=" scalar
+
+variant_body      = variant_op newline (variant_op newline)*
+variant_op        = patch_op / show_op / hide_op / remove_op / insert_op
+patch_op          = "patch" wsp "target=" ident attr*
+show_op           = "show" wsp "target=" ident
+hide_op           = "hide" wsp "target=" ident
+remove_op         = "remove" wsp "target=" ident
+insert_op         = "insert" wsp "position=" position wsp "ref=" ident newline indented_node
+
+position          = "before" / "after" / "inside-start" / "inside-end"
+
+scalar            = quoted / number / boolean / bare
+quoted            = dquote quoted_char* dquote
+quoted_char       = escaped_dquote / escaped_backslash / !dquote any_char
+escaped_dquote    = "\\" dquote
+escaped_backslash = "\\\\"
+number            = "-"? digit+ ("." digit+)?
+boolean           = "true" / "false"
+bare              = bare_char+
+bare_char         = ALPHA / DIGIT / "_" / "-" / "." / "/" / ":"
+ident             = ALPHA (ALPHA / DIGIT / "_" / "-")*
+
+newline           = "\n" / "\r\n"
+wsp               = " "+

@@ -1,0 +1,501 @@
+{
+  "schemaVersion": "1.0.0-rc0",
+  "sourceFormat": "markdown+wirespec",
+  "sourceFile": "fixtures/review-surface.wirespec.md",
+  "metadata": {
+    "schema": "wirespec/1.0-draft",
+    "id": "review-surface",
+    "route": "/review/login",
+    "component": "review/ReviewSurface",
+    "canonical": "false"
+  },
+  "documentTitle": "Review surface",
+  "selection": {
+    "state": "stale-preview"
+  },
+  "root": {
+    "kind": "screen",
+    "id": "review-surface",
+    "props": {
+      "route": "/review/login",
+      "title": "Review login"
+    },
+    "children": [
+      {
+        "kind": "header",
+        "id": "review-header",
+        "props": {
+          "padding": "sm"
+        },
+        "children": [
+          {
+            "kind": "toolbar",
+            "id": "review-toolbar",
+            "props": {
+              "gap": "sm",
+              "align": "center",
+              "justify": "between"
+            },
+            "children": [
+              {
+                "kind": "row",
+                "id": "review-context",
+                "props": {
+                  "gap": "sm",
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "kind": "heading",
+                    "id": "review-title",
+                    "props": {
+                      "level": 1,
+                      "text": "Review login"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 19,
+                      "columnStart": 9,
+                      "lineEnd": 19,
+                      "columnEnd": 52
+                    }
+                  },
+                  {
+                    "kind": "status",
+                    "id": "variant-status",
+                    "props": {
+                      "text": "error · mobile"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 20,
+                      "columnStart": 9,
+                      "lineEnd": 20,
+                      "columnEnd": 47
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 18,
+                  "columnStart": 7,
+                  "lineEnd": 20,
+                  "columnEnd": 47
+                }
+              },
+              {
+                "kind": "actions",
+                "id": "review-actions",
+                "props": {
+                  "gap": "sm"
+                },
+                "children": [
+                  {
+                    "kind": "select",
+                    "id": "screen-picker",
+                    "props": {
+                      "name": "screen",
+                      "label": "Screen"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 22,
+                      "columnStart": 9,
+                      "lineEnd": 22,
+                      "columnEnd": 51
+                    }
+                  },
+                  {
+                    "kind": "select",
+                    "id": "variant-picker",
+                    "props": {
+                      "name": "variant",
+                      "label": "Variant"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 23,
+                      "columnStart": 9,
+                      "lineEnd": 23,
+                      "columnEnd": 54
+                    }
+                  },
+                  {
+                    "kind": "switch",
+                    "id": "comment-mode",
+                    "props": {
+                      "name": "comment-mode",
+                      "label": "Comment mode"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 24,
+                      "columnStart": 9,
+                      "lineEnd": 24,
+                      "columnEnd": 62
+                    }
+                  },
+                  {
+                    "kind": "button",
+                    "id": "open-threads",
+                    "props": {
+                      "variant": "secondary",
+                      "action": "open-threads",
+                      "label": "Open threads"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 25,
+                      "columnStart": 9,
+                      "lineEnd": 25,
+                      "columnEnd": 82
+                    }
+                  },
+                  {
+                    "kind": "button",
+                    "id": "copy-link",
+                    "props": {
+                      "variant": "secondary",
+                      "action": "copy-link",
+                      "label": "Copy review link"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 26,
+                      "columnStart": 9,
+                      "lineEnd": 26,
+                      "columnEnd": 80
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 21,
+                  "columnStart": 7,
+                  "lineEnd": 26,
+                  "columnEnd": 80
+                }
+              }
+            ],
+            "span": {
+              "file": "fixtures/review-surface.wirespec.md",
+              "lineStart": 17,
+              "columnStart": 5,
+              "lineEnd": 26,
+              "columnEnd": 80
+            }
+          }
+        ],
+        "span": {
+          "file": "fixtures/review-surface.wirespec.md",
+          "lineStart": 16,
+          "columnStart": 3,
+          "lineEnd": 26,
+          "columnEnd": 80
+        }
+      },
+      {
+        "kind": "main",
+        "id": "review-main",
+        "props": {
+          "direction": "column",
+          "gap": "md",
+          "padding": "md"
+        },
+        "children": [
+          {
+            "kind": "alert",
+            "id": "stale-warning",
+            "props": {
+              "tone": "warning",
+              "text": "Preview is out of date. Refresh before leaving new feedback."
+            },
+            "children": [],
+            "span": {
+              "file": "fixtures/review-surface.wirespec.md",
+              "lineStart": 52,
+              "columnStart": 3,
+              "lineEnd": 52,
+              "columnEnd": 104
+            }
+          },
+          {
+            "kind": "section",
+            "id": "preview-stage",
+            "props": {
+              "width": "fill"
+            },
+            "children": [
+              {
+                "kind": "panel",
+                "id": "preview-panel",
+                "props": {
+                  "width": "fill",
+                  "padding": "sm"
+                },
+                "children": [
+                  {
+                    "kind": "helper",
+                    "id": "preview-help",
+                    "props": {
+                      "text": "Click the page background for page feedback. Click a highlighted node for section or element feedback."
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 30,
+                      "columnStart": 9,
+                      "lineEnd": 30,
+                      "columnEnd": 133
+                    }
+                  },
+                  {
+                    "kind": "x-wireframe-preview",
+                    "id": "preview-canvas",
+                    "props": {
+                      "source": "screens/01-login.md",
+                      "variant": "error+mobile"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 31,
+                      "columnStart": 9,
+                      "lineEnd": 31,
+                      "columnEnd": 90
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 29,
+                  "columnStart": 7,
+                  "lineEnd": 31,
+                  "columnEnd": 90
+                }
+              }
+            ],
+            "span": {
+              "file": "fixtures/review-surface.wirespec.md",
+              "lineStart": 28,
+              "columnStart": 5,
+              "lineEnd": 31,
+              "columnEnd": 90
+            }
+          },
+          {
+            "kind": "drawer",
+            "id": "thread-drawer",
+            "props": {
+              "title": "Threads",
+              "visible": false,
+              "width": "sm"
+            },
+            "children": [
+              {
+                "kind": "heading",
+                "id": "thread-title",
+                "props": {
+                  "level": 2,
+                  "text": "Open feedback"
+                },
+                "children": [],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 33,
+                  "columnStart": 7,
+                  "lineEnd": 33,
+                  "columnEnd": 53
+                }
+              },
+              {
+                "kind": "list",
+                "id": "thread-list",
+                "props": {},
+                "children": [
+                  {
+                    "kind": "list-item",
+                    "id": "thread-1",
+                    "props": {},
+                    "children": [
+                      {
+                        "kind": "text",
+                        "id": "thread-1-summary",
+                        "props": {
+                          "text": "Submit button falls below the fold on short mobile heights."
+                        },
+                        "children": [],
+                        "span": {
+                          "file": "fixtures/review-surface.wirespec.md",
+                          "lineStart": 36,
+                          "columnStart": 11,
+                          "lineEnd": 36,
+                          "columnEnd": 92
+                        }
+                      }
+                    ],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 35,
+                      "columnStart": 9,
+                      "lineEnd": 36,
+                      "columnEnd": 92
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 34,
+                  "columnStart": 7,
+                  "lineEnd": 36,
+                  "columnEnd": 92
+                }
+              },
+              {
+                "kind": "actions",
+                "id": "drawer-actions",
+                "props": {},
+                "children": [
+                  {
+                    "kind": "button",
+                    "id": "export-to-agent",
+                    "props": {
+                      "variant": "primary",
+                      "action": "export-open",
+                      "label": "Send open threads to agent"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/review-surface.wirespec.md",
+                      "lineStart": 38,
+                      "columnStart": 9,
+                      "lineEnd": 38,
+                      "columnEnd": 96
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/review-surface.wirespec.md",
+                  "lineStart": 37,
+                  "columnStart": 7,
+                  "lineEnd": 38,
+                  "columnEnd": 96
+                }
+              }
+            ],
+            "span": {
+              "file": "fixtures/review-surface.wirespec.md",
+              "lineStart": 32,
+              "columnStart": 5,
+              "lineEnd": 38,
+              "columnEnd": 96
+            }
+          }
+        ],
+        "span": {
+          "file": "fixtures/review-surface.wirespec.md",
+          "lineStart": 27,
+          "columnStart": 3,
+          "lineEnd": 38,
+          "columnEnd": 96
+        }
+      }
+    ],
+    "span": {
+      "file": "fixtures/review-surface.wirespec.md",
+      "lineStart": 15,
+      "columnStart": 1,
+      "lineEnd": 38,
+      "columnEnd": 96
+    }
+  },
+  "sections": [
+    {
+      "id": "intent",
+      "title": "Intent",
+      "kind": "intent",
+      "body": "Review one rendered wireframe variant and leave precise page, section, or element feedback without hiding the work under collaboration chrome.",
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 12,
+        "columnStart": 1,
+        "lineEnd": 12,
+        "columnEnd": 143
+      }
+    },
+    {
+      "id": "acceptance",
+      "title": "Acceptance",
+      "kind": "acceptance",
+      "body": "- The preview stays visually primary in every state.\n- Reviewers can leave page, section, or element feedback in one click after entering comment mode.\n- The thread drawer stays optional and does not permanently reduce preview width.\n- Stale preview is visible without replacing the page with a large empty shell.",
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 61,
+        "columnStart": 1,
+        "lineEnd": 64,
+        "columnEnd": 80
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "acc-1",
+      "text": "The preview stays visually primary in every state.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 61,
+        "columnStart": 1,
+        "lineEnd": 61,
+        "columnEnd": 53
+      }
+    },
+    {
+      "id": "acc-2",
+      "text": "Reviewers can leave page, section, or element feedback in one click after entering comment mode.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 62,
+        "columnStart": 1,
+        "lineEnd": 62,
+        "columnEnd": 99
+      }
+    },
+    {
+      "id": "acc-3",
+      "text": "The thread drawer stays optional and does not permanently reduce preview width.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 63,
+        "columnStart": 1,
+        "lineEnd": 63,
+        "columnEnd": 82
+      }
+    },
+    {
+      "id": "acc-4",
+      "text": "Stale preview is visible without replacing the page with a large empty shell.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "lineStart": 64,
+        "columnStart": 1,
+        "lineEnd": 64,
+        "columnEnd": 80
+      }
+    }
+  ]
+}

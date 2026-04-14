@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/wirespec-ast-v1-rc0.schema.json",
+  "title": "WireSpec AST v1 rc0",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "sourceFormat",
+    "root",
+    "variants",
+    "acceptance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0-rc0"
+    },
+    "sourceFormat": {
+      "const": "markdown+wirespec"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/scalarValue"
+      }
+    },
+    "documentTitle": {
+      "type": "string"
+    },
+    "intent": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "root": {
+      "$ref": "#/$defs/node"
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variant"
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acceptanceRule"
+      }
+    }
+  },
+  "$defs": {
+    "scalar": {
+      "type": [
+        "string",
+        "number",
+        "boolean"
+      ]
+    },
+    "scalarValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/scalar"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scalar"
+          }
+        }
+      ]
+    },
+    "sourceSpan": {
+      "type": "object",
+      "required": [
+        "lineStart",
+        "lineEnd"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "lineStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lineEnd": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnEnd": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "coreNodeKind": {
+      "enum": [
+        "screen",
+        "component",
+        "header",
+        "nav",
+        "main",
+        "aside",
+        "footer",
+        "section",
+        "toolbar",
+        "card",
+        "panel",
+        "form",
+        "row",
+        "column",
+        "grid",
+        "stack",
+        "actions",
+        "dialog",
+        "drawer",
+        "breadcrumbs",
+        "breadcrumb-item",
+        "tabs",
+        "tab",
+        "tab-panel",
+        "list",
+        "list-item",
+        "table",
+        "table-header",
+        "table-body",
+        "table-row",
+        "table-cell",
+        "pagination",
+        "stepper",
+        "step",
+        "heading",
+        "text",
+        "helper",
+        "alert",
+        "badge",
+        "divider",
+        "status",
+        "empty-state",
+        "avatar",
+        "icon",
+        "field",
+        "textarea",
+        "select",
+        "checkbox",
+        "radio-group",
+        "radio",
+        "switch",
+        "combobox",
+        "button",
+        "link"
+      ]
+    },
+    "nodeKind": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/coreNodeKind"
+        },
+        {
+          "type": "string",
+          "pattern": "^x-[a-z0-9][a-z0-9-]*$"
+        }
+      ]
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "kind",
+        "props",
+        "children"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/nodeKind"
+        },
+        "id": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scalarValue"
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "variantWhen": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "minWidth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxWidth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expression": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "variant": {
+      "type": "object",
+      "required": [
+        "kind",
+        "name",
+        "ops"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "state",
+            "breakpoint",
+            "theme",
+            "mode"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "when": {
+          "$ref": "#/$defs/variantWhen"
+        },
+        "ops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variantOp"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        }
+      },
+      "additionalProperties": false
+    },
+    "variantOpBase": {
+      "type": "object",
+      "required": [
+        "op"
+      ],
+      "properties": {
+        "op": {
+          "enum": [
+            "patch",
+            "show",
+            "hide",
+            "insert",
+            "remove"
+          ]
+        },
+        "target": {
+          "type": "string"
+        },
+        "position": {
+          "enum": [
+            "before",
+            "after",
+            "inside-start",
+            "inside-end"
+          ]
+        },
+        "ref": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scalarValue"
+          }
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        }
+      },
+      "additionalProperties": false
+    },
+    "variantOp": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/variantOpBase"
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "op": {
+                  "const": "patch"
+                }
+              },
+              "required": [
+                "op",
+                "target",
+                "props"
+              ]
+            },
+            {
+              "properties": {
+                "op": {
+                  "const": "show"
+                }
+              },
+              "required": [
+                "op",
+                "target"
+              ]
+            },
+            {
+              "properties": {
+                "op": {
+                  "const": "hide"
+                }
+              },
+              "required": [
+                "op",
+                "target"
+              ]
+            },
+            {
+              "properties": {
+                "op": {
+                  "const": "remove"
+                }
+              },
+              "required": [
+                "op",
+                "target"
+              ]
+            },
+            {
+              "properties": {
+                "op": {
+                  "const": "insert"
+                }
+              },
+              "required": [
+                "op",
+                "position",
+                "ref",
+                "node"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "acceptanceRule": {
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "must",
+            "should",
+            "may"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

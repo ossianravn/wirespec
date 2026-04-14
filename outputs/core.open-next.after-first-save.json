@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "taskFiles": 1,
+    "documents": [
+      "login"
+    ],
+    "openTasks": 1,
+    "latestDocumentId": "login",
+    "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json"
+  },
+  "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json",
+  "latestDocumentId": "login",
+  "nextTask": {
+    "taskId": "task:ann-login-error-copy",
+    "threadId": "ann-login-error-copy",
+    "status": "open",
+    "severity": "should",
+    "severityRank": 1,
+    "screenId": "login",
+    "scope": "element",
+    "targetId": "node:form-error",
+    "summary": "should · copy · node:form-error · Error copy should preserve recovery confidence",
+    "requestedChange": "The inline error should stay direct and calm. It should explain failure without sounding punitive or hiding the recovery path.",
+    "orphaned": false,
+    "wireId": "form-error",
+    "variantKey": "mobile+error",
+    "taxonomy": [
+      "QA-03"
+    ],
+    "openInEditor": {
+      "file": "src/features/auth/LoginCard.tsx",
+      "line": 17,
+      "column": 13
+    }
+  }
+}

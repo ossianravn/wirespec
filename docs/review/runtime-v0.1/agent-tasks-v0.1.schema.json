@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wirespec.dev/schemas/agent-tasks-v0.1.schema.json",
+  "title": "WireSpec Agent Review Task Export v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "documentId",
+    "exportedAt",
+    "tasks"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.1"
+    },
+    "documentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/task"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "openInEditor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "uri": {
+          "type": "string"
+        }
+      }
+    },
+    "suggestedOp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "op",
+        "target"
+      ],
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": [
+            "patch",
+            "show",
+            "hide",
+            "remove",
+            "insert"
+          ]
+        },
+        "target": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "position": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "node": {
+          "type": "object"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taskId",
+        "threadId",
+        "status",
+        "severity",
+        "severityRank",
+        "screenId",
+        "scope",
+        "targetId",
+        "summary",
+        "requestedChange",
+        "orphaned"
+      ],
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "severityRank": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "screenId": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "wireId": {
+          "type": "string"
+        },
+        "variantKey": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "requestedChange": {
+          "type": "string"
+        },
+        "taxonomy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "suggestedOps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/suggestedOp"
+          },
+          "default": []
+        },
+        "openInEditor": {
+          "$ref": "#/$defs/openInEditor"
+        },
+        "orphaned": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "version": "0.3",
+  "documentId": "login",
+  "exportedAt": "2026-04-12T09:05:00.000Z",
+  "tasks": [
+    {
+      "taskId": "task:ann-login-submit-fold",
+      "threadId": "ann-login-submit-fold",
+      "status": "open",
+      "severity": "must",
+      "severityRank": 0,
+      "screenId": "login",
+      "scope": "section",
+      "targetId": "node:primary-actions",
+      "summary": "must \u00b7 responsive \u00b7 node:primary-actions \u00b7 Keep the primary action above the fold",
+      "requestedChange": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without turning the card into a dashboard shell.",
+      "orphaned": false,
+      "wireId": "primary-actions",
+      "variantKey": "mobile+error",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "openInEditor": {
+        "file": "src/features/auth/LoginCard.tsx",
+        "line": 21,
+        "column": 11
+      }
+    },
+    {
+      "taskId": "task:ann-login-error-copy",
+      "threadId": "ann-login-error-copy",
+      "status": "open",
+      "severity": "should",
+      "severityRank": 1,
+      "screenId": "login",
+      "scope": "element",
+      "targetId": "node:form-error",
+      "summary": "should \u00b7 copy \u00b7 node:form-error \u00b7 Error copy should preserve recovery confidence",
+      "requestedChange": "The inline error should stay direct and calm. It should explain failure without sounding punitive or hiding the recovery path.",
+      "orphaned": false,
+      "wireId": "form-error",
+      "variantKey": "mobile+error",
+      "taxonomy": [
+        "QA-03"
+      ],
+      "openInEditor": {
+        "file": "src/features/auth/LoginCard.tsx",
+        "line": 17,
+        "column": 13
+      }
+    }
+  ]
+}

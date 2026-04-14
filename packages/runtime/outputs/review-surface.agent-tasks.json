@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "documentId": "review-surface",
+  "exportedAt": "2026-04-13T14:38:33.375Z",
+  "tasks": [
+    {
+      "taskId": "task:ann-170b64c3f682",
+      "threadId": "ann-170b64c3f682",
+      "status": "open",
+      "severity": "must",
+      "severityRank": 0,
+      "screenId": "review-surface",
+      "scope": "section",
+      "targetId": "node:preview-panel",
+      "summary": "must · layout · node:preview-panel · Preview should stay the dominant surface",
+      "requestedChange": "Keep the preview visually primary even when there are multiple open notes. The review tooling should not permanently shrink the canvas.",
+      "orphaned": false,
+      "wireId": "preview-panel",
+      "variantKey": "commenting",
+      "taxonomy": [
+        "LAY-08",
+        "QA-03"
+      ],
+      "openInEditor": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "line": 29,
+        "column": 7,
+        "uri": "vscode://file/fixtures/review-surface.wirespec.md:29:7"
+      }
+    },
+    {
+      "taskId": "task:ann-8015cb607f5b",
+      "threadId": "ann-8015cb607f5b",
+      "status": "open",
+      "severity": "should",
+      "severityRank": 1,
+      "screenId": "review-surface",
+      "scope": "element",
+      "targetId": "node:open-threads",
+      "summary": "should · behavior · node:open-threads · Thread access should be obvious but quiet",
+      "requestedChange": "Make it clear where open feedback lives, but avoid turning the header into a collaboration dashboard. One calm entry point is enough.",
+      "orphaned": false,
+      "wireId": "open-threads",
+      "variantKey": "commenting",
+      "taxonomy": [
+        "FID-07"
+      ],
+      "openInEditor": {
+        "file": "fixtures/review-surface.wirespec.md",
+        "line": 25,
+        "column": 9,
+        "uri": "vscode://file/fixtures/review-surface.wirespec.md:25:9"
+      }
+    }
+  ]
+}

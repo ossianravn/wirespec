@@ -1,0 +1,11 @@
+{
+  "name": "wirespec-parser-renderer-adapter-v0.1",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "generate:examples": "node ./scripts/build-examples.mjs",
+    "test": "node ./scripts/smoke-test.mjs"
+  }
+}

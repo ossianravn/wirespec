@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Login · mobile+error · review</title><style>
+:root {
+  --ws-bg: #f7f7f7;
+  --ws-surface: #ffffff;
+  --ws-border: #d8d8d8;
+  --ws-text: #1f1f1f;
+  --ws-muted: #666666;
+  --ws-accent: #111111;
+  --ws-space-xs: 8px;
+  --ws-space-sm: 12px;
+  --ws-space-md: 16px;
+  --ws-space-lg: 24px;
+  --ws-space-xl: 32px;
+  --ws-radius: 10px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--ws-bg); color: var(--ws-text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.4; }
+body { padding: var(--ws-space-lg); }
+.ws-node { min-width: 0; }
+.ws-screen { width: 100%; min-height: calc(100vh - 48px); display: flex; flex-direction: column; gap: var(--ws-space-lg); }
+.ws-main, .ws-header, .ws-footer, .ws-section, .ws-panel, .ws-card, .ws-form, .ws-dialog, .ws-drawer, .ws-column, .ws-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-space-md);
+}
+.ws-row, .ws-actions, .ws-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ws-space-md);
+}
+.ws-grid {
+  display: grid;
+  gap: var(--ws-space-md);
+}
+.ws-card, .ws-panel, .ws-dialog, .ws-drawer, .ws-form, .ws-section {
+  background: var(--ws-surface);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-radius);
+  padding: var(--ws-space-md);
+}
+.ws-heading, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+.ws-text, .ws-helper, .ws-status, .ws-badge, .ws-alert, p { margin: 0; }
+.ws-helper, .ws-status { color: var(--ws-muted); }
+.ws-alert {
+  border: 1px solid var(--ws-border);
+  background: #fafafa;
+  border-radius: 8px;
+  padding: var(--ws-space-sm);
+}
+.ws-field, .ws-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ws-label { font-size: 0.95rem; font-weight: 500; }
+.ws-input, .ws-select select, .ws-select, select, input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--ws-border);
+  border-radius: 8px;
+  background: #fff;
+  padding: 0 12px;
+  color: var(--ws-text);
+}
+.ws-check { margin-right: 8px; }
+button, .ws-button {
+  min-height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--ws-border);
+  background: #fff;
+  color: var(--ws-text);
+  padding: 0 14px;
+  font: inherit;
+  cursor: pointer;
+}
+button.is-primary, .ws-button.is-primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+a { color: inherit; text-decoration: none; }
+.ws-list { list-style: none; margin: 0; padding: 0; }
+[data-ws-id], [data-ws-target] {
+  position: relative;
+}
+[data-ws-id]:hover, [data-ws-target]:hover {
+  outline: 2px solid rgba(17, 17, 17, 0.18);
+  outline-offset: 2px;
+}
+.is-hidden { display: none !important; }
+.ws-doc-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ws-space-md);
+  margin-bottom: var(--ws-space-md);
+  color: var(--ws-muted);
+  font-size: 0.95rem;
+}
+.ws-acceptance {
+  margin-top: var(--ws-space-lg);
+  padding: var(--ws-space-md);
+  background: var(--ws-surface);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-radius);
+}
+.ws-acceptance ul {
+  margin: 0;
+  padding-left: 20px;
+}
+</style></head><body><div class="ws-doc-meta"><span>Login</span><span>{&quot;state&quot;:&quot;error&quot;,&quot;breakpoint&quot;:&quot;mobile&quot;}</span></div><main class="ws-screen ws-node" data-ws-kind="screen" data-ws-screen="login" data-ws-target="screen:login" data-ws-id="login"><section class="ws-main ws-node" data-ws-kind="main" data-ws-screen="login" data-ws-target="node:content" data-ws-id="content" style="width:100%;align-items:center;justify-content:center;padding:24px"><section class="ws-card ws-node" data-ws-kind="card" data-ws-screen="login" data-ws-target="node:auth-card" data-ws-id="auth-card" style="width:100%;max-width:100%"><h1 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="login" data-ws-target="node:title" data-ws-id="title">Welcome back</h1><p class="ws-text ws-node" data-ws-kind="text" data-ws-screen="login" data-ws-target="node:intro" data-ws-id="intro">Use your work email and password.</p><form class="ws-form ws-node" data-ws-kind="form" data-ws-screen="login" data-ws-target="node:login-form" data-ws-id="login-form"><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:email" data-ws-id="email" data-ws-role="textbox"><span class="ws-label">Work email</span><input class="ws-input" type="email" name="email" required=""></label><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:password" data-ws-id="password" data-ws-role="textbox"><span class="ws-label">Password</span><input class="ws-input" type="password" name="password" required="" aria-invalid="true"></label><section class="ws-row ws-node" data-ws-kind="row" data-ws-screen="login" data-ws-target="node:assistive-row" data-ws-id="assistive-row" style="align-items:center;justify-content:space-between"><label class="ws-checkbox ws-node" data-ws-kind="checkbox" data-ws-screen="login" data-ws-target="node:remember" data-ws-id="remember" data-ws-role="checkbox"><input class="ws-check" type="checkbox" name="remember"><span>Remember me</span></label><a class="ws-link ws-node" data-ws-kind="link" data-ws-screen="login" data-ws-target="node:forgot" data-ws-id="forgot" data-ws-role="link" href="/forgot-password">Forgot password?</a></section><div class="ws-alert ws-node tone-critical" data-ws-kind="alert" data-ws-screen="login" data-ws-target="node:form-error" data-ws-id="form-error" data-ws-role="alert" role="alert">Incorrect email or password.</div><section class="ws-actions ws-node dir-column" data-ws-kind="actions" data-ws-screen="login" data-ws-target="node:primary-actions" data-ws-id="primary-actions" style="width:100%"><button class="ws-button ws-node is-primary" data-ws-kind="button" data-ws-screen="login" data-ws-target="node:submit" data-ws-id="submit" data-ws-role="button" type="button">Sign in</button></section></form></section></section></main><section class="ws-acceptance"><h2>Acceptance</h2><ul><li>Keyboard-only user can complete sign-in and trigger password recovery.</li><li>Inline error stays close to the password field and does not replace the field label.</li><li>Primary action remains visible without scrolling on common mobile widths.</li></ul></section>
+<script type="module">
+  import { mountReviewOverlay } from "../dist/review-overlay.js";
+  const sourceMap = {"version":"0.1","documentId":"login","entryFile":"fixtures/login.wirespec.md","generatedAt":"2026-04-11T18:35:52.375Z","contentHash":"sha256:50bfe3874d196cd634e470851942ceabf412dbc08b7657785a4eb6a13ea41f29","variants":[{"key":"base"},{"key":"mobile","breakpoint":"mobile"},{"key":"loading","state":"loading"},{"key":"error","state":"error"},{"key":"mobile+loading","breakpoint":"mobile","state":"loading"},{"key":"mobile+error","breakpoint":"mobile","state":"error"}],"targets":[{"targetId":"prose:intent","scope":"prose","screenId":"login","kind":"intent","label":"Intent","semanticPath":["screen:login","prose:intent"],"span":{"file":"fixtures/login.wirespec.md","lineStart":12,"columnStart":1,"lineEnd":12,"columnEnd":109},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"screen:login","scope":"screen","screenId":"login","wireId":"login","kind":"screen","semanticPath":["screen:login"],"span":{"file":"fixtures/login.wirespec.md","lineStart":15,"columnStart":1,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-screen='login']","screenId":"login","kind":"screen"},"signature":{"kind":"screen"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:content","scope":"section","screenId":"login","wireId":"content","kind":"main","parentTargetId":"screen:login","semanticPath":["screen:login","node:content"],"span":{"file":"fixtures/login.wirespec.md","lineStart":16,"columnStart":3,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-id='content']","screenId":"login","wireId":"content","kind":"main","path":"screen:login/node:content"},"signature":{"kind":"main"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:auth-card","scope":"section","screenId":"login","wireId":"auth-card","kind":"card","parentTargetId":"node:content","semanticPath":["screen:login","node:content","node:auth-card"],"span":{"file":"fixtures/login.wirespec.md","lineStart":17,"columnStart":5,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-id='auth-card']","screenId":"login","wireId":"auth-card","kind":"card","path":"screen:login/node:content/node:auth-card"},"signature":{"kind":"card"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:title","scope":"element","screenId":"login","wireId":"title","kind":"heading","label":"Welcome back","parentTargetId":"node:auth-card","semanticPath":["screen:login","node:content","node:auth-card","node:title"],"span":{"file":"fixtures/login.wirespec.md","lineStart":18,"columnStart":7,"lineEnd":18,"columnEnd":45},"dom":{"selector":"[data-ws-id='title']","screenId":"login","wireId":"title","kind":"heading","path":"screen:login/node:content/node:auth-card/node:title"},"signature":{"kind":"heading","text":"Welcome back"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:intro","scope":"element","screenId":"login","wireId":"intro","kind":"text","label":"Use your work email and password.","parentTargetId":"node:auth-card","semanticPath":["screen:login","node:content","node:auth-card","node:intro"],"span":{"file":"fixtures/login.wirespec.md","lineStart":19,"columnStart":7,"lineEnd":19,"columnEnd":55},"dom":{"selector":"[data-ws-id='intro']","screenId":"login","wireId":"intro","kind":"text","path":"screen:login/node:content/node:auth-card/node:intro"},"signature":{"kind":"text","text":"Use your work email and password."},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:login-form","scope":"section","screenId":"login","wireId":"login-form","kind":"form","parentTargetId":"node:auth-card","semanticPath":["screen:login","node:content","node:auth-card","node:login-form"],"span":{"file":"fixtures/login.wirespec.md","lineStart":20,"columnStart":7,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-id='login-form']","screenId":"login","wireId":"login-form","kind":"form","path":"screen:login/node:content/node:auth-card/node:login-form"},"signature":{"kind":"form"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:email","scope":"element","screenId":"login","wireId":"email","kind":"field","label":"Work email","parentTargetId":"node:login-form","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:email"],"span":{"file":"fixtures/login.wirespec.md","lineStart":21,"columnStart":9,"lineEnd":21,"columnEnd":89},"dom":{"selector":"[data-ws-id='email']","screenId":"login","wireId":"email","kind":"field","path":"screen:login/node:content/node:auth-card/node:login-form/node:email"},"signature":{"kind":"field","role":"textbox","text":"Work email"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:password","scope":"element","screenId":"login","wireId":"password","kind":"field","label":"Password","parentTargetId":"node:login-form","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:password"],"span":{"file":"fixtures/login.wirespec.md","lineStart":22,"columnStart":9,"lineEnd":22,"columnEnd":107},"dom":{"selector":"[data-ws-id='password']","screenId":"login","wireId":"password","kind":"field","path":"screen:login/node:content/node:auth-card/node:login-form/node:password"},"signature":{"kind":"field","role":"textbox","text":"Password"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:assistive-row","scope":"section","screenId":"login","wireId":"assistive-row","kind":"row","parentTargetId":"node:login-form","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:assistive-row"],"span":{"file":"fixtures/login.wirespec.md","lineStart":23,"columnStart":9,"lineEnd":25,"columnEnd":64},"dom":{"selector":"[data-ws-id='assistive-row']","screenId":"login","wireId":"assistive-row","kind":"row","path":"screen:login/node:content/node:auth-card/node:login-form/node:assistive-row"},"signature":{"kind":"row"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:remember","scope":"element","screenId":"login","wireId":"remember","kind":"checkbox","label":"Remember me","parentTargetId":"node:assistive-row","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:assistive-row","node:remember"],"span":{"file":"fixtures/login.wirespec.md","lineStart":24,"columnStart":11,"lineEnd":24,"columnEnd":55},"dom":{"selector":"[data-ws-id='remember']","screenId":"login","wireId":"remember","kind":"checkbox","path":"screen:login/node:content/node:auth-card/node:login-form/node:assistive-row/node:remember"},"signature":{"kind":"checkbox","role":"checkbox","text":"Remember me"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:forgot","scope":"element","screenId":"login","wireId":"forgot","kind":"link","label":"Forgot password?","parentTargetId":"node:assistive-row","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:assistive-row","node:forgot"],"span":{"file":"fixtures/login.wirespec.md","lineStart":25,"columnStart":11,"lineEnd":25,"columnEnd":64},"dom":{"selector":"[data-ws-id='forgot']","screenId":"login","wireId":"forgot","kind":"link","path":"screen:login/node:content/node:auth-card/node:login-form/node:assistive-row/node:forgot"},"signature":{"kind":"link","role":"link","text":"Forgot password?"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:form-error","scope":"element","screenId":"login","wireId":"form-error","kind":"alert","label":"Incorrect email or password.","parentTargetId":"node:login-form","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:form-error"],"span":{"file":"fixtures/login.wirespec.md","lineStart":26,"columnStart":9,"lineEnd":26,"columnEnd":84},"dom":{"selector":"[data-ws-id='form-error']","screenId":"login","wireId":"form-error","kind":"alert","path":"screen:login/node:content/node:auth-card/node:login-form/node:form-error"},"signature":{"kind":"alert","role":"alert","text":"Incorrect email or password."},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:primary-actions","scope":"section","screenId":"login","wireId":"primary-actions","kind":"actions","parentTargetId":"node:login-form","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:primary-actions"],"span":{"file":"fixtures/login.wirespec.md","lineStart":27,"columnStart":9,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-id='primary-actions']","screenId":"login","wireId":"primary-actions","kind":"actions","path":"screen:login/node:content/node:auth-card/node:login-form/node:primary-actions"},"signature":{"kind":"actions"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"node:submit","scope":"element","screenId":"login","wireId":"submit","kind":"button","label":"Sign in","parentTargetId":"node:primary-actions","semanticPath":["screen:login","node:content","node:auth-card","node:login-form","node:primary-actions","node:submit"],"span":{"file":"fixtures/login.wirespec.md","lineStart":28,"columnStart":11,"lineEnd":28,"columnEnd":63},"dom":{"selector":"[data-ws-id='submit']","screenId":"login","wireId":"submit","kind":"button","path":"screen:login/node:content/node:auth-card/node:login-form/node:primary-actions/node:submit"},"signature":{"kind":"button","role":"button","text":"Sign in"},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"acceptance:login-01","scope":"acceptance","screenId":"login","kind":"acceptance","label":"Keyboard-only user can complete sign-in and trigger password recovery.","semanticPath":["screen:login","acceptance:login-01"],"span":{"file":"fixtures/login.wirespec.md","lineStart":47,"columnStart":1,"lineEnd":47,"columnEnd":73},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"acceptance:login-02","scope":"acceptance","screenId":"login","kind":"acceptance","label":"Inline error stays close to the password field and does not replace the field label.","semanticPath":["screen:login","acceptance:login-02"],"span":{"file":"fixtures/login.wirespec.md","lineStart":48,"columnStart":1,"lineEnd":48,"columnEnd":87},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]},{"targetId":"acceptance:login-03","scope":"acceptance","screenId":"login","kind":"acceptance","label":"Primary action remains visible without scrolling on common mobile widths.","semanticPath":["screen:login","acceptance:login-03"],"span":{"file":"fixtures/login.wirespec.md","lineStart":49,"columnStart":1,"lineEnd":49,"columnEnd":76},"variants":["base","error","loading","mobile","mobile+error","mobile+loading"]}],"renames":[]};
+  mountReviewOverlay({ sourceMap });
+  window.addEventListener("wirespec.review.draftSubmitted", (event) => {
+    console.log("Review draft submitted", event.detail);
+  });
+</script></body></html>

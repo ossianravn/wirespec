@@ -1,0 +1,6 @@
+Watching /mnt/data/wirespec_vscode_ide_companion_v0_4/outputs/demo-workspace/.wirespec/reviews
+[task-file-changed] /mnt/data/wirespec_vscode_ide_companion_v0_4/outputs/demo-workspace/.wirespec/reviews/login.agent-tasks.json
+[auto-opened] /mnt/data/wirespec_vscode_ide_companion_v0_4/outputs/demo-workspace/.wirespec/reviews/login.agent-tasks.json
+[jump-next] fixtures/login.wirespec.md:27:9
+[resolved] ann-fa94e2410f77, ann-0a9fa3ed2a17 remaining=0
+[ide-events] /mnt/data/wirespec_vscode_ide_companion_v0_4/outputs/demo-workspace/.wirespec/reviews/ide.events.ndjson

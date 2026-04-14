@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "1.0.0-rc0",
+  "sourceFormat": "markdown+wirespec",
+  "metadata": {
+    "schema": "wirespec/1.0-rc0",
+    "id": "login",
+    "route": "/login",
+    "component": "auth/LoginScreen",
+    "canonical": true
+  },
+  "documentTitle": "Login",
+  "intent": "Let a returning user sign in quickly, recover access easily, and understand failures without losing context.",
+  "root": {
+    "kind": "screen",
+    "id": "login",
+    "props": {
+      "route": "/login",
+      "title": "Sign in"
+    },
+    "children": [
+      {
+        "kind": "main",
+        "id": "content",
+        "props": {
+          "width": "fill",
+          "align": "center",
+          "justify": "center",
+          "padding": "lg"
+        },
+        "children": [
+          {
+            "kind": "card",
+            "id": "auth-card",
+            "props": {
+              "width": "fill",
+              "max": "sm"
+            },
+            "children": [
+              {
+                "kind": "heading",
+                "id": "title",
+                "props": {
+                  "level": 1,
+                  "text": "Welcome back"
+                },
+                "children": []
+              },
+              {
+                "kind": "text",
+                "id": "intro",
+                "props": {
+                  "text": "Use your work email and password."
+                },
+                "children": []
+              },
+              {
+                "kind": "form",
+                "id": "login-form",
+                "props": {
+                  "submit": "sign-in"
+                },
+                "children": [
+                  {
+                    "kind": "field",
+                    "id": "email",
+                    "props": {
+                      "type": "email",
+                      "name": "email",
+                      "label": "Work email",
+                      "required": true,
+                      "autocomplete": "email"
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "field",
+                    "id": "password",
+                    "props": {
+                      "type": "password",
+                      "name": "password",
+                      "label": "Password",
+                      "required": true,
+                      "autocomplete": "current-password"
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "row",
+                    "id": "assistive-row",
+                    "props": {
+                      "justify": "between",
+                      "align": "center"
+                    },
+                    "children": [
+                      {
+                        "kind": "checkbox",
+                        "id": "remember",
+                        "props": {
+                          "name": "remember",
+                          "label": "Remember me"
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "link",
+                        "id": "forgot",
+                        "props": {
+                          "href": "/forgot-password",
+                          "label": "Forgot password?"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "alert",
+                    "id": "form-error",
+                    "props": {
+                      "tone": "critical",
+                      "text": "Incorrect email or password.",
+                      "visible": false
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "actions",
+                    "id": "primary-actions",
+                    "props": {},
+                    "children": [
+                      {
+                        "kind": "button",
+                        "id": "submit",
+                        "props": {
+                          "variant": "primary",
+                          "action": "submit",
+                          "label": "Sign in"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "variants": [
+    {
+      "kind": "state",
+      "name": "loading",
+      "ops": [
+        {
+          "op": "patch",
+          "target": "submit",
+          "props": {
+            "label": "Signing in…",
+            "busy": true,
+            "disabled": true
+          }
+        },
+        {
+          "op": "patch",
+          "target": "login-form",
+          "props": {
+            "disabled": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "state",
+      "name": "error",
+      "ops": [
+        {
+          "op": "show",
+          "target": "form-error"
+        },
+        {
+          "op": "patch",
+          "target": "password",
+          "props": {
+            "invalid": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "breakpoint",
+      "name": "mobile",
+      "when": {
+        "maxWidth": 599
+      },
+      "ops": [
+        {
+          "op": "patch",
+          "target": "auth-card",
+          "props": {
+            "max": "fill"
+          }
+        },
+        {
+          "op": "patch",
+          "target": "primary-actions",
+          "props": {
+            "direction": "column",
+            "width": "fill"
+          }
+        }
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "acc-1",
+      "text": "Keyboard-only user can complete sign-in and trigger password recovery.",
+      "level": "must",
+      "tags": [
+        "keyboard",
+        "flow"
+      ]
+    },
+    {
+      "id": "acc-2",
+      "text": "Inline error stays close to the password field and does not replace the field label.",
+      "level": "must",
+      "tags": [
+        "error",
+        "clarity"
+      ]
+    },
+    {
+      "id": "acc-3",
+      "text": "Primary action remains visible without scrolling on common mobile widths.",
+      "level": "must",
+      "tags": [
+        "mobile",
+        "primary-action"
+      ]
+    }
+  ]
+}

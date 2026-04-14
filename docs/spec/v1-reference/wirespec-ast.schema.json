@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/wirespec-ast.schema.json",
+  "title": "WireSpec AST",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "sourceFormat",
+    "root",
+    "variants",
+    "acceptance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0-draft"
+    },
+    "sourceFormat": {
+      "const": "markdown+wirespec"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/scalarValue"
+      }
+    },
+    "documentTitle": {
+      "type": "string"
+    },
+    "intent": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "root": {
+      "$ref": "#/$defs/node"
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variant"
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acceptanceRule"
+      }
+    }
+  },
+  "$defs": {
+    "scalar": {
+      "type": [
+        "string",
+        "number",
+        "boolean"
+      ]
+    },
+    "scalarValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/scalar"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scalar"
+          }
+        }
+      ]
+    },
+    "sourceSpan": {
+      "type": "object",
+      "required": [
+        "lineStart",
+        "lineEnd"
+      ],
+      "properties": {
+        "lineStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lineEnd": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnEnd": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "file": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "kind",
+        "props",
+        "children"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scalarValue"
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "variant": {
+      "type": "object",
+      "required": [
+        "kind",
+        "name",
+        "ops"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "state",
+            "breakpoint",
+            "theme",
+            "mode"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "when": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scalarValue"
+          }
+        },
+        "ops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variantOp"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/sourceSpan"
+        }
+      },
+      "additionalProperties": false
+    },
+    "variantOp": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "patch",
+            "show",
+            "hide",
+            "insert",
+            "remove"
+          ]
+        },
+        "target": {
+          "type": "string"
+        },
+        "position": {
+          "enum": [
+            "before",
+            "after",
+            "inside-start",
+            "inside-end"
+          ]
+        },
+        "ref": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scalarValue"
+          }
+        },
+        "node": {
+          "$ref": "#/$defs/node"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "patch"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target",
+              "props"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "show"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "hide"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "remove"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "const": "insert"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "position",
+              "ref",
+              "node"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "acceptanceRule": {
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,7 @@
+[core] summary -> 2 open
+[vscode] task-change -> latest=login next=ann-login-submit-fold
+[jetbrains] open-next -> src/features/auth/LoginCard.tsx:21
+[jetbrains] resolve-on-save 21-23 -> resolved=ann-login-submit-fold remaining=1
+[vscode] open-next -> ann-login-error-copy
+[vscode] resolve-on-save 17-20 -> resolved=ann-login-error-copy remaining=0
+[core] summary -> 0 open

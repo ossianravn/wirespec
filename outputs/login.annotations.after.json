@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "0.3.0",
+  "documentId": "login",
+  "source": {
+    "wireFile": "fixtures/login.wirespec.md"
+  },
+  "threads": [
+    {
+      "id": "ann-login-submit-fold",
+      "title": "Keep the primary action above the fold",
+      "status": "resolved",
+      "severity": "must",
+      "motivation": "blocking",
+      "category": "responsive",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:primary-actions",
+        "screenId": "login",
+        "scope": "section",
+        "wireId": "primary-actions",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "primary-actions"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='primary-actions']"
+          },
+          {
+            "type": "wire-source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 18,
+            "lineEnd": 19,
+            "columnStart": 9,
+            "columnEnd": 61
+          },
+          {
+            "type": "source-span",
+            "file": "src/features/auth/LoginCard.tsx",
+            "lineStart": 21,
+            "lineEnd": 23,
+            "columnStart": 11,
+            "columnEnd": 16
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-submit-review",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without turning the card into a dashboard shell.",
+          "createdAt": "2026-04-12T09:00:00.000Z"
+        },
+        {
+          "id": "msg-128437ff27c6",
+          "author": "WireSpec JetBrains Companion",
+          "authorRole": "system",
+          "body": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 21-23.",
+          "createdAt": "2026-04-13T14:38:32.707Z"
+        }
+      ],
+      "createdAt": "2026-04-12T09:00:00.000Z",
+      "updatedAt": "2026-04-13T14:38:32.707Z",
+      "resolutionNote": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 21-23."
+    },
+    {
+      "id": "ann-login-error-copy",
+      "title": "Error copy should preserve recovery confidence",
+      "status": "resolved",
+      "severity": "should",
+      "motivation": "change-request",
+      "category": "copy",
+      "taxonomy": [
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:form-error",
+        "screenId": "login",
+        "scope": "element",
+        "wireId": "form-error",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "form-error"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='form-error']"
+          },
+          {
+            "type": "text-quote",
+            "exact": "Incorrect email or password."
+          },
+          {
+            "type": "wire-source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 22,
+            "lineEnd": 22,
+            "columnStart": 1,
+            "columnEnd": 79
+          },
+          {
+            "type": "source-span",
+            "file": "src/features/auth/LoginCard.tsx",
+            "lineStart": 17,
+            "lineEnd": 20,
+            "columnStart": 11,
+            "columnEnd": 16
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-copy-review",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "The inline error should stay direct and calm. It should explain failure without sounding punitive or hiding the recovery path.",
+          "createdAt": "2026-04-12T09:02:00.000Z"
+        },
+        {
+          "id": "msg-1cfbc322b440",
+          "author": "WireSpec VS Code Companion",
+          "authorRole": "system",
+          "body": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 17-20.",
+          "createdAt": "2026-04-13T14:38:32.790Z"
+        }
+      ],
+      "createdAt": "2026-04-12T09:02:00.000Z",
+      "updatedAt": "2026-04-13T14:38:32.790Z",
+      "resolutionNote": "Auto-resolved after edits were saved in src/features/auth/LoginCard.tsx at lines 17-20."
+    }
+  ]
+}

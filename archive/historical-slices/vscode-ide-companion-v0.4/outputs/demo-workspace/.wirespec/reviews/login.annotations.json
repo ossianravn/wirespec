@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "0.3.0",
+  "documentId": "login",
+  "source": {
+    "wireFile": "fixtures/login.wirespec.md"
+  },
+  "threads": [
+    {
+      "id": "ann-fa94e2410f77",
+      "title": "Keep the primary action above the fold",
+      "status": "resolved",
+      "severity": "must",
+      "motivation": "blocking",
+      "category": "responsive",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:primary-actions",
+        "screenId": "login",
+        "scope": "section",
+        "wireId": "primary-actions",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "primary-actions"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='primary-actions']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 27,
+            "lineEnd": 28,
+            "columnStart": 9,
+            "columnEnd": 63
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-0ddb81210fa6",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without making the card feel like a dashboard shell.",
+          "createdAt": "2026-04-11T18:40:00.000Z"
+        },
+        {
+          "id": "msg-09f01c74a99d",
+          "author": "WireSpec IDE Companion",
+          "authorRole": "system",
+          "body": "Auto-resolved after edits were saved in fixtures/login.wirespec.md at lines 26-27.",
+          "createdAt": "2026-04-12T09:30:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:40:00.000Z",
+      "updatedAt": "2026-04-12T09:30:00.000Z",
+      "resolutionNote": "Auto-resolved after edits were saved in fixtures/login.wirespec.md at lines 26-27."
+    },
+    {
+      "id": "ann-0a9fa3ed2a17",
+      "title": "Error copy should preserve recovery confidence",
+      "status": "resolved",
+      "severity": "should",
+      "motivation": "change-request",
+      "category": "copy",
+      "taxonomy": [
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:form-error",
+        "screenId": "login",
+        "scope": "element",
+        "wireId": "form-error",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "form-error"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='form-error']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 26,
+            "lineEnd": 26,
+            "columnStart": 9,
+            "columnEnd": 84
+          },
+          {
+            "type": "text-quote",
+            "exact": "Incorrect email or password."
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-97df6de90715",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "The inline error should stay direct and calm. It should acknowledge failure without sounding punitive or hiding the recovery path.",
+          "createdAt": "2026-04-11T18:41:00.000Z"
+        },
+        {
+          "id": "msg-15d9221dbf05",
+          "author": "WireSpec IDE Companion",
+          "authorRole": "system",
+          "body": "Auto-resolved after edits were saved in fixtures/login.wirespec.md at lines 26-27.",
+          "createdAt": "2026-04-12T09:30:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:41:00.000Z",
+      "updatedAt": "2026-04-12T09:30:00.000Z",
+      "resolutionNote": "Auto-resolved after edits were saved in fixtures/login.wirespec.md at lines 26-27."
+    }
+  ]
+}

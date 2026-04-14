@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wirespec.dev/schemas/annotation-events-v0.1.schema.json",
+  "title": "WireSpec Review Events v0.1",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/eventEnvelope"
+  },
+  "$defs": {
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "human",
+            "agent",
+            "system"
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "wirespec.review.thread.created",
+        "wirespec.review.thread.messageAdded",
+        "wirespec.review.thread.statusChanged",
+        "wirespec.review.thread.retargeted",
+        "wirespec.review.editor.openRequested",
+        "wirespec.review.agent.exportRequested",
+        "wirespec.review.preview.stale"
+      ]
+    },
+    "eventEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "type",
+        "occurredAt",
+        "actor",
+        "screenId",
+        "payload"
+      ],
+      "properties": {
+        "version": {
+          "const": "0.1"
+        },
+        "type": {
+          "$ref": "#/$defs/eventType"
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor": {
+          "$ref": "#/$defs/actor"
+        },
+        "screenId": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

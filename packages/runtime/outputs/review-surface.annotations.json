@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "0.2.0",
+  "documentId": "review-surface",
+  "source": {
+    "wireFile": "fixtures/review-surface.wirespec.md"
+  },
+  "threads": [
+    {
+      "id": "ann-170b64c3f682",
+      "title": "Preview should stay the dominant surface",
+      "status": "open",
+      "severity": "must",
+      "motivation": "blocking",
+      "category": "layout",
+      "taxonomy": [
+        "LAY-08",
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:preview-panel",
+        "screenId": "review-surface",
+        "scope": "section",
+        "wireId": "preview-panel",
+        "variantKey": "commenting",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "preview-panel"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='preview-panel']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/review-surface.wirespec.md",
+            "lineStart": 29,
+            "lineEnd": 31,
+            "columnStart": 7,
+            "columnEnd": 90
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-2bc132527386",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "Keep the preview visually primary even when there are multiple open notes. The review tooling should not permanently shrink the canvas.",
+          "createdAt": "2026-04-11T18:50:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:50:00.000Z",
+      "updatedAt": "2026-04-11T18:50:00.000Z"
+    },
+    {
+      "id": "ann-8015cb607f5b",
+      "title": "Thread access should be obvious but quiet",
+      "status": "open",
+      "severity": "should",
+      "motivation": "change-request",
+      "category": "behavior",
+      "taxonomy": [
+        "FID-07"
+      ],
+      "target": {
+        "targetId": "node:open-threads",
+        "screenId": "review-surface",
+        "scope": "element",
+        "wireId": "open-threads",
+        "variantKey": "commenting",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "open-threads"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='open-threads']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/review-surface.wirespec.md",
+            "lineStart": 25,
+            "lineEnd": 25,
+            "columnStart": 9,
+            "columnEnd": 82
+          },
+          {
+            "type": "text-quote",
+            "exact": "Open threads"
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-bd3242177d8f",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "Make it clear where open feedback lives, but avoid turning the header into a collaboration dashboard. One calm entry point is enough.",
+          "createdAt": "2026-04-11T18:51:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:51:00.000Z",
+      "updatedAt": "2026-04-11T18:51:00.000Z"
+    }
+  ]
+}

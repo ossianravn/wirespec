@@ -1,0 +1,220 @@
+{
+  "version": "0.1",
+  "documentId": "login",
+  "entryFile": "screens/01-login.md",
+  "generatedAt": "2026-04-11T17:30:00Z",
+  "contentHash": "sha256:sample-login",
+  "variants": [
+    {
+      "key": "base"
+    },
+    {
+      "key": "error",
+      "state": "error"
+    },
+    {
+      "key": "mobile",
+      "breakpoint": "mobile"
+    },
+    {
+      "key": "error+mobile",
+      "state": "error",
+      "breakpoint": "mobile"
+    }
+  ],
+  "targets": [
+    {
+      "targetId": "screen:login",
+      "scope": "screen",
+      "screenId": "login",
+      "wireId": "login",
+      "kind": "screen",
+      "label": "Login",
+      "semanticPath": [
+        "screen:login"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 10,
+        "columnStart": 1,
+        "lineEnd": 30,
+        "columnEnd": 1
+      },
+      "dom": {
+        "selector": "[data-ws-screen='login']",
+        "screenId": "login"
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ],
+      "signature": {
+        "kind": "screen"
+      }
+    },
+    {
+      "targetId": "prose:intent",
+      "scope": "prose",
+      "screenId": "login",
+      "kind": "intent",
+      "label": "Intent",
+      "semanticPath": [
+        "screen:login",
+        "prose:intent"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 6,
+        "columnStart": 1,
+        "lineEnd": 7,
+        "columnEnd": 80
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ]
+    },
+    {
+      "targetId": "acceptance:login-01",
+      "scope": "acceptance",
+      "screenId": "login",
+      "kind": "acceptance",
+      "label": "Keyboard-only user can complete the form.",
+      "semanticPath": [
+        "screen:login",
+        "acceptance:login-01"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 42,
+        "columnStart": 3,
+        "lineEnd": 42,
+        "columnEnd": 60
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ]
+    },
+    {
+      "targetId": "node:auth-card",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "auth-card",
+      "kind": "card",
+      "label": "Authentication card",
+      "parentTargetId": "screen:login",
+      "semanticPath": [
+        "screen:login",
+        "node:auth-card"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 14,
+        "columnStart": 3,
+        "lineEnd": 26,
+        "columnEnd": 40
+      },
+      "dom": {
+        "selector": "[data-ws-id='auth-card']",
+        "screenId": "login",
+        "wireId": "auth-card",
+        "kind": "card"
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ],
+      "signature": {
+        "kind": "card",
+        "text": "Welcome back"
+      }
+    },
+    {
+      "targetId": "node:password",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "password",
+      "kind": "field",
+      "label": "Password",
+      "parentTargetId": "node:auth-card",
+      "semanticPath": [
+        "screen:login",
+        "node:auth-card",
+        "node:password"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 19,
+        "columnStart": 7,
+        "lineEnd": 19,
+        "columnEnd": 79
+      },
+      "dom": {
+        "selector": "[data-ws-id='password']",
+        "screenId": "login",
+        "wireId": "password",
+        "kind": "field"
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ],
+      "signature": {
+        "kind": "field",
+        "text": "Password",
+        "role": "textbox"
+      }
+    },
+    {
+      "targetId": "node:submit",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "submit",
+      "kind": "button",
+      "label": "Sign in",
+      "parentTargetId": "node:auth-card",
+      "semanticPath": [
+        "screen:login",
+        "node:auth-card",
+        "node:actions",
+        "node:submit"
+      ],
+      "span": {
+        "file": "screens/01-login.md",
+        "lineStart": 24,
+        "columnStart": 9,
+        "lineEnd": 24,
+        "columnEnd": 78
+      },
+      "dom": {
+        "selector": "[data-ws-id='submit']",
+        "screenId": "login",
+        "wireId": "submit",
+        "kind": "button"
+      },
+      "variants": [
+        "base",
+        "error",
+        "mobile",
+        "error+mobile"
+      ],
+      "signature": {
+        "kind": "button",
+        "text": "Sign in",
+        "role": "button"
+      }
+    }
+  ],
+  "renames": []
+}

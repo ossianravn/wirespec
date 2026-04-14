@@ -1,0 +1,70 @@
+{
+  "version": "0.1",
+  "documentId": "login",
+  "exportedAt": "2026-04-11T17:34:00Z",
+  "tasks": [
+    {
+      "taskId": "task:ann-login-001",
+      "threadId": "ann-login-001",
+      "status": "open",
+      "severity": "must",
+      "severityRank": 0,
+      "screenId": "login",
+      "scope": "element",
+      "targetId": "node:submit",
+      "wireId": "submit",
+      "variantKey": "error+mobile",
+      "summary": "must \u00b7 responsive \u00b7 node:submit \u00b7 Keep submit visible on short mobile heights",
+      "requestedChange": "On short mobile heights the error message pushes the primary action too low.",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "suggestedOps": [
+        {
+          "op": "patch",
+          "target": "actions",
+          "props": {
+            "sticky": "bottom"
+          }
+        },
+        {
+          "op": "patch",
+          "target": "auth-card",
+          "props": {
+            "max": "fill"
+          }
+        }
+      ],
+      "openInEditor": {
+        "file": "screens/01-login.md",
+        "line": 24,
+        "column": 9,
+        "uri": "vscode://file/screens/01-login.md:24:9"
+      },
+      "orphaned": false
+    },
+    {
+      "taskId": "task:ann-login-002",
+      "threadId": "ann-login-002",
+      "status": "open",
+      "severity": "should",
+      "severityRank": 1,
+      "screenId": "login",
+      "scope": "acceptance",
+      "targetId": "acceptance:login-01",
+      "summary": "should \u00b7 a11y \u00b7 acceptance:login-01 \u00b7 Add a focus-visible acceptance rule, not only keyboard completion.",
+      "requestedChange": "Add a focus-visible acceptance rule, not only keyboard completion.",
+      "taxonomy": [
+        "QA-02"
+      ],
+      "openInEditor": {
+        "file": "screens/01-login.md",
+        "line": 42,
+        "column": 3,
+        "uri": "vscode://file/screens/01-login.md:42:3"
+      },
+      "orphaned": false
+    }
+  ]
+}

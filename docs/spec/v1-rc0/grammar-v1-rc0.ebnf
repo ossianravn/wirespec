@@ -1,0 +1,89 @@
+; WireSpec v1 rc0 grammar (informative)
+; The host document is CommonMark-compatible Markdown.
+; Frontmatter handling is optional and host-parser specific.
+; Inside wirespec blocks, tabs are invalid and indentation is exactly two spaces.
+
+document             = frontmatter? doc_block*
+doc_block            = markdown_block / wirespec_block
+
+frontmatter          = frontmatter_fence newline frontmatter_line* frontmatter_fence newline?
+frontmatter_fence    = "---"
+frontmatter_line     = !("---") text_line
+
+markdown_block       = prose_line newline
+                     / blank_line
+                     / fenced_markdown_block
+
+prose_line           = text_line
+fenced_markdown_block = non_wirespec_fence_open newline text_line* non_wirespec_fence_close newline?
+non_wirespec_fence_open = "```" !("wirespec") text_line?
+non_wirespec_fence_close = "```"
+
+wirespec_block       = fence_open info_string newline ws_body fence_close newline?
+fence_open           = "```"
+fence_close          = "```"
+
+info_string          = "wirespec" (wsp info_pair)*
+info_pair            = ident "=" value
+
+ws_body              = base_body / variant_body
+
+; ---------- base tree ----------
+
+base_body            = node_line newline base_child*
+base_child           = indented_node_line newline base_child*
+
+indented_node_line   = indent node_line
+indent               = "  "+
+
+node_line            = kind attr_pair*
+kind                 = core_kind / extension_kind
+core_kind            = ident
+extension_kind       = "x-" ident
+
+attr_pair            = wsp ident "=" value
+
+; ---------- variants ----------
+
+variant_body         = variant_stmt (newline variant_stmt)* newline?
+variant_stmt         = patch_stmt
+                     / show_stmt
+                     / hide_stmt
+                     / remove_stmt
+                     / insert_stmt
+
+patch_stmt           = "patch" wsp "target=" ident attr_pair*
+show_stmt            = "show" wsp "target=" ident
+hide_stmt            = "hide" wsp "target=" ident
+remove_stmt          = "remove" wsp "target=" ident
+
+insert_stmt          = "insert" wsp "position=" position wsp "ref=" ident newline indented_node_line insert_child*
+insert_child         = newline indented_node_line
+
+position             = "before" / "after" / "inside-start" / "inside-end"
+
+; ---------- values ----------
+
+value                = list / scalar
+scalar               = quoted / number / boolean / bare
+list                 = "[" "]" / "[" list_item ("," list_item)* "]"
+list_item            = scalar
+
+quoted               = dquote quoted_char* dquote
+quoted_char          = escaped_dquote / escaped_backslash / !dquote any_char
+escaped_dquote       = "\" dquote
+escaped_backslash    = "\\"
+dquote               = %x22
+
+number               = "-"? digit+ ("." digit+)?
+boolean              = "true" / "false"
+bare                 = bare_char+
+bare_char            = ALPHA / DIGIT / "_" / "-" / "." / "/" / ":"
+
+ident                = ALPHA (ALPHA / DIGIT / "_" / "-")*
+digit                = %x30-39
+newline              = %x0A / %x0D.0A
+blank_line           = newline
+wsp                  = " "+
+text_line            = any_char*
+any_char             = %x00-10FFFF

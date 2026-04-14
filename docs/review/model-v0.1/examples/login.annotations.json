@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "0.1.0",
+  "documentId": "login",
+  "source": {
+    "wireFile": "screens/01-login.md",
+    "astFile": "dist/01-login.ast.json",
+    "component": "auth/LoginScreen"
+  },
+  "threads": [
+    {
+      "id": "ann-login-001",
+      "title": "Keep the primary action above the fold on mobile error state",
+      "status": "open",
+      "severity": "must",
+      "motivation": "change-request",
+      "category": "responsive",
+      "taxonomy": ["LAY-10", "QA-03"],
+      "target": {
+        "screenId": "login",
+        "nodeId": "submit",
+        "variant": {
+          "state": "error",
+          "breakpoint": "mobile"
+        },
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "submit"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id=\"submit\"]"
+          },
+          {
+            "type": "source-span",
+            "file": "screens/01-login.md",
+            "lineStart": 22,
+            "lineEnd": 22,
+            "columnStart": 11,
+            "columnEnd": 71
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-login-001",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "On short mobile heights, the error message pushes the submit button too low. Tighten the stack or move the error closer to the password field.",
+          "createdAt": "2026-04-11T17:20:00Z"
+        }
+      ],
+      "suggestedOps": [
+        {
+          "op": "patch",
+          "target": "primary-actions",
+          "props": {
+            "sticky": "bottom"
+          }
+        }
+      ],
+      "createdAt": "2026-04-11T17:20:00Z",
+      "updatedAt": "2026-04-11T17:20:00Z"
+    },
+    {
+      "id": "ann-login-002",
+      "title": "Explain password recovery timing more clearly",
+      "status": "accepted",
+      "severity": "should",
+      "motivation": "question",
+      "category": "copy",
+      "taxonomy": ["QA-03"],
+      "target": {
+        "screenId": "login",
+        "nodeId": "forgot",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "forgot"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id=\"forgot\"]"
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-login-002",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "Could this link tell the user whether recovery happens by email immediately or after admin review?",
+          "createdAt": "2026-04-11T17:23:00Z"
+        },
+        {
+          "id": "msg-login-003",
+          "author": "agent",
+          "authorRole": "agent",
+          "body": "Proposed follow-up: add helper copy on the recovery screen rather than lengthening this link label.",
+          "createdAt": "2026-04-11T17:28:00Z"
+        }
+      ],
+      "createdAt": "2026-04-11T17:23:00Z",
+      "updatedAt": "2026-04-11T17:28:00Z"
+    }
+  ]
+}

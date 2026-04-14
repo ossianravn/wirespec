@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "documentId": "login",
+  "exportedAt": "2026-04-13T14:38:33.327Z",
+  "tasks": [
+    {
+      "taskId": "task:ann-60cd9c982887",
+      "threadId": "ann-60cd9c982887",
+      "status": "open",
+      "severity": "must",
+      "severityRank": 0,
+      "screenId": "login",
+      "scope": "section",
+      "targetId": "node:primary-actions",
+      "summary": "must · responsive · node:primary-actions · Keep the primary action above the fold",
+      "requestedChange": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without making the card feel like a dashboard shell.",
+      "orphaned": false,
+      "wireId": "primary-actions",
+      "variantKey": "mobile+error",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "openInEditor": {
+        "file": "fixtures/login.wirespec.md",
+        "line": 27,
+        "column": 9,
+        "uri": "vscode://file/fixtures/login.wirespec.md:27:9"
+      }
+    },
+    {
+      "taskId": "task:ann-89941564d89f",
+      "threadId": "ann-89941564d89f",
+      "status": "open",
+      "severity": "should",
+      "severityRank": 1,
+      "screenId": "login",
+      "scope": "element",
+      "targetId": "node:form-error",
+      "summary": "should · copy · node:form-error · Error copy should preserve recovery confidence",
+      "requestedChange": "The inline error should stay direct and calm. It should acknowledge failure without sounding punitive or hiding the recovery path.",
+      "orphaned": false,
+      "wireId": "form-error",
+      "variantKey": "mobile+error",
+      "taxonomy": [
+        "QA-03"
+      ],
+      "openInEditor": {
+        "file": "fixtures/login.wirespec.md",
+        "line": 26,
+        "column": 9,
+        "uri": "vscode://file/fixtures/login.wirespec.md:26:9"
+      }
+    }
+  ]
+}

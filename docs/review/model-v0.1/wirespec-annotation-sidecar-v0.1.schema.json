@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wirespec.dev/schemas/wirespec-annotation-sidecar-v0.1.schema.json",
+  "title": "WireSpec Annotation Sidecar v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentId", "threads"],
+  "properties": {
+    "schemaVersion": {
+      "const": "0.1.0"
+    },
+    "documentId": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wireFile": { "type": "string" },
+        "astFile": { "type": "string" },
+        "component": { "type": "string" }
+      }
+    },
+    "threads": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/thread" }
+    }
+  },
+  "$defs": {
+    "thread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "motivation", "target", "messages"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ann-[A-Za-z0-9][A-Za-z0-9-]*$"
+        },
+        "title": { "type": "string" },
+        "status": {
+          "enum": ["open", "accepted", "in-progress", "resolved", "wontfix"]
+        },
+        "severity": {
+          "enum": ["note", "should", "must"]
+        },
+        "motivation": {
+          "enum": ["note", "question", "change-request", "issue", "approval", "blocking"]
+        },
+        "category": {
+          "enum": ["layout", "copy", "behavior", "a11y", "responsive", "fidelity", "content", "state", "navigation", "visual", "data"]
+        },
+        "taxonomy": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "orphaned": {
+          "type": "boolean"
+        },
+        "target": { "$ref": "#/$defs/target" },
+        "messages": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/message" }
+        },
+        "suggestedOps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/op" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "resolvedBy": { "type": "string" },
+        "resolutionNote": { "type": "string" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["screenId", "anchors"],
+      "properties": {
+        "screenId": { "type": "string" },
+        "nodeId": { "type": "string" },
+        "acceptanceId": { "type": "string" },
+        "section": {
+          "enum": ["screen", "intent", "acceptance", "notes"]
+        },
+        "variant": { "$ref": "#/$defs/variantSelection" },
+        "anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/anchor" }
+        }
+      }
+    },
+    "variantSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "state": { "type": "string" },
+        "breakpoint": { "type": "string" },
+        "theme": { "type": "string" },
+        "mode": { "type": "string" }
+      }
+    },
+    "anchor": {
+      "oneOf": [
+        { "$ref": "#/$defs/nodeIdAnchor" },
+        { "$ref": "#/$defs/selectorAnchor" },
+        { "$ref": "#/$defs/sourceSpanAnchor" },
+        { "$ref": "#/$defs/textQuoteAnchor" },
+        { "$ref": "#/$defs/renderRegionAnchor" }
+      ]
+    },
+    "nodeIdAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "const": "node-id" },
+        "value": { "type": "string" }
+      }
+    },
+    "selectorAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "const": "selector" },
+        "value": { "type": "string" }
+      }
+    },
+    "sourceSpanAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "file", "lineStart", "lineEnd"],
+      "properties": {
+        "type": { "const": "source-span" },
+        "file": { "type": "string" },
+        "lineStart": { "type": "integer", "minimum": 1 },
+        "lineEnd": { "type": "integer", "minimum": 1 },
+        "columnStart": { "type": "integer", "minimum": 1 },
+        "columnEnd": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "textQuoteAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "exact"],
+      "properties": {
+        "type": { "const": "text-quote" },
+        "exact": { "type": "string" },
+        "prefix": { "type": "string" },
+        "suffix": { "type": "string" }
+      }
+    },
+    "renderRegionAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "x", "y", "width", "height"],
+      "properties": {
+        "type": { "const": "render-region" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 }
+      }
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "author", "body", "createdAt"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^msg-[A-Za-z0-9][A-Za-z0-9-]*$"
+        },
+        "author": { "type": "string" },
+        "authorRole": {
+          "enum": ["human", "agent", "system"]
+        },
+        "body": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "op": {
+      "oneOf": [
+        { "$ref": "#/$defs/patchOp" },
+        { "$ref": "#/$defs/showHideRemoveOp" },
+        { "$ref": "#/$defs/insertOp" }
+      ]
+    },
+    "patchOp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "target", "props"],
+      "properties": {
+        "op": { "const": "patch" },
+        "target": { "type": "string" },
+        "props": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "showHideRemoveOp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "target"],
+      "properties": {
+        "op": {
+          "enum": ["show", "hide", "remove"]
+        },
+        "target": { "type": "string" }
+      }
+    },
+    "insertOp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "position", "ref", "node"],
+      "properties": {
+        "op": { "const": "insert" },
+        "position": {
+          "enum": ["before", "after", "inside-start", "inside-end"]
+        },
+        "ref": { "type": "string" },
+        "node": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

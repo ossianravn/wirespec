@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wirespec.dev/schemas/annotation-sidecar-v0.3.schema.json",
+  "title": "WireSpec Annotation Sidecar v0.3",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentId",
+    "threads"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.3.0"
+    },
+    "documentId": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "wireFile": {
+          "type": "string"
+        },
+        "astFile": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "threads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/thread"
+      }
+    }
+  },
+  "$defs": {
+    "anchor": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "node-id",
+                "selector"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "file",
+            "lineStart",
+            "lineEnd",
+            "columnStart",
+            "columnEnd"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "source-span"
+            },
+            "file": {
+              "type": "string"
+            },
+            "lineStart": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "lineEnd": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "columnStart": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "columnEnd": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "exact"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "text-quote"
+            },
+            "exact": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "id",
+        "author",
+        "authorRole",
+        "body",
+        "createdAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "authorRole": {
+          "type": "string",
+          "enum": [
+            "human",
+            "agent",
+            "system"
+          ]
+        },
+        "body": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "thread": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "status",
+        "severity",
+        "motivation",
+        "category",
+        "target",
+        "messages",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "in_progress",
+            "resolved",
+            "wontfix"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "must",
+            "should",
+            "could",
+            "question"
+          ]
+        },
+        "motivation": {
+          "type": "string",
+          "enum": [
+            "blocking",
+            "change-request",
+            "question"
+          ]
+        },
+        "category": {
+          "type": "string"
+        },
+        "taxonomy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resolutionNote": {
+          "type": "string"
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "targetId",
+            "screenId",
+            "scope",
+            "anchors"
+          ],
+          "properties": {
+            "targetId": {
+              "type": "string"
+            },
+            "screenId": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "wireId": {
+              "type": "string"
+            },
+            "variantKey": {
+              "type": "string"
+            },
+            "anchors": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/anchor"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

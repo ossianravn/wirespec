@@ -1,0 +1,19 @@
+{
+  "name": "wirespec-consolidated-repo",
+  "private": true,
+  "version": "0.5.0-consolidated",
+  "description": "Consolidated WireSpec handoff repo with language spec, runtime, review bridge, and IDE companions.",
+  "scripts": {
+    "test": "npm run test:core && npm run test:runtime && npm run test:bridge",
+    "test:core": "node --test packages/core/test/*.test.js",
+    "test:runtime": "npm --prefix packages/runtime test",
+    "test:bridge": "npm --prefix packages/bridge test",
+    "generate:examples": "npm run generate:cross-ide && npm run generate:runtime && npm run generate:bridge",
+    "generate:cross-ide": "node tools/generate-examples.js",
+    "generate:runtime": "npm --prefix packages/runtime run generate:examples",
+    "generate:bridge": "npm --prefix packages/bridge run generate:examples"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,70 @@
+; WireSpec annotation Markdown projection v0.1 (informative)
+; Canonical storage is JSON sidecar. This grammar describes an optional,
+; human-readable Markdown projection for review threads.
+
+annotation_document      = annotation_block+
+annotation_block         = annotation_fence_open newline annotation_header newline annotation_line* annotation_fence_close newline?
+annotation_fence_open    = "```wirecomment"
+annotation_fence_close   = "```"
+
+annotation_header        = "annotation" wsp "id=" ident
+annotation_line          = target_line
+                         / meta_line
+                         / body_line
+                         / message_line
+                         / suggest_line
+                         / blank_line
+
+target_line              = "target" wsp target_pair (wsp target_pair)*
+target_pair              = "screen=" ident
+                         / "node=" ident
+                         / "section=" ident
+                         / "acceptance=" ident
+                         / "state=" ident
+                         / "breakpoint=" ident
+                         / "theme=" ident
+                         / "mode=" ident
+
+meta_line                = "title=" quoted
+                         / "status=" status
+                         / "severity=" severity
+                         / "motivation=" motivation
+                         / "category=" ident
+                         / "taxonomy=" list
+                         / "author=" quoted
+                         / "createdAt=" quoted
+                         / "updatedAt=" quoted
+                         / "resolutionNote=" quoted
+
+body_line                = "body=" quoted
+message_line             = "reply" wsp "author=" quoted wsp "at=" quoted wsp "body=" quoted
+suggest_line             = suggest_patch / suggest_show / suggest_hide / suggest_remove
+
+suggest_patch            = "suggest" wsp "patch" wsp "target=" ident attr_pair*
+suggest_show             = "suggest" wsp "show" wsp "target=" ident
+suggest_hide             = "suggest" wsp "hide" wsp "target=" ident
+suggest_remove           = "suggest" wsp "remove" wsp "target=" ident
+
+attr_pair                = wsp ident "=" value
+value                    = list / scalar
+scalar                   = quoted / number / boolean / bare
+list                     = "[" "]" / "[" list_item ("," list_item)* "]"
+list_item                = scalar
+quoted                   = dquote quoted_char* dquote
+quoted_char              = escaped_dquote / escaped_backslash / !dquote any_char
+escaped_dquote           = "\\" dquote
+escaped_backslash        = "\\\\"
+dquote                   = %x22
+number                   = "-"? digit+ ("." digit+)?
+boolean                  = "true" / "false"
+bare                     = bare_char+
+bare_char                = ALPHA / DIGIT / "_" / "-" / "." / "/" / ":"
+status                   = "open" / "accepted" / "in-progress" / "resolved" / "wontfix"
+severity                 = "note" / "should" / "must"
+motivation               = "note" / "question" / "change-request" / "issue" / "approval" / "blocking"
+ident                    = ALPHA (ALPHA / DIGIT / "_" / "-")*
+digit                    = %x30-39
+newline                  = %x0A / %x0D.0A
+blank_line               = newline
+wsp                      = " "+
+any_char                 = %x00-10FFFF

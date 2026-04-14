@@ -1,0 +1,83 @@
+{
+  "name": "wirespec-ide-companion",
+  "displayName": "WireSpec IDE Companion",
+  "description": "Small VS Code companion for WireSpec review task files and annotation threads.",
+  "version": "0.4.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:wirespec.openLatestTaskFile",
+    "onCommand:wirespec.openNextOpenTaskTarget",
+    "onCommand:wirespec.resolveTouchedThreads",
+    "workspaceContains:**/.wirespec/reviews/*.agent-tasks.json"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "wirespec.openLatestTaskFile",
+        "title": "WireSpec: Open latest task file"
+      },
+      {
+        "command": "wirespec.openNextOpenTaskTarget",
+        "title": "WireSpec: Open next open task target"
+      },
+      {
+        "command": "wirespec.resolveTouchedThreads",
+        "title": "WireSpec: Resolve touched threads for active file"
+      },
+      {
+        "command": "wirespec.refreshReviewFiles",
+        "title": "WireSpec: Refresh review files"
+      },
+      {
+        "command": "wirespec.showReviewSummary",
+        "title": "WireSpec: Show review summary"
+      }
+    ],
+    "configuration": {
+      "title": "WireSpec IDE",
+      "properties": {
+        "wirespec.ide.autoOpenTaskFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open changed WireSpec task files in preview mode."
+        },
+        "wirespec.ide.autoRevealFirstTarget": {
+          "type": "boolean",
+          "default": false,
+          "description": "After a task file changes, also reveal the most severe open target."
+        },
+        "wirespec.ide.autoResolveOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Resolve matching open threads when the edited target span is saved."
+        },
+        "wirespec.ide.keepResolvedTasksInTaskFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Keep resolved tasks in the task export instead of removing them from the open queue."
+        },
+        "wirespec.ide.statusBarAlignment": {
+          "type": "string",
+          "default": "left",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "description": "Where the WireSpec status item should appear."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test",
+    "generate:examples": "node ./src/simulate.js"
+  }
+}

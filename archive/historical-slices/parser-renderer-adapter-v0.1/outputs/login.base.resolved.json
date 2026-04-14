@@ -1,0 +1,318 @@
+{
+  "schemaVersion": "1.0.0-rc0",
+  "sourceFormat": "markdown+wirespec",
+  "sourceFile": "fixtures/login.wirespec.md",
+  "metadata": {
+    "schema": "wirespec/1.0-rc0",
+    "id": "login",
+    "route": "/login",
+    "component": "auth/LoginScreen",
+    "canonical": "true"
+  },
+  "documentTitle": "Login",
+  "selection": {},
+  "root": {
+    "kind": "screen",
+    "id": "login",
+    "props": {
+      "route": "/login",
+      "title": "Sign in"
+    },
+    "children": [
+      {
+        "kind": "main",
+        "id": "content",
+        "props": {
+          "width": "fill",
+          "align": "center",
+          "justify": "center",
+          "padding": "lg"
+        },
+        "children": [
+          {
+            "kind": "card",
+            "id": "auth-card",
+            "props": {
+              "width": "fill",
+              "max": "sm"
+            },
+            "children": [
+              {
+                "kind": "heading",
+                "id": "title",
+                "props": {
+                  "level": 1,
+                  "text": "Welcome back"
+                },
+                "children": [],
+                "span": {
+                  "file": "fixtures/login.wirespec.md",
+                  "lineStart": 18,
+                  "columnStart": 7,
+                  "lineEnd": 18,
+                  "columnEnd": 45
+                }
+              },
+              {
+                "kind": "text",
+                "id": "intro",
+                "props": {
+                  "text": "Use your work email and password."
+                },
+                "children": [],
+                "span": {
+                  "file": "fixtures/login.wirespec.md",
+                  "lineStart": 19,
+                  "columnStart": 7,
+                  "lineEnd": 19,
+                  "columnEnd": 55
+                }
+              },
+              {
+                "kind": "form",
+                "id": "login-form",
+                "props": {
+                  "submit": "sign-in"
+                },
+                "children": [
+                  {
+                    "kind": "field",
+                    "id": "email",
+                    "props": {
+                      "type": "email",
+                      "name": "email",
+                      "label": "Work email",
+                      "required": true,
+                      "autocomplete": "email"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/login.wirespec.md",
+                      "lineStart": 21,
+                      "columnStart": 9,
+                      "lineEnd": 21,
+                      "columnEnd": 89
+                    }
+                  },
+                  {
+                    "kind": "field",
+                    "id": "password",
+                    "props": {
+                      "type": "password",
+                      "name": "password",
+                      "label": "Password",
+                      "required": true,
+                      "autocomplete": "current-password"
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/login.wirespec.md",
+                      "lineStart": 22,
+                      "columnStart": 9,
+                      "lineEnd": 22,
+                      "columnEnd": 107
+                    }
+                  },
+                  {
+                    "kind": "row",
+                    "id": "assistive-row",
+                    "props": {
+                      "justify": "between",
+                      "align": "center"
+                    },
+                    "children": [
+                      {
+                        "kind": "checkbox",
+                        "id": "remember",
+                        "props": {
+                          "name": "remember",
+                          "label": "Remember me"
+                        },
+                        "children": [],
+                        "span": {
+                          "file": "fixtures/login.wirespec.md",
+                          "lineStart": 24,
+                          "columnStart": 11,
+                          "lineEnd": 24,
+                          "columnEnd": 55
+                        }
+                      },
+                      {
+                        "kind": "link",
+                        "id": "forgot",
+                        "props": {
+                          "href": "/forgot-password",
+                          "label": "Forgot password?"
+                        },
+                        "children": [],
+                        "span": {
+                          "file": "fixtures/login.wirespec.md",
+                          "lineStart": 25,
+                          "columnStart": 11,
+                          "lineEnd": 25,
+                          "columnEnd": 64
+                        }
+                      }
+                    ],
+                    "span": {
+                      "file": "fixtures/login.wirespec.md",
+                      "lineStart": 23,
+                      "columnStart": 9,
+                      "lineEnd": 25,
+                      "columnEnd": 64
+                    }
+                  },
+                  {
+                    "kind": "alert",
+                    "id": "form-error",
+                    "props": {
+                      "tone": "critical",
+                      "text": "Incorrect email or password.",
+                      "visible": false
+                    },
+                    "children": [],
+                    "span": {
+                      "file": "fixtures/login.wirespec.md",
+                      "lineStart": 26,
+                      "columnStart": 9,
+                      "lineEnd": 26,
+                      "columnEnd": 84
+                    }
+                  },
+                  {
+                    "kind": "actions",
+                    "id": "primary-actions",
+                    "props": {},
+                    "children": [
+                      {
+                        "kind": "button",
+                        "id": "submit",
+                        "props": {
+                          "variant": "primary",
+                          "action": "submit",
+                          "label": "Sign in"
+                        },
+                        "children": [],
+                        "span": {
+                          "file": "fixtures/login.wirespec.md",
+                          "lineStart": 28,
+                          "columnStart": 11,
+                          "lineEnd": 28,
+                          "columnEnd": 63
+                        }
+                      }
+                    ],
+                    "span": {
+                      "file": "fixtures/login.wirespec.md",
+                      "lineStart": 27,
+                      "columnStart": 9,
+                      "lineEnd": 28,
+                      "columnEnd": 63
+                    }
+                  }
+                ],
+                "span": {
+                  "file": "fixtures/login.wirespec.md",
+                  "lineStart": 20,
+                  "columnStart": 7,
+                  "lineEnd": 28,
+                  "columnEnd": 63
+                }
+              }
+            ],
+            "span": {
+              "file": "fixtures/login.wirespec.md",
+              "lineStart": 17,
+              "columnStart": 5,
+              "lineEnd": 28,
+              "columnEnd": 63
+            }
+          }
+        ],
+        "span": {
+          "file": "fixtures/login.wirespec.md",
+          "lineStart": 16,
+          "columnStart": 3,
+          "lineEnd": 28,
+          "columnEnd": 63
+        }
+      }
+    ],
+    "span": {
+      "file": "fixtures/login.wirespec.md",
+      "lineStart": 15,
+      "columnStart": 1,
+      "lineEnd": 28,
+      "columnEnd": 63
+    }
+  },
+  "sections": [
+    {
+      "id": "intent",
+      "title": "Intent",
+      "kind": "intent",
+      "body": "Let a returning user sign in quickly, recover access easily, and understand failures without losing context.",
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 12,
+        "columnStart": 1,
+        "lineEnd": 12,
+        "columnEnd": 109
+      }
+    },
+    {
+      "id": "acceptance",
+      "title": "Acceptance",
+      "kind": "acceptance",
+      "body": "- Keyboard-only user can complete sign-in and trigger password recovery.\n- Inline error stays close to the password field and does not replace the field label.\n- Primary action remains visible without scrolling on common mobile widths.",
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 47,
+        "columnStart": 1,
+        "lineEnd": 49,
+        "columnEnd": 76
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "acc-1",
+      "text": "Keyboard-only user can complete sign-in and trigger password recovery.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 47,
+        "columnStart": 1,
+        "lineEnd": 47,
+        "columnEnd": 73
+      }
+    },
+    {
+      "id": "acc-2",
+      "text": "Inline error stays close to the password field and does not replace the field label.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 48,
+        "columnStart": 1,
+        "lineEnd": 48,
+        "columnEnd": 87
+      }
+    },
+    {
+      "id": "acc-3",
+      "text": "Primary action remains visible without scrolling on common mobile widths.",
+      "level": "must",
+      "tags": [],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 49,
+        "columnStart": 1,
+        "lineEnd": 49,
+        "columnEnd": 76
+      }
+    }
+  ]
+}

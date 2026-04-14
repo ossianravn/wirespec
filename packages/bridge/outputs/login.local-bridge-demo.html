@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>WireSpec local bridge demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #f7f7f5;
+        color: #111;
+        font: 400 16px/1.45 Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+      main[data-ws-screen="login"] {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 20px;
+      }
+      [data-ws-id="auth-card"] {
+        width: min(420px, 100%);
+        background: #fff;
+        border: 1px solid rgba(17,17,17,0.10);
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 10px 24px rgba(17,17,17,0.05);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        line-height: 1.1;
+      }
+      p {
+        margin: 0;
+      }
+      form {
+        display: grid;
+        gap: 14px;
+        margin-top: 20px;
+      }
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 14px;
+      }
+      input {
+        border: 1px solid rgba(17,17,17,0.14);
+        border-radius: 10px;
+        min-height: 42px;
+        padding: 0 12px;
+        font: inherit;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .error {
+        padding: 10px 12px;
+        border: 1px solid rgba(17,17,17,0.14);
+        border-radius: 10px;
+        background: #fbfbfb;
+        color: rgba(17,17,17,0.80);
+        font-size: 14px;
+      }
+      button.primary {
+        appearance: none;
+        min-height: 44px;
+        border: 1px solid #111;
+        border-radius: 10px;
+        background: #111;
+        color: #fff;
+        font: 600 15px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+        padding: 0 14px;
+      }
+      .subtle-link {
+        color: #111;
+        font-size: 14px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main data-ws-screen="login" data-ws-target="screen:login" data-ws-kind="screen">
+      <section data-ws-id="content" data-ws-target="node:content" data-ws-kind="main">
+        <article data-ws-id="auth-card" data-ws-target="node:auth-card" data-ws-kind="card">
+          <h1 data-ws-id="title" data-ws-target="node:title" data-ws-kind="heading">Welcome back</h1>
+          <p data-ws-id="intro" data-ws-target="node:intro" data-ws-kind="text">Use your work email and password.</p>
+
+          <form data-ws-id="login-form" data-ws-target="node:login-form" data-ws-kind="form">
+            <label data-ws-id="email-field" data-ws-target="node:email-field" data-ws-kind="field">
+              <span>Work email</span>
+              <input type="email" value="alex@example.com">
+            </label>
+
+            <label data-ws-id="password-field" data-ws-target="node:password-field" data-ws-kind="field">
+              <span>Password</span>
+              <input type="password" value="password">
+            </label>
+
+            <div class="error" data-ws-id="form-error" data-ws-target="node:form-error" data-ws-kind="alert">
+              Incorrect email or password.
+            </div>
+
+            <div class="row" data-ws-id="secondary-row" data-ws-target="node:secondary-row" data-ws-kind="row">
+              <label style="display:flex;align-items:center;gap:8px">
+                <input type="checkbox" checked style="min-height:auto">
+                <span>Remember me</span>
+              </label>
+              <a class="subtle-link" href="#" data-ws-id="forgot-password" data-ws-target="node:forgot-password" data-ws-kind="link">Forgot password?</a>
+            </div>
+
+            <div data-ws-id="primary-actions" data-ws-target="node:primary-actions" data-ws-kind="actions">
+              <button class="primary" type="button" data-ws-id="submit" data-ws-target="node:submit" data-ws-kind="button">Sign in</button>
+            </div>
+          </form>
+        </article>
+      </section>
+    </main>
+
+    <script type="module">
+      import { createReviewRuntime } from "../src/review-runtime.js";
+      const sourceMap = {
+  "version": "0.1",
+  "documentId": "login",
+  "entryFile": "fixtures/login.wirespec.md",
+  "generatedAt": "2026-04-11T18:35:52.375Z",
+  "contentHash": "sha256:50bfe3874d196cd634e470851942ceabf412dbc08b7657785a4eb6a13ea41f29",
+  "variants": [
+    {
+      "key": "base"
+    },
+    {
+      "key": "mobile",
+      "breakpoint": "mobile"
+    },
+    {
+      "key": "loading",
+      "state": "loading"
+    },
+    {
+      "key": "error",
+      "state": "error"
+    },
+    {
+      "key": "mobile+loading",
+      "breakpoint": "mobile",
+      "state": "loading"
+    },
+    {
+      "key": "mobile+error",
+      "breakpoint": "mobile",
+      "state": "error"
+    }
+  ],
+  "targets": [
+    {
+      "targetId": "prose:intent",
+      "scope": "prose",
+      "screenId": "login",
+      "kind": "intent",
+      "label": "Intent",
+      "semanticPath": [
+        "screen:login",
+        "prose:intent"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 12,
+        "columnStart": 1,
+        "lineEnd": 12,
+        "columnEnd": 109
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "screen:login",
+      "scope": "screen",
+      "screenId": "login",
+      "wireId": "login",
+      "kind": "screen",
+      "semanticPath": [
+        "screen:login"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 15,
+        "columnStart": 1,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-screen='login']",
+        "screenId": "login",
+        "kind": "screen"
+      },
+      "signature": {
+        "kind": "screen"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:content",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "content",
+      "kind": "main",
+      "parentTargetId": "screen:login",
+      "semanticPath": [
+        "screen:login",
+        "node:content"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 16,
+        "columnStart": 3,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-id='content']",
+        "screenId": "login",
+        "wireId": "content",
+        "kind": "main",
+        "path": "screen:login/node:content"
+      },
+      "signature": {
+        "kind": "main"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:auth-card",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "auth-card",
+      "kind": "card",
+      "parentTargetId": "node:content",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 17,
+        "columnStart": 5,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-id='auth-card']",
+        "screenId": "login",
+        "wireId": "auth-card",
+        "kind": "card",
+        "path": "screen:login/node:content/node:auth-card"
+      },
+      "signature": {
+        "kind": "card"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:title",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "title",
+      "kind": "heading",
+      "label": "Welcome back",
+      "parentTargetId": "node:auth-card",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:title"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 18,
+        "columnStart": 7,
+        "lineEnd": 18,
+        "columnEnd": 45
+      },
+      "dom": {
+        "selector": "[data-ws-id='title']",
+        "screenId": "login",
+        "wireId": "title",
+        "kind": "heading",
+        "path": "screen:login/node:content/node:auth-card/node:title"
+      },
+      "signature": {
+        "kind": "heading",
+        "text": "Welcome back"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:intro",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "intro",
+      "kind": "text",
+      "label": "Use your work email and password.",
+      "parentTargetId": "node:auth-card",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:intro"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 19,
+        "columnStart": 7,
+        "lineEnd": 19,
+        "columnEnd": 55
+      },
+      "dom": {
+        "selector": "[data-ws-id='intro']",
+        "screenId": "login",
+        "wireId": "intro",
+        "kind": "text",
+        "path": "screen:login/node:content/node:auth-card/node:intro"
+      },
+      "signature": {
+        "kind": "text",
+        "text": "Use your work email and password."
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:login-form",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "login-form",
+      "kind": "form",
+      "parentTargetId": "node:auth-card",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 20,
+        "columnStart": 7,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-id='login-form']",
+        "screenId": "login",
+        "wireId": "login-form",
+        "kind": "form",
+        "path": "screen:login/node:content/node:auth-card/node:login-form"
+      },
+      "signature": {
+        "kind": "form"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:email",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "email",
+      "kind": "field",
+      "label": "Work email",
+      "parentTargetId": "node:login-form",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:email"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 21,
+        "columnStart": 9,
+        "lineEnd": 21,
+        "columnEnd": 89
+      },
+      "dom": {
+        "selector": "[data-ws-id='email']",
+        "screenId": "login",
+        "wireId": "email",
+        "kind": "field",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:email"
+      },
+      "signature": {
+        "kind": "field",
+        "role": "textbox",
+        "text": "Work email"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:password",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "password",
+      "kind": "field",
+      "label": "Password",
+      "parentTargetId": "node:login-form",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:password"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 22,
+        "columnStart": 9,
+        "lineEnd": 22,
+        "columnEnd": 107
+      },
+      "dom": {
+        "selector": "[data-ws-id='password']",
+        "screenId": "login",
+        "wireId": "password",
+        "kind": "field",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:password"
+      },
+      "signature": {
+        "kind": "field",
+        "role": "textbox",
+        "text": "Password"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:assistive-row",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "assistive-row",
+      "kind": "row",
+      "parentTargetId": "node:login-form",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:assistive-row"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 23,
+        "columnStart": 9,
+        "lineEnd": 25,
+        "columnEnd": 64
+      },
+      "dom": {
+        "selector": "[data-ws-id='assistive-row']",
+        "screenId": "login",
+        "wireId": "assistive-row",
+        "kind": "row",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:assistive-row"
+      },
+      "signature": {
+        "kind": "row"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:remember",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "remember",
+      "kind": "checkbox",
+      "label": "Remember me",
+      "parentTargetId": "node:assistive-row",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:assistive-row",
+        "node:remember"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 24,
+        "columnStart": 11,
+        "lineEnd": 24,
+        "columnEnd": 55
+      },
+      "dom": {
+        "selector": "[data-ws-id='remember']",
+        "screenId": "login",
+        "wireId": "remember",
+        "kind": "checkbox",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:assistive-row/node:remember"
+      },
+      "signature": {
+        "kind": "checkbox",
+        "role": "checkbox",
+        "text": "Remember me"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:forgot",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "forgot",
+      "kind": "link",
+      "label": "Forgot password?",
+      "parentTargetId": "node:assistive-row",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:assistive-row",
+        "node:forgot"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 25,
+        "columnStart": 11,
+        "lineEnd": 25,
+        "columnEnd": 64
+      },
+      "dom": {
+        "selector": "[data-ws-id='forgot']",
+        "screenId": "login",
+        "wireId": "forgot",
+        "kind": "link",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:assistive-row/node:forgot"
+      },
+      "signature": {
+        "kind": "link",
+        "role": "link",
+        "text": "Forgot password?"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:form-error",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "form-error",
+      "kind": "alert",
+      "label": "Incorrect email or password.",
+      "parentTargetId": "node:login-form",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:form-error"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 26,
+        "columnStart": 9,
+        "lineEnd": 26,
+        "columnEnd": 84
+      },
+      "dom": {
+        "selector": "[data-ws-id='form-error']",
+        "screenId": "login",
+        "wireId": "form-error",
+        "kind": "alert",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:form-error"
+      },
+      "signature": {
+        "kind": "alert",
+        "role": "alert",
+        "text": "Incorrect email or password."
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:primary-actions",
+      "scope": "section",
+      "screenId": "login",
+      "wireId": "primary-actions",
+      "kind": "actions",
+      "parentTargetId": "node:login-form",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:primary-actions"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 27,
+        "columnStart": 9,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-id='primary-actions']",
+        "screenId": "login",
+        "wireId": "primary-actions",
+        "kind": "actions",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:primary-actions"
+      },
+      "signature": {
+        "kind": "actions"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "node:submit",
+      "scope": "element",
+      "screenId": "login",
+      "wireId": "submit",
+      "kind": "button",
+      "label": "Sign in",
+      "parentTargetId": "node:primary-actions",
+      "semanticPath": [
+        "screen:login",
+        "node:content",
+        "node:auth-card",
+        "node:login-form",
+        "node:primary-actions",
+        "node:submit"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 28,
+        "columnStart": 11,
+        "lineEnd": 28,
+        "columnEnd": 63
+      },
+      "dom": {
+        "selector": "[data-ws-id='submit']",
+        "screenId": "login",
+        "wireId": "submit",
+        "kind": "button",
+        "path": "screen:login/node:content/node:auth-card/node:login-form/node:primary-actions/node:submit"
+      },
+      "signature": {
+        "kind": "button",
+        "role": "button",
+        "text": "Sign in"
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "acceptance:login-01",
+      "scope": "acceptance",
+      "screenId": "login",
+      "kind": "acceptance",
+      "label": "Keyboard-only user can complete sign-in and trigger password recovery.",
+      "semanticPath": [
+        "screen:login",
+        "acceptance:login-01"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 47,
+        "columnStart": 1,
+        "lineEnd": 47,
+        "columnEnd": 73
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "acceptance:login-02",
+      "scope": "acceptance",
+      "screenId": "login",
+      "kind": "acceptance",
+      "label": "Inline error stays close to the password field and does not replace the field label.",
+      "semanticPath": [
+        "screen:login",
+        "acceptance:login-02"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 48,
+        "columnStart": 1,
+        "lineEnd": 48,
+        "columnEnd": 87
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    },
+    {
+      "targetId": "acceptance:login-03",
+      "scope": "acceptance",
+      "screenId": "login",
+      "kind": "acceptance",
+      "label": "Primary action remains visible without scrolling on common mobile widths.",
+      "semanticPath": [
+        "screen:login",
+        "acceptance:login-03"
+      ],
+      "span": {
+        "file": "fixtures/login.wirespec.md",
+        "lineStart": 49,
+        "columnStart": 1,
+        "lineEnd": 49,
+        "columnEnd": 76
+      },
+      "variants": [
+        "base",
+        "error",
+        "loading",
+        "mobile",
+        "mobile+error",
+        "mobile+loading"
+      ]
+    }
+  ],
+  "renames": []
+};
+      const initialSidecar = {
+  "schemaVersion": "0.2.0",
+  "documentId": "login",
+  "source": {
+    "wireFile": "fixtures/login.wirespec.md"
+  },
+  "threads": [
+    {
+      "id": "ann-fa94e2410f77",
+      "title": "Keep the primary action above the fold",
+      "status": "open",
+      "severity": "must",
+      "motivation": "blocking",
+      "category": "responsive",
+      "taxonomy": [
+        "LAY-10",
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:primary-actions",
+        "screenId": "login",
+        "scope": "section",
+        "wireId": "primary-actions",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "primary-actions"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='primary-actions']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 27,
+            "lineEnd": 28,
+            "columnStart": 9,
+            "columnEnd": 63
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-0ddb81210fa6",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "On short mobile heights, the error message pushes the submit action too low. Keep the action visible without making the card feel like a dashboard shell.",
+          "createdAt": "2026-04-11T18:40:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:40:00.000Z",
+      "updatedAt": "2026-04-11T18:40:00.000Z"
+    },
+    {
+      "id": "ann-0a9fa3ed2a17",
+      "title": "Error copy should preserve recovery confidence",
+      "status": "open",
+      "severity": "should",
+      "motivation": "change-request",
+      "category": "copy",
+      "taxonomy": [
+        "QA-03"
+      ],
+      "target": {
+        "targetId": "node:form-error",
+        "screenId": "login",
+        "scope": "element",
+        "wireId": "form-error",
+        "variantKey": "mobile+error",
+        "anchors": [
+          {
+            "type": "node-id",
+            "value": "form-error"
+          },
+          {
+            "type": "selector",
+            "value": "[data-ws-id='form-error']"
+          },
+          {
+            "type": "source-span",
+            "file": "fixtures/login.wirespec.md",
+            "lineStart": 26,
+            "lineEnd": 26,
+            "columnStart": 9,
+            "columnEnd": 84
+          },
+          {
+            "type": "text-quote",
+            "exact": "Incorrect email or password."
+          }
+        ]
+      },
+      "messages": [
+        {
+          "id": "msg-97df6de90715",
+          "author": "reviewer",
+          "authorRole": "human",
+          "body": "The inline error should stay direct and calm. It should acknowledge failure without sounding punitive or hiding the recovery path.",
+          "createdAt": "2026-04-11T18:41:00.000Z"
+        }
+      ],
+      "createdAt": "2026-04-11T18:41:00.000Z",
+      "updatedAt": "2026-04-11T18:41:00.000Z"
+    }
+  ]
+};
+      createReviewRuntime({
+        documentId: "login",
+        sourceMap,
+        initialSidecar,
+        bridgeUrl: "http://127.0.0.1:4317",
+        wireFile: sourceMap.entryFile,
+      });
+    </script>
+  </body>
+</html>

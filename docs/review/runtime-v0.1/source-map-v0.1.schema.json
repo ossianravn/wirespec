@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wirespec.dev/schemas/source-map-v0.1.schema.json",
+  "title": "WireSpec Target Source Map v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "documentId",
+    "entryFile",
+    "generatedAt",
+    "variants",
+    "targets"
+  ],
+  "properties": {
+    "version": {
+      "const": "0.1"
+    },
+    "documentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entryFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contentHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variantRef"
+      },
+      "default": []
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/target"
+      },
+      "minItems": 1
+    },
+    "renames": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/renameEntry"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "scope": {
+      "type": "string",
+      "enum": [
+        "screen",
+        "section",
+        "element",
+        "prose",
+        "acceptance",
+        "region"
+      ]
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "lineStart",
+        "columnStart",
+        "lineEnd",
+        "columnEnd"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lineStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnStart": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lineEnd": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "columnEnd": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "normalizedRect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "variantRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string"
+        },
+        "breakpoint": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        }
+      }
+    },
+    "domAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selector",
+        "screenId"
+      ],
+      "properties": {
+        "selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "screenId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wireId": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "variantKey": {
+          "type": "string"
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetId",
+        "scope",
+        "screenId",
+        "kind",
+        "semanticPath",
+        "span"
+      ],
+      "properties": {
+        "targetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "screenId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wireId": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string"
+        },
+        "parentTargetId": {
+          "type": "string"
+        },
+        "semanticPath": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "span": {
+          "$ref": "#/$defs/span"
+        },
+        "dom": {
+          "$ref": "#/$defs/domAnchor"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        },
+        "signature": {
+          "$ref": "#/$defs/signature"
+        },
+        "lastKnownRect": {
+          "$ref": "#/$defs/normalizedRect"
+        }
+      }
+    },
+    "renameEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fromTargetId",
+        "toTargetId"
+      ],
+      "properties": {
+        "fromTargetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "toTargetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

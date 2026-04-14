@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "taskFiles": 1,
+    "documents": [
+      "login"
+    ],
+    "openTasks": 0,
+    "latestDocumentId": "login",
+    "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json"
+  },
+  "latestTaskFile": "/tmp/wirespec-cross-ide-XXFMQQ/demo-workspace/.wirespec/reviews/login.agent-tasks.json",
+  "latestDocumentId": "login",
+  "nextTask": null
+}

@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0.0-rc0",
+  "sourceFormat": "markdown+wirespec",
+  "selection": {
+    "breakpoint": "mobile",
+    "state": "error"
+  },
+  "root": {
+    "kind": "screen",
+    "id": "login",
+    "props": {
+      "route": "/login",
+      "title": "Sign in"
+    },
+    "children": [
+      {
+        "kind": "main",
+        "id": "content",
+        "props": {
+          "width": "fill",
+          "align": "center",
+          "justify": "center",
+          "padding": "lg"
+        },
+        "children": [
+          {
+            "kind": "card",
+            "id": "auth-card",
+            "props": {
+              "width": "fill",
+              "max": "fill"
+            },
+            "children": [
+              {
+                "kind": "heading",
+                "id": "title",
+                "props": {
+                  "level": 1,
+                  "text": "Welcome back"
+                },
+                "children": []
+              },
+              {
+                "kind": "text",
+                "id": "intro",
+                "props": {
+                  "text": "Use your work email and password."
+                },
+                "children": []
+              },
+              {
+                "kind": "form",
+                "id": "login-form",
+                "props": {
+                  "submit": "sign-in"
+                },
+                "children": [
+                  {
+                    "kind": "field",
+                    "id": "email",
+                    "props": {
+                      "type": "email",
+                      "name": "email",
+                      "label": "Work email",
+                      "required": true,
+                      "autocomplete": "email"
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "field",
+                    "id": "password",
+                    "props": {
+                      "type": "password",
+                      "name": "password",
+                      "label": "Password",
+                      "required": true,
+                      "autocomplete": "current-password",
+                      "invalid": true
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "row",
+                    "id": "assistive-row",
+                    "props": {
+                      "justify": "between",
+                      "align": "center"
+                    },
+                    "children": [
+                      {
+                        "kind": "checkbox",
+                        "id": "remember",
+                        "props": {
+                          "name": "remember",
+                          "label": "Remember me"
+                        },
+                        "children": []
+                      },
+                      {
+                        "kind": "link",
+                        "id": "forgot",
+                        "props": {
+                          "href": "/forgot-password",
+                          "label": "Forgot password?"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "alert",
+                    "id": "form-error",
+                    "props": {
+                      "tone": "critical",
+                      "text": "Incorrect email or password.",
+                      "visible": true
+                    },
+                    "children": []
+                  },
+                  {
+                    "kind": "actions",
+                    "id": "primary-actions",
+                    "props": {
+                      "direction": "column",
+                      "width": "fill"
+                    },
+                    "children": [
+                      {
+                        "kind": "button",
+                        "id": "submit",
+                        "props": {
+                          "variant": "primary",
+                          "action": "submit",
+                          "label": "Sign in"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
