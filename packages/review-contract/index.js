@@ -313,6 +313,85 @@ function reviewThreadCardHtml(options) {
     `;
 }
 
+function reviewRoleAttribute(role) {
+  return role ? ` data-role="${escapeReviewHtml(role)}"` : "";
+}
+
+function reviewDrawerEmptyHtml(options = {}) {
+  const className = options.className || "ws-review-empty";
+  const message = options.message ?? REVIEW_UI_COPY.emptyThreads;
+  if (options.container === "div") {
+    return `<div class="${escapeReviewHtml(className)}"><p>${escapeReviewHtml(message)}</p></div>`;
+  }
+  return `<p class="${escapeReviewHtml(className)}">${escapeReviewHtml(message)}</p>`;
+}
+
+function reviewDrawerFilterHtml(options = {}) {
+  const showClosed = Boolean(options.showClosed);
+  const filterClass = options.filterClass || "ws-review-drawer-filter";
+  const buttonClass = options.buttonClass || "ws-review-filter-chip";
+  const metaClass = options.metaClass || "ws-review-drawer-meta";
+  return `
+      <div class="${escapeReviewHtml(filterClass)}" data-role="filter">
+        <button type="button" class="${escapeReviewHtml(buttonClass)}" data-filter="active" aria-pressed="${showClosed ? "false" : "true"}">${REVIEW_UI_COPY.activeFilter}</button>
+        <button type="button" class="${escapeReviewHtml(buttonClass)}" data-filter="all" aria-pressed="${showClosed ? "true" : "false"}">${REVIEW_UI_COPY.allFilter}</button>
+        <span class="${escapeReviewHtml(metaClass)}" data-role="filter-target">${escapeReviewHtml(options.filterTargetText || "")}</span>
+      </div>
+    `;
+}
+
+function reviewDrawerFooterHtml(options = {}) {
+  const footerClass = options.footerClass || "ws-review-drawer-footer";
+  const actions = Array.isArray(options.actions) ? options.actions : [];
+  const buttons = actions
+    .map((action) => {
+      const primary = action.primary ? ' data-primary="true"' : "";
+      return `<button type="button" data-action="${escapeReviewHtml(action.action)}"${primary}>${escapeReviewHtml(action.label)}</button>`;
+    })
+    .join("\n        ");
+  const content = options.actionsClass
+    ? `<div class="${escapeReviewHtml(options.actionsClass)}">${buttons}</div>`
+    : buttons;
+  return `
+      <div class="${escapeReviewHtml(footerClass)}">
+        ${content}
+      </div>
+    `;
+}
+
+function reviewDrawerShellHtml(options = {}) {
+  const headerClass = options.headerClass || "ws-review-drawer-header";
+  const bodyClass = options.bodyClass || "ws-review-drawer-body";
+  const titleClass = reviewClassAttribute(options.titleClass);
+  const metaClass = options.metaClass ? ` class="${escapeReviewHtml(options.metaClass)}"` : "";
+  const metaRole = reviewRoleAttribute(options.metaRole);
+  const titleHtml = `<h2${titleClass}>${escapeReviewHtml(options.title || REVIEW_UI_COPY.drawerTitle)}</h2>`;
+  const metaHtml = `<p${metaClass}${metaRole}>${escapeReviewHtml(options.metaText || "")}</p>`;
+  const closeAction = options.closeAction || "close";
+  const closeButton = options.includeHeaderClose
+    ? `<button type="button" data-action="${escapeReviewHtml(closeAction)}">${REVIEW_UI_COPY.close}</button>`
+    : "";
+  const headerInner = options.titleRowClass
+    ? `<div class="${escapeReviewHtml(options.titleRowClass)}">
+        <div>
+          ${titleHtml}
+          ${metaHtml}
+        </div>
+        ${closeButton}
+      </div>
+      ${options.filterHtml || ""}`
+    : `${titleHtml}
+      ${metaHtml}
+      ${options.filterHtml || ""}`;
+  return `
+    <div class="${escapeReviewHtml(headerClass)}">
+      ${headerInner}
+    </div>
+    <div class="${escapeReviewHtml(bodyClass)}"${reviewRoleAttribute(options.bodyRole)}>${options.bodyHtml || ""}</div>
+    ${options.footerHtml || ""}
+  `;
+}
+
 function reviewCountSummary(counts) {
   return `${counts.active} active · ${counts.total} total`;
 }
@@ -549,6 +628,10 @@ module.exports = {
   reviewCountSummary,
   reviewComposerHtml,
   reviewDefaultDraftTitle,
+  reviewDrawerEmptyHtml,
+  reviewDrawerFilterHtml,
+  reviewDrawerFooterHtml,
+  reviewDrawerShellHtml,
   escapeReviewHtml,
   reviewLatestMessageBody,
   reviewPinTitle,

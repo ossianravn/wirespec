@@ -11,7 +11,7 @@ This package is intentionally small. It centralizes values that must not drift a
 - review motivations
 - annotation anchor type names
 - the canonical annotation sidecar JSON Schema
-- shared reviewer-facing UI copy and HTML primitives for review bars, composers, thread cards, status badges, and thread actions
+- shared reviewer-facing UI copy and HTML primitives for review bars, composers, drawers, filters, empty states, thread cards, status badges, and thread actions
 
 The package is CommonJS so the IDE core can `require()` it directly. ESM packages should import the default export and destructure the values they need.
 

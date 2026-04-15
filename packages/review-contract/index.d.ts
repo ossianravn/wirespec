@@ -74,6 +74,44 @@ export interface ReviewThreadCardHtmlOptions {
   actionsHtml?: string;
   dataOrphaned?: boolean;
 }
+export interface ReviewDrawerAction {
+  action: string;
+  label: string;
+  primary?: boolean;
+}
+export interface ReviewDrawerEmptyHtmlOptions {
+  className?: string;
+  message?: string;
+  container?: "p" | "div";
+}
+export interface ReviewDrawerFilterHtmlOptions {
+  showClosed?: boolean;
+  filterTargetText?: string;
+  filterClass?: string;
+  buttonClass?: string;
+  metaClass?: string;
+}
+export interface ReviewDrawerFooterHtmlOptions {
+  footerClass?: string;
+  actionsClass?: string;
+  actions?: ReviewDrawerAction[];
+}
+export interface ReviewDrawerShellHtmlOptions {
+  title?: string;
+  metaText?: string;
+  headerClass?: string;
+  titleRowClass?: string;
+  titleClass?: string;
+  metaClass?: string;
+  metaRole?: string;
+  includeHeaderClose?: boolean;
+  closeAction?: string;
+  filterHtml?: string;
+  bodyClass?: string;
+  bodyRole?: string;
+  bodyHtml?: string;
+  footerHtml?: string;
+}
 export function activeReviewStatusSet(): Set<string>;
 export function isClosedReviewStatus(status: string): boolean;
 export function isActiveReviewStatus(status: string): boolean;
@@ -87,6 +125,10 @@ export function reviewComposerHtml(options: {
   actionsClass?: string;
 }): string;
 export function reviewDefaultDraftTitle(target: { label?: string } | null | undefined): string;
+export function reviewDrawerEmptyHtml(options?: ReviewDrawerEmptyHtmlOptions): string;
+export function reviewDrawerFilterHtml(options?: ReviewDrawerFilterHtmlOptions): string;
+export function reviewDrawerFooterHtml(options?: ReviewDrawerFooterHtmlOptions): string;
+export function reviewDrawerShellHtml(options?: ReviewDrawerShellHtmlOptions): string;
 export function reviewLatestMessageBody(thread: ReviewThreadLike | null | undefined): string;
 export function reviewPinTitle(count: number): string;
 export function reviewScopeLabel(scope: string | null | undefined): string;
@@ -143,6 +185,10 @@ declare const contract: {
   reviewCountSummary: typeof reviewCountSummary;
   reviewComposerHtml: typeof reviewComposerHtml;
   reviewDefaultDraftTitle: typeof reviewDefaultDraftTitle;
+  reviewDrawerEmptyHtml: typeof reviewDrawerEmptyHtml;
+  reviewDrawerFilterHtml: typeof reviewDrawerFilterHtml;
+  reviewDrawerFooterHtml: typeof reviewDrawerFooterHtml;
+  reviewDrawerShellHtml: typeof reviewDrawerShellHtml;
   escapeReviewHtml: typeof escapeReviewHtml;
   reviewLatestMessageBody: typeof reviewLatestMessageBody;
   reviewPinTitle: typeof reviewPinTitle;

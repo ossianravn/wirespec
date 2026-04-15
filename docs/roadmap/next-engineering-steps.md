@@ -39,6 +39,8 @@ Follow-up complete: added browser-safe review contract primitives for toolbar an
 
 Follow-up complete: extracted shared thread-card, badge, latest-message, summary, and thread-action primitives. Bridge and runtime still keep their own layout classes and actions, but no longer hand-roll the same annotation card markup and escaping rules.
 
+Follow-up complete: extracted shared drawer shell, filter, footer, and empty-state primitives. Bridge and runtime still render their existing visual systems, but the drawer structure and filter state rules now come from the shared review contract.
+
 The bridge and runtime annotation UIs are still separate implementations. After the data contract is stable, consolidate the shared behavior, labels, state rules, and reviewer-facing copy so the two surfaces do not drift again.
 
 The goal is not to expose implementation detail to reviewers. The review UI should stay focused on adding notes, finding open feedback, and saving structured work for the developer loop.

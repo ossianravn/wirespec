@@ -7,6 +7,9 @@ const {
   reviewCountSummary,
   reviewComposerHtml,
   reviewDefaultDraftTitle,
+  reviewDrawerEmptyHtml,
+  reviewDrawerFooterHtml,
+  reviewDrawerShellHtml,
   reviewPinTitle,
   reviewToolbarHtml,
   reviewThreadActionButtonHtml,
@@ -484,21 +487,22 @@ export function mountReviewOverlay(options) {
             });
           })
           .join("")
-      : `<div class="ws-review-empty"><p>No review notes yet.</p></div>`;
+      : reviewDrawerEmptyHtml({
+        container: "div",
+        message: "No review notes yet.",
+      });
 
-    drawer.innerHTML = `
-      <div class="ws-review-drawer-header">
-        <h2>${REVIEW_UI_COPY.drawerTitle}</h2>
-        <p class="ws-review-label">${reviewCountSummary({
-          active: threads.filter((thread) => isActiveReviewStatus(thread.status)).length,
-          total: threads.length,
-        })}</p>
-      </div>
-      <div class="ws-review-drawer-body">${cards}</div>
-      <div class="ws-review-drawer-footer">
-        <button type="button" data-action="close-drawer">${REVIEW_UI_COPY.close}</button>
-      </div>
-    `;
+    drawer.innerHTML = reviewDrawerShellHtml({
+      metaClass: "ws-review-label",
+      metaText: reviewCountSummary({
+        active: threads.filter((thread) => isActiveReviewStatus(thread.status)).length,
+        total: threads.length,
+      }),
+      bodyHtml: cards,
+      footerHtml: reviewDrawerFooterHtml({
+        actions: [{ action: "close-drawer", label: REVIEW_UI_COPY.close }],
+      }),
+    });
 
     drawer.querySelector('[data-action="close-drawer"]')?.addEventListener("click", closeDrawer);
     drawer.querySelectorAll("[data-thread-action]").forEach((button) => {

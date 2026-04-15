@@ -81,6 +81,41 @@ test("review UI helpers keep status labels and transitions consistent", () => {
     }),
     /Unsafe &lt;title&gt;/,
   );
+  assert.match(
+    contract.reviewDrawerFilterHtml({
+      showClosed: true,
+      filterTargetText: "Filtered to <target>",
+    }),
+    /aria-pressed="true">All/,
+  );
+  assert.match(contract.reviewDrawerFilterHtml({ filterTargetText: "<target>" }), /&lt;target&gt;/);
+  assert.match(
+    contract.reviewDrawerEmptyHtml({
+      container: "div",
+      message: "No <notes>",
+    }),
+    /<div class="ws-review-empty"><p>No &lt;notes&gt;<\/p><\/div>/,
+  );
+  assert.match(
+    contract.reviewDrawerFooterHtml({
+      actionsClass: "actions",
+      actions: [{ action: "close", label: "Close" }],
+    }),
+    /class="actions"/,
+  );
+  assert.match(
+    contract.reviewDrawerShellHtml({
+      titleClass: "title",
+      titleRowClass: "row",
+      metaClass: "meta",
+      metaRole: "meta",
+      includeHeaderClose: true,
+      filterHtml: contract.reviewDrawerFilterHtml(),
+      bodyRole: "body",
+      bodyHtml: "<p>Body</p>",
+    }),
+    /data-role="body"/,
+  );
 });
 
 test("browser ESM contract exposes the same UI primitives", async () => {
@@ -99,6 +134,8 @@ test("browser ESM contract exposes the same UI primitives", async () => {
       messages: [],
     },
   }), /Browser/);
+  assert.match(browserContract.default.reviewDrawerEmptyHtml(), /No threads in this view/);
+  assert.match(browserContract.default.reviewDrawerShellHtml({ bodyHtml: "Body" }), /ws-review-drawer-body/);
 });
 
 test("annotation sidecar schema uses the canonical version and anchor names", () => {

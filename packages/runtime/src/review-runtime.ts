@@ -28,6 +28,10 @@ const {
   REVIEW_UI_COPY,
   isClosedReviewStatus,
   reviewCountSummary,
+  reviewDrawerEmptyHtml,
+  reviewDrawerFilterHtml,
+  reviewDrawerFooterHtml,
+  reviewDrawerShellHtml,
   reviewPinTitle,
   reviewScopeLabel,
   reviewThreadActionButtonHtml,
@@ -374,31 +378,25 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
   const drawer = document.createElement("aside");
   drawer.className = "ws-review-drawer";
   drawer.setAttribute("aria-label", REVIEW_UI_COPY.drawerLabel);
-  drawer.innerHTML = `
-    <div class="ws-review-drawer-header">
-      <div class="ws-review-drawer-title-row">
-        <div>
-          <h2 class="ws-review-drawer-title">${REVIEW_UI_COPY.drawerTitle}</h2>
-          <p class="ws-review-drawer-meta" data-role="meta"></p>
-        </div>
-        <button type="button" data-action="close">${REVIEW_UI_COPY.close}</button>
-      </div>
-      <div class="ws-review-drawer-filter">
-        <button type="button" class="ws-review-filter-chip" data-filter="active" aria-pressed="true">${REVIEW_UI_COPY.activeFilter}</button>
-        <button type="button" class="ws-review-filter-chip" data-filter="all" aria-pressed="false">${REVIEW_UI_COPY.allFilter}</button>
-        <span class="ws-review-drawer-meta" data-role="filter-target"></span>
-      </div>
-    </div>
-    <div class="ws-review-drawer-body" data-role="body"></div>
-    <div class="ws-review-drawer-footer">
-      <div class="ws-review-export-actions">
-        <button type="button" data-action="export-annotations" data-primary="true">${REVIEW_UI_COPY.exportAnnotations}</button>
-        <button type="button" data-action="export-tasks">${REVIEW_UI_COPY.exportTasks}</button>
-        <button type="button" data-action="import">${REVIEW_UI_COPY.importAnnotations}</button>
-        <button type="button" data-action="clear-local">${REVIEW_UI_COPY.resetLocal}</button>
-      </div>
-    </div>
-  `;
+  drawer.innerHTML = reviewDrawerShellHtml({
+    titleClass: "ws-review-drawer-title",
+    titleRowClass: "ws-review-drawer-title-row",
+    metaClass: "ws-review-drawer-meta",
+    metaRole: "meta",
+    includeHeaderClose: true,
+    closeAction: "close",
+    filterHtml: reviewDrawerFilterHtml(),
+    bodyRole: "body",
+    footerHtml: reviewDrawerFooterHtml({
+      actionsClass: "ws-review-export-actions",
+      actions: [
+        { action: "export-annotations", label: REVIEW_UI_COPY.exportAnnotations, primary: true },
+        { action: "export-tasks", label: REVIEW_UI_COPY.exportTasks },
+        { action: "import", label: REVIEW_UI_COPY.importAnnotations },
+        { action: "clear-local", label: REVIEW_UI_COPY.resetLocal },
+      ],
+    }),
+  });
   document.body.append(drawer);
 
   const importInput = document.createElement("input");
@@ -408,11 +406,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
   document.body.append(importInput);
 
   const metaNode = drawer.querySelector('[data-role="meta"]') as HTMLParagraphElement | null;
-  const filterNode = drawer.querySelector('[data-role="filter-target"]') as HTMLSpanElement | null;
   const bodyNode = drawer.querySelector('[data-role="body"]') as HTMLDivElement | null;
-  const closeButton = drawer.querySelector('[data-action="close"]') as HTMLButtonElement | null;
-  const activeFilterButton = drawer.querySelector('[data-filter="active"]') as HTMLButtonElement | null;
-  const allFilterButton = drawer.querySelector('[data-filter="all"]') as HTMLButtonElement | null;
 
   const sidecar = (): AnnotationSidecar =>
     reviewStoreToSidecar(store, options.sourceMap, {
@@ -513,21 +507,25 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
   };
 
   const renderDrawer = (): void => {
-    if (!metaNode || !filterNode || !bodyNode || !activeFilterButton || !allFilterButton) {
+    if (!metaNode || !bodyNode) {
       return;
     }
     const counts = reviewCounts(store);
     metaNode.textContent = reviewCountSummary(counts);
-    filterNode.textContent = filterTargetId
-      ? `Filtered to ${labelForTarget(options.sourceMap, filterTargetId)}`
-      : "";
-    activeFilterButton.setAttribute("aria-pressed", showClosed ? "false" : "true");
-    allFilterButton.setAttribute("aria-pressed", showClosed ? "true" : "false");
+    const filterNode = drawer.querySelector('[data-role="filter"]');
+    if (filterNode) {
+      filterNode.outerHTML = reviewDrawerFilterHtml({
+        showClosed,
+        filterTargetText: filterTargetId
+          ? `Filtered to ${labelForTarget(options.sourceMap, filterTargetId)}`
+          : "",
+      });
+    }
 
     const entries = currentThreads();
     bodyNode.innerHTML = entries.length
       ? entries.map(renderThreadCard).join("")
-      : `<p class="ws-review-empty">${REVIEW_UI_COPY.emptyThreads}</p>`;
+      : reviewDrawerEmptyHtml();
   };
 
   const clearPins = (): void => {
@@ -622,6 +620,12 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
 
   const onDrawerClick = (event: MouseEvent): void => {
     const rawTarget = event.target instanceof HTMLElement ? event.target : null;
+    const filter = rawTarget?.getAttribute("data-filter");
+    if (filter === "active" || filter === "all") {
+      showClosed = filter === "all";
+      render();
+      return;
+    }
     const action = rawTarget?.getAttribute("data-action");
     if (!action) {
       return;
@@ -660,15 +664,6 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     if (drawerOpen && !filterTargetId) {
       filterTargetId = undefined;
     }
-    render();
-  });
-  closeButton?.addEventListener("click", () => controller.closeDrawer());
-  activeFilterButton?.addEventListener("click", () => {
-    showClosed = false;
-    render();
-  });
-  allFilterButton?.addEventListener("click", () => {
-    showClosed = true;
     render();
   });
   bodyNode?.addEventListener("click", onDrawerBodyClick);
