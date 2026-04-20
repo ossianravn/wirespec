@@ -56,19 +56,59 @@ Inside it, the most important current sources of truth are:
 From the repo root:
 
 ```bash
-npm run test
-npm run generate:examples
+pnpm run test
+pnpm run generate:examples
 ```
 
 More targeted:
 
 ```bash
-npm run test:core
-npm run test:runtime
-npm run test:bridge
-npm run generate:cross-ide
-npm run generate:runtime
-npm run generate:bridge
+pnpm run test:core
+pnpm run test:runtime
+pnpm run test:bridge
+pnpm run generate:cross-ide
+pnpm run generate:runtime
+pnpm run generate:bridge
+```
+
+## Install in another repo with pnpm
+
+Add WireSpec from this GitHub repo:
+
+```bash
+pnpm add -D wirespec@github:ossianravn/wirespec
+```
+
+Then use the package from the target repo:
+
+```bash
+pnpm exec wirespec-inspect .
+pnpm exec wirespec summary --workspace .
+pnpm exec wirespec open-next --workspace .
+pnpm exec wirespec-bridge --workspace . --port 4317
+pnpm exec wirespec-bridge-watch --url http://127.0.0.1:4317/api/events
+```
+
+The package also exposes the browser/runtime API:
+
+```ts
+import {
+  buildSourceMap,
+  parseWireSpecDocument,
+  renderDocumentSelection,
+} from "wirespec";
+```
+
+Useful target-repo scripts:
+
+```json
+{
+  "scripts": {
+    "wirespec:inspect": "wirespec-inspect .",
+    "wirespec:summary": "wirespec summary --workspace .",
+    "wirespec:bridge": "wirespec-bridge --workspace . --port 4317"
+  }
+}
 ```
 
 ## Honest status

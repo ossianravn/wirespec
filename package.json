@@ -1,21 +1,77 @@
 {
-  "name": "wirespec-consolidated-repo",
-  "private": true,
-  "version": "0.5.0-consolidated",
-  "description": "Consolidated WireSpec handoff repo with language spec, runtime, review bridge, and IDE companions.",
+  "name": "wirespec",
+  "version": "0.5.0",
+  "description": "WireSpec language tools, review runtime, local bridge, and IDE task workflow.",
+  "packageManager": "pnpm@9.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ossianravn/wirespec.git"
+  },
+  "homepage": "https://github.com/ossianravn/wirespec#readme",
+  "bugs": {
+    "url": "https://github.com/ossianravn/wirespec/issues"
+  },
+  "main": "./packages/runtime/dist/index.js",
+  "types": "./packages/runtime/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./packages/runtime/dist/index.d.ts",
+      "import": "./packages/runtime/dist/index.js"
+    },
+    "./runtime": {
+      "types": "./packages/runtime/dist/index.d.ts",
+      "import": "./packages/runtime/dist/index.js"
+    },
+    "./bridge/client": {
+      "import": "./packages/bridge/src/bridge-client.js"
+    },
+    "./bridge/runtime": {
+      "import": "./packages/bridge/src/review-runtime.js"
+    },
+    "./review-contract": {
+      "types": "./packages/review-contract/index.d.ts",
+      "default": "./packages/review-contract/index.js"
+    },
+    "./skill": "./skills/wirespec/SKILL.md",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "wirespec": "./packages/core/bin/wirespec-ide-core.js",
+    "wirespec-ide-core": "./packages/core/bin/wirespec-ide-core.js",
+    "wirespec-bridge": "./packages/bridge/src/cli-bridge-server.js",
+    "wirespec-bridge-watch": "./packages/bridge/src/cli-bridge-watch.js",
+    "wirespec-inspect": "./skills/wirespec/scripts/inspect_wirespec_repo.mjs"
+  },
+  "files": [
+    "README.md",
+    "docs/spec/v1-rc0",
+    "packages/bridge/README.md",
+    "packages/bridge/package.json",
+    "packages/bridge/src",
+    "packages/core/README.md",
+    "packages/core/bin",
+    "packages/core/src",
+    "packages/review-contract",
+    "packages/runtime/README.md",
+    "packages/runtime/dist",
+    "packages/runtime/package.json",
+    "packages/runtime/schemas",
+    "skills/wirespec"
+  ],
   "scripts": {
-    "test": "npm run test:contract && npm run test:core && npm run test:runtime && npm run test:bridge && npm run test:e2e",
-    "test:contract": "npm --prefix packages/review-contract test",
+    "test": "pnpm run test:contract && pnpm run test:core && pnpm run test:runtime && pnpm run test:bridge && pnpm run test:e2e",
+    "test:contract": "pnpm --dir packages/review-contract test",
     "test:core": "node --test packages/core/test/*.test.js",
-    "test:runtime": "npm --prefix packages/runtime test",
-    "test:bridge": "npm --prefix packages/bridge test",
+    "test:runtime": "pnpm --dir packages/runtime test",
+    "test:bridge": "pnpm --dir packages/bridge test",
     "test:e2e": "node tools/e2e-demo.mjs",
     "demo:e2e": "node tools/e2e-demo.mjs --keep",
-    "generate:contract": "npm --prefix packages/review-contract run generate:schema",
-    "generate:examples": "npm run generate:cross-ide && npm run generate:runtime && npm run generate:bridge",
+    "generate:contract": "pnpm --dir packages/review-contract run generate:schema",
+    "generate:examples": "pnpm run generate:cross-ide && pnpm run generate:runtime && pnpm run generate:bridge",
     "generate:cross-ide": "node tools/generate-examples.js",
-    "generate:runtime": "npm --prefix packages/runtime run generate:examples",
-    "generate:bridge": "npm --prefix packages/bridge run generate:examples"
+    "generate:runtime": "pnpm --dir packages/runtime run generate:examples",
+    "generate:bridge": "pnpm --dir packages/bridge run generate:examples",
+    "pack:local": "pnpm pack --pack-destination dist"
   },
   "engines": {
     "node": ">=18"
