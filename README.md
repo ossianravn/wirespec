@@ -1,105 +1,194 @@
-# WireSpec consolidated repo
+# WireSpec
 
-This is the **single handoff package** for the full WireSpec solution created in this thread.
+WireSpec is a Markdown-native UI specification and review workflow for teams building interfaces with coding agents.
 
-It is designed to let you continue working **outside this environment** without needing to chase earlier zips, missing docs, or superseded slices.
+It gives product, design, and engineering a small text format for describing screens before implementation, rendering low-fidelity previews, collecting structured browser feedback, and turning that feedback into actionable repo files.
 
-## What is canonical now
+WireSpec is useful when a normal prompt is too loose, but a high-fidelity design file is more than the work needs.
 
-Treat **this repo folder** as the canonical handoff going forward.
+## Why Use It
 
-Inside it, the most important current sources of truth are:
+Coding agents are fast at producing UI, but they need a precise target. A prose prompt often leaves too much unstated: layout hierarchy, empty states, loading behavior, breakpoints, primary actions, error copy, and what should stay unchanged.
 
-- `docs/spec/v1-rc0/` — current language direction, grammar, AST schema, semantics, vocabulary, and canonical screens
-- `packages/runtime/` — parser, resolver, semantic renderer, source map, sidecar model, review runtime, and generated examples
-- `packages/bridge/` — localhost bridge that saves annotations and agent tasks into `.wirespec/reviews`
-- `packages/core/` — shared cross-IDE watcher, resolver, task selection, and audit logic
-- `packages/vscode/` — thin VS Code companion over the shared core
-- `packages/jetbrains/` — thin JetBrains companion skeleton over the shared core
-- `demo-workspace/` — working sample workspace for the IDE layer
-- `references/proper-ui/` — the Proper UI skill materials used as the design-quality constraint
+WireSpec puts a reviewable contract between intent and code:
 
-## What is included
+1. Write the screen in Markdown with a fenced `wirespec` block.
+2. Render a semantic low-fidelity preview.
+3. Review page, section, and element feedback in the browser.
+4. Save annotations into `.wirespec/reviews`.
+5. Give coding agents bounded tasks instead of vague comments.
+6. Resolve review threads as implementation changes land.
 
-### Active implementation packages
+## Install
 
-- `packages/runtime` from `wirespec_review_runtime_v0_2`
-- `packages/bridge` from `wirespec_local_bridge_v0_3`
-- `packages/core`, `packages/vscode`, `packages/jetbrains` from `wirespec_cross_ide_companions_v0_5`
-
-### Design and specification docs
-
-- `docs/spec/v1-reference` from the first v1 language pack
-- `docs/spec/v1-rc0` from the continuation pack
-- `docs/review/model-v0.1` from the annotation concept pack
-- `docs/review/runtime-v0.1` from the annotation runtime pack
-- `docs/full-solution/README.md` from the consolidated solution README
-- `docs/architecture/` from the cross-IDE slice
-
-### Preserved history and provenance
-
-- `archive/historical-slices/parser-renderer-adapter-v0.1`
-- `archive/historical-slices/vscode-ide-companion-v0.4`
-- `archive/original-packs/*.zip` with the original pack archives from the thread
-
-## Recommended place to start
-
-1. Read `docs/full-solution/README.md` for the end-to-end product framing.
-2. Read `docs/spec/v1-rc0/README.md` plus `grammar-v1-rc0.ebnf`, `wirespec-ast-v1-rc0.schema.json`, `semantics-v1.md`, and `vocabulary-v1.md`.
-3. Open `packages/runtime/README.md` to understand the current parser / renderer / review-runtime implementation.
-4. Open `packages/bridge/README.md` to see how browser review is persisted into repo files.
-5. Open `packages/core/README.md` and then `packages/vscode/README.md` / `packages/jetbrains/README.md` for the IDE loop.
-6. Use `demo-workspace/` as the starting fixture when continuing development.
-
-## Quick commands
-
-From the repo root:
-
-```bash
-pnpm run test
-pnpm run generate:examples
-```
-
-More targeted:
-
-```bash
-pnpm run test:core
-pnpm run test:runtime
-pnpm run test:bridge
-pnpm run generate:cross-ide
-pnpm run generate:runtime
-pnpm run generate:bridge
-```
-
-## Install in another repo with pnpm
-
-Add WireSpec from this GitHub repo:
+Install directly from GitHub:
 
 ```bash
 pnpm add -D wirespec@github:ossianravn/wirespec
 ```
 
-Then use the package from the target repo:
+Requires Node.js 18 or newer.
+
+## Quick Start
+
+Create a screen spec:
+
+````md
+---
+id: login
+route: /login
+component: src/features/auth/LoginCard.tsx
+---
+
+# Login
+
+## Intent
+Allow a returning user to sign in with a work email and password.
+
+```wirespec v=1 kind=base
+screen id=login route="/login" title="Sign in"
+  main id=content align=center justify=center padding=lg
+    card id=auth-card max=sm
+      heading id=title level=1 text="Welcome back"
+      form id=login-form submit=sign-in
+        field id=email type=email name=email label="Work email" required=true
+        field id=password type=password name=password label="Password" required=true
+        actions id=primary-actions
+          button id=submit variant=primary action=submit label="Sign in"
+```
+
+```wirespec v=1 kind=state name=loading
+patch target=submit label="Signing in..." busy=true disabled=true
+patch target=login-form disabled=true
+```
+
+## Acceptance
+- The email field is focused first.
+- The submit button is disabled while sign-in is pending.
+- Error copy appears near the form, not in a global notification.
+````
+
+Inspect a repo for existing WireSpec files and review tasks:
 
 ```bash
 pnpm exec wirespec-inspect .
+```
+
+Ask for the current review summary:
+
+```bash
 pnpm exec wirespec summary --workspace .
-pnpm exec wirespec open-next --workspace .
+```
+
+Start the local review bridge:
+
+```bash
 pnpm exec wirespec-bridge --workspace . --port 4317
+```
+
+Watch review events from another terminal:
+
+```bash
 pnpm exec wirespec-bridge-watch --url http://127.0.0.1:4317/api/events
 ```
 
-The package also exposes the browser/runtime API:
+## Runtime API
+
+The package exposes the parser, resolver, renderer, source-map builder, review runtime, and task export utilities.
 
 ```ts
 import {
   buildSourceMap,
+  buildVariantRefs,
+  mountReviewRuntime,
   parseWireSpecDocument,
   renderDocumentSelection,
 } from "wirespec";
+
+const source = await fetch("/screens/login.wirespec.md").then((response) => response.text());
+const document = parseWireSpecDocument(source, "screens/login.wirespec.md");
+const sourceMap = buildSourceMap(document, {
+  entryFile: "screens/login.wirespec.md",
+  variantRefs: buildVariantRefs(document),
+});
+
+document.body.innerHTML = renderDocumentSelection(
+  document,
+  { state: "loading", breakpoint: "mobile" },
+  { includeDocumentShell: false, includeAcceptance: true },
+);
+
+mountReviewRuntime({
+  sourceMap,
+  variantKey: "mobile+loading",
+});
 ```
 
-Useful target-repo scripts:
+## Core Concepts
+
+**WireSpec document**
+
+A Markdown file that combines normal product prose with one base `wirespec` block and optional variants. The prose explains intent and acceptance. The fenced blocks define structure and states.
+
+**Base tree**
+
+The default screen structure. It uses semantic nodes such as `screen`, `main`, `card`, `heading`, `form`, `field`, `actions`, `button`, `panel`, `table`, and `dialog`.
+
+**Variants**
+
+State, breakpoint, theme, or mode changes applied on top of the base tree. Variants use operations such as `patch`, `show`, `hide`, `insert`, and `remove` instead of duplicating the whole screen.
+
+**Source map**
+
+A mapping from rendered targets back to WireSpec source spans. This lets review feedback attach to the full page, a section, an element, prose, or acceptance criteria.
+
+**Annotation sidecar**
+
+A JSON file containing structured review threads. Review feedback stays outside the source spec so the UI contract remains readable.
+
+**Agent tasks**
+
+A normalized export of open review threads. Tasks include target ids, severity, source locations when available, requested changes, and editor-open metadata.
+
+**Local bridge**
+
+A localhost server that lets browser review tools write annotation sidecars, agent tasks, and event logs into the repository.
+
+## Review Files
+
+By default, the bridge writes review artifacts under:
+
+```text
+.wirespec/reviews/<documentId>.annotations.json
+.wirespec/reviews/<documentId>.agent-tasks.json
+.wirespec/reviews/events.ndjson
+```
+
+These files are intended to be committed when review state should travel with the branch.
+
+## CLI Commands
+
+```bash
+# Inspect WireSpec usage in a repo
+pnpm exec wirespec-inspect .
+
+# Summarize review task state
+pnpm exec wirespec summary --workspace .
+
+# Open the next highest-priority review task as JSON
+pnpm exec wirespec open-next --workspace .
+
+# Resolve threads touched by a saved file and changed line range
+pnpm exec wirespec resolve-on-save --workspace . --saved-file src/App.tsx --ranges 21-35
+
+# Run the browser review bridge
+pnpm exec wirespec-bridge --workspace . --port 4317
+
+# Watch bridge events
+pnpm exec wirespec-bridge-watch --url http://127.0.0.1:4317/api/events
+```
+
+Useful package scripts for a consuming repo:
 
 ```json
 {
@@ -111,24 +200,79 @@ Useful target-repo scripts:
 }
 ```
 
-## Honest status
+## Authoring Rules
 
-This repo is now a **single consolidated handoff**, but it is still composed of sequential slices that were originally created in stages.
+- Keep WireSpec low-fidelity and task-first.
+- Preserve node ids unless the meaning of the node changes.
+- Use variants for loading, error, empty, selected, disabled, and responsive states.
+- Prefer the core vocabulary before adding `x-...` extension nodes.
+- Keep one node or operation per line.
+- Do not embed raw CSS, utility classes, pixel coordinates, or component-library internals.
+- Do not duplicate whole subtrees to represent small state changes.
+- Keep end-user copy in the spec free of implementation notes and review process details.
 
-So:
+## Repository Layout
 
-- it **does include everything needed to continue**
-- it **does preserve the earlier packs and design docs**
-- it **does not pretend all parts were fully refactored into one polished production monorepo**
+```text
+docs/spec/v1-rc0/           Language grammar, AST schema, semantics, vocabulary, and examples
+packages/runtime/           Parser, resolver, renderer, source maps, review runtime, task export
+packages/bridge/            Local bridge server, browser client, event watcher
+packages/core/              Review task discovery, prioritization, resolution, and audit events
+packages/review-contract/   Shared review constants, schema, and helper functions
+packages/vscode/            VS Code companion over the shared core
+packages/jetbrains/         JetBrains companion skeleton over the shared core
+skills/wirespec/            Agent instructions for using WireSpec in other repositories
+```
 
-That means the repo is suitable as a continuation base, while still keeping the original artifacts for traceability.
+## Development
 
-## Best next engineering move
+Install dependencies:
 
-If you want one fully unified codebase after this handoff, the next step is to refactor the active packages into a tighter monorepo contract:
+```bash
+pnpm install
+```
 
-- promote shared schemas and types into common packages
-- wire `packages/runtime` outputs directly into `packages/bridge`
-- formalize CLI entrypoints for compile / render / review
-- make the IDE companions consume the same published core package instead of path coupling
-- add end-to-end demo scripts that run browser review -> bridge save -> IDE resolve in one loop
+Run the full test suite:
+
+```bash
+pnpm run test
+```
+
+Regenerate examples:
+
+```bash
+pnpm run generate:examples
+```
+
+Build a local package tarball:
+
+```bash
+pnpm run pack:local
+```
+
+## Project Status
+
+WireSpec is early-stage. The current repository includes a working language draft, parser, resolver, renderer, browser review runtime, local bridge, review task format, and IDE-core workflow. It is ready for experimentation in real UI work, but package APIs and file formats may still change before a stable release.
+
+Most complete today:
+
+- Markdown-hosted WireSpec authoring
+- v1 rc0 grammar, semantics, and vocabulary
+- parser, resolver, renderer, and source-map generation
+- browser annotation runtime
+- local bridge persistence
+- agent-task export
+- shared IDE core and VS Code companion workflow
+
+Still evolving:
+
+- formatter and lint rules
+- npm registry publishing
+- IDE extension packaging
+- code-generation adapters
+- multi-user review
+- long-term schema versioning guarantees
+
+## License
+
+No license has been selected.
