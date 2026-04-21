@@ -104,7 +104,11 @@ export class StudioCommandError extends Error {
     }
 }
 function structuredCloneValue(value) {
-    return structuredClone(value);
+    const clone = globalThis.structuredClone;
+    if (typeof clone === "function") {
+        return clone(value);
+    }
+    return JSON.parse(JSON.stringify(value));
 }
 export function syntheticSpan(file = "studio") {
     return {

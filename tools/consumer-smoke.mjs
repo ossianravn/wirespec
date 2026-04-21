@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   access,
+  copyFile,
   mkdtemp,
   readFile,
   rm,
@@ -43,6 +44,12 @@ const tempEnv = {
   npm_config_store_dir: path.join(tempRoot, ".pnpm-store"),
 };
 try {
+  const installTarballPath = path.join(
+    tempRoot,
+    `wirespec-${packageJson.version}-${Date.now()}.tgz`,
+  );
+  await copyFile(tarballPath, installTarballPath);
+
   await writeFile(
     path.join(tempRoot, "package.json"),
     `${JSON.stringify(
@@ -89,7 +96,7 @@ screen id=login route="/login" title="Sign in"
     "utf8",
   );
 
-  run(pnpmBin, ["add", "-D", tarballPath], { cwd: tempRoot, env: tempEnv });
+  run(pnpmBin, ["add", "-D", installTarballPath], { cwd: tempRoot, env: tempEnv });
 
   const lintOutput = run(
     pnpmBin,

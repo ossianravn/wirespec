@@ -138,7 +138,13 @@ export class StudioCommandError extends Error {
 }
 
 function structuredCloneValue<T>(value: T): T {
-  return structuredClone(value);
+  const clone = (globalThis as {
+    structuredClone?: <U>(input: U) => U;
+  }).structuredClone;
+  if (typeof clone === "function") {
+    return clone(value);
+  }
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 export function syntheticSpan(file = "studio"): StudioSourceSpan {
