@@ -118,8 +118,10 @@ export function isActiveReviewStatus(status: string): boolean;
 export function normalizeReviewStatus(status: string): string;
 export function reviewCountSummary(counts: { active: number; total: number }): string;
 export function escapeReviewHtml(value: unknown): string;
+export function humanizeReviewToken(value: unknown): string;
+export function reviewKindLabel(kind: string | null | undefined): string;
 export function reviewComposerHtml(options: {
-  target: { scope: string; kind: string; label: string };
+  target: { scope: string; kind: string; label: string; variantKey?: string };
   headerClass?: string;
   metaClass?: string;
   actionsClass?: string;
@@ -136,6 +138,20 @@ export function reviewSeverityRank(severity: string): number;
 export function reviewSeverityBadgeHtml(severity: string, className?: string): string;
 export function reviewStatusLabel(status: string): string;
 export function reviewStatusBadgeHtml(status: string, className?: string): string;
+export function reviewTargetContextText(
+  target:
+    | {
+        scope?: string;
+        kind?: string;
+        label?: string;
+        wireId?: string;
+        targetId?: string;
+        variantKey?: string;
+      }
+    | null
+    | undefined,
+  label?: string | null | undefined,
+): string;
 export function reviewToolbarHtml(options?: {
   commentMode?: boolean;
   commentAction?: string;
@@ -161,6 +177,7 @@ export function reviewThreadStatusAction(status: string): {
 };
 export function reviewThreadSummary(thread: ReviewThreadLike | null | undefined): string;
 export function reviewThreadsButtonLabel(activeCount: number): string;
+export function reviewVariantLabel(variantKey: string | null | undefined): string;
 export function reviewVariantPillHtml(variantKey: string | null | undefined, className?: string): string;
 
 declare const contract: {
@@ -190,6 +207,8 @@ declare const contract: {
   reviewDrawerFooterHtml: typeof reviewDrawerFooterHtml;
   reviewDrawerShellHtml: typeof reviewDrawerShellHtml;
   escapeReviewHtml: typeof escapeReviewHtml;
+  humanizeReviewToken: typeof humanizeReviewToken;
+  reviewKindLabel: typeof reviewKindLabel;
   reviewLatestMessageBody: typeof reviewLatestMessageBody;
   reviewPinTitle: typeof reviewPinTitle;
   reviewScopeLabel: typeof reviewScopeLabel;
@@ -197,6 +216,7 @@ declare const contract: {
   reviewSeverityBadgeHtml: typeof reviewSeverityBadgeHtml;
   reviewStatusLabel: typeof reviewStatusLabel;
   reviewStatusBadgeHtml: typeof reviewStatusBadgeHtml;
+  reviewTargetContextText: typeof reviewTargetContextText;
   reviewToolbarHtml: typeof reviewToolbarHtml;
   reviewThreadActionButtonHtml: typeof reviewThreadActionButtonHtml;
   reviewThreadActionLinkHtml: typeof reviewThreadActionLinkHtml;
@@ -204,6 +224,7 @@ declare const contract: {
   reviewThreadStatusAction: typeof reviewThreadStatusAction;
   reviewThreadSummary: typeof reviewThreadSummary;
   reviewThreadsButtonLabel: typeof reviewThreadsButtonLabel;
+  reviewVariantLabel: typeof reviewVariantLabel;
   reviewVariantPillHtml: typeof reviewVariantPillHtml;
 };
 

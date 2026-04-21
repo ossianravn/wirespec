@@ -1,8 +1,9 @@
 {
-  "name": "wirespec-local-bridge-v0-3",
+  "name": "@wirespec/bridge",
   "version": "0.3.0",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "test": "node --test",
     "generate:examples": "node ./scripts/generate-examples.mjs",

@@ -40,7 +40,15 @@ class WireSpecStatusBarWidget(private val project: Project) : CustomStatusBarWid
     override fun dispose() = Unit
 
     fun update() {
-        val summary = WireSpecProjectService.getInstance(project).currentSummary()
+        val service = WireSpecProjectService.getInstance(project)
+        val unavailableReason = service.bridgeUnavailableReason()
+        if (unavailableReason != null) {
+            label.text = "WireSpec setup"
+            label.toolTipText = unavailableReason
+            return
+        }
+
+        val summary = service.currentSummary()
         val docLabel = summary.latestDocumentId?.let { " · $it" } ?: ""
         label.text = "WireSpec ${summary.openTasks} open$docLabel"
         label.toolTipText = "${summary.openTasks} open review tasks across ${summary.taskFiles} file(s)"

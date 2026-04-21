@@ -2,6 +2,7 @@
   "name": "wirespec",
   "version": "0.5.0",
   "description": "WireSpec language tools, review runtime, local bridge, and IDE task workflow.",
+  "license": "MIT",
   "packageManager": "pnpm@9.0.0",
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "wirespec-inspect": "./skills/wirespec/scripts/inspect_wirespec_repo.mjs"
   },
   "files": [
+    "LICENSE",
     "README.md",
     "docs/spec/v1-rc0",
     "packages/bridge/README.md",
@@ -51,7 +53,13 @@
     "packages/core/README.md",
     "packages/core/bin",
     "packages/core/src",
-    "packages/review-contract",
+    "packages/review-contract/README.md",
+    "packages/review-contract/browser.d.mts",
+    "packages/review-contract/browser.mjs",
+    "packages/review-contract/index.d.ts",
+    "packages/review-contract/index.js",
+    "packages/review-contract/package.json",
+    "packages/review-contract/schemas",
     "packages/runtime/README.md",
     "packages/runtime/dist",
     "packages/runtime/package.json",
@@ -59,18 +67,22 @@
     "skills/wirespec"
   ],
   "scripts": {
-    "test": "pnpm run test:contract && pnpm run test:core && pnpm run test:runtime && pnpm run test:bridge && pnpm run test:e2e",
+    "test": "pnpm run test:contract && pnpm run test:core && pnpm run test:runtime && pnpm run test:bridge && pnpm run test:studio && pnpm run test:e2e",
     "test:contract": "pnpm --dir packages/review-contract test",
     "test:core": "node --test packages/core/test/*.test.js",
     "test:runtime": "pnpm --dir packages/runtime test",
     "test:bridge": "pnpm --dir packages/bridge test",
+    "test:studio": "pnpm --dir packages/studio-import-dom test && pnpm --dir packages/studio-core test && pnpm --dir packages/studio-web test",
     "test:e2e": "node tools/e2e-demo.mjs",
+    "test:consumer": "node tools/consumer-smoke.mjs",
     "demo:e2e": "node tools/e2e-demo.mjs --keep",
+    "demo:full": "pnpm run test && pnpm run generate:examples && node tools/e2e-demo.mjs --keep",
     "generate:contract": "pnpm --dir packages/review-contract run generate:schema",
-    "generate:examples": "pnpm run generate:cross-ide && pnpm run generate:runtime && pnpm run generate:bridge",
+    "generate:examples": "pnpm run generate:cross-ide && pnpm run generate:runtime && pnpm run generate:bridge && pnpm run generate:studio",
     "generate:cross-ide": "node tools/generate-examples.js",
     "generate:runtime": "pnpm --dir packages/runtime run generate:examples",
     "generate:bridge": "pnpm --dir packages/bridge run generate:examples",
+    "generate:studio": "pnpm --dir packages/studio-web run generate:examples",
     "pack:local": "pnpm pack --pack-destination dist"
   },
   "engines": {

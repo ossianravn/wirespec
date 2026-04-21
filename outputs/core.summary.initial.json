@@ -1,4 +1,6 @@
 {
+  "ok": true,
+  "command": "summary",
   "summary": {
     "taskFiles": 1,
     "documents": [

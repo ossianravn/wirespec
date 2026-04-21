@@ -1,4 +1,6 @@
 {
+  "ok": true,
+  "command": "open-next",
   "summary": {
     "taskFiles": 1,
     "documents": [

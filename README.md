@@ -92,6 +92,12 @@ Watch review events from another terminal:
 pnpm exec wirespec-bridge-watch --url http://127.0.0.1:4317/api/events
 ```
 
+Run the full repository proof loop locally:
+
+```bash
+pnpm run demo:full
+```
+
 ## Runtime API
 
 The package exposes the parser, resolver, renderer, source-map builder, review runtime, and task export utilities.
@@ -100,6 +106,9 @@ The package exposes the parser, resolver, renderer, source-map builder, review r
 import {
   buildSourceMap,
   buildVariantRefs,
+  formatWireSpecDocument,
+  lintWireSpecQuality,
+  lintWireSpecDocument,
   mountReviewRuntime,
   parseWireSpecDocument,
   renderDocumentSelection,
@@ -112,6 +121,14 @@ const sourceMap = buildSourceMap(document, {
   variantRefs: buildVariantRefs(document),
 });
 
+const lint = lintWireSpecDocument(document);
+if (!lint.ok) {
+  console.error(lint.diagnostics);
+}
+const qualityWarnings = lintWireSpecQuality(document);
+
+const canonicalSource = formatWireSpecDocument(document);
+
 document.body.innerHTML = renderDocumentSelection(
   document,
   { state: "loading", breakpoint: "mobile" },
@@ -123,6 +140,8 @@ mountReviewRuntime({
   variantKey: "mobile+loading",
 });
 ```
+
+`lintWireSpecDocument` includes syntax, vocabulary, and Proper UI quality warnings. If you only want structural linting in code, pass `{ includeQualityWarnings: false }` or call `lintWireSpecQuality(document)` separately.
 
 ## Core Concepts
 
@@ -166,11 +185,38 @@ By default, the bridge writes review artifacts under:
 
 These files are intended to be committed when review state should travel with the branch.
 
+## Studio
+
+Studio is still internal, but the current repo now includes three working layers:
+
+- `packages/studio-core`: semantic AST edit engine with undo/redo and canonical projection refresh
+- `packages/studio-web`: internal browser prototype for template-based editing, review mode, and state/breakpoint authoring
+- `packages/studio-import-dom`: internal implementation drift comparison and DOM-to-WireSpec inference engine
+
+The current Studio prototype supports:
+
+- creating screens from the canonical templates
+- editing the WireSpec tree without raw Markdown
+- reviewing through the same annotation sidecar and bridge flow as the browser runtime
+- comparing approved WireSpec against implementation HTML when `data-ws-id` hooks exist
+- inferring a draft WireSpec baseline from semantic HTML when hooks do not exist
+
+The compare/import workflow is intentionally conservative: drift can become review notes, and inferred drafts must be explicitly loaded before they replace the active Studio draft.
+
 ## CLI Commands
 
 ```bash
 # Inspect WireSpec usage in a repo
 pnpm exec wirespec-inspect .
+
+# Lint a WireSpec document
+pnpm exec wirespec lint screens/login.wirespec.md
+
+# Print canonical formatting
+pnpm exec wirespec format screens/login.wirespec.md
+
+# Rewrite a file in canonical form
+pnpm exec wirespec format --write screens/login.wirespec.md
 
 # Summarize review task state
 pnpm exec wirespec summary --workspace .
@@ -219,6 +265,9 @@ packages/runtime/           Parser, resolver, renderer, source maps, review runt
 packages/bridge/            Local bridge server, browser client, event watcher
 packages/core/              Review task discovery, prioritization, resolution, and audit events
 packages/review-contract/   Shared review constants, schema, and helper functions
+packages/studio-core/       Internal semantic edit engine for the future Studio surface
+packages/studio-import-dom/ Internal DOM drift comparison and inference engine for Studio
+packages/studio-web/        Internal browser prototype for semantic Studio editing
 packages/vscode/            VS Code companion over the shared core
 packages/jetbrains/         JetBrains companion skeleton over the shared core
 skills/wirespec/            Agent instructions for using WireSpec in other repositories
@@ -250,6 +299,12 @@ Build a local package tarball:
 pnpm run pack:local
 ```
 
+Run the packed consumer-install smoke test after packing:
+
+```bash
+pnpm run test:consumer
+```
+
 ## Project Status
 
 WireSpec is early-stage. The current repository includes a working language draft, parser, resolver, renderer, browser review runtime, local bridge, review task format, and IDE-core workflow. It is ready for experimentation in real UI work, but package APIs and file formats may still change before a stable release.
@@ -259,6 +314,9 @@ Most complete today:
 - Markdown-hosted WireSpec authoring
 - v1 rc0 grammar, semantics, and vocabulary
 - parser, resolver, renderer, and source-map generation
+- internal Studio edit-core foundation
+- internal Studio DOM compare/import engine
+- internal Studio browser prototype
 - browser annotation runtime
 - local bridge persistence
 - agent-task export
@@ -275,4 +333,4 @@ Still evolving:
 
 ## License
 
-No license has been selected.
+WireSpec is released under the [MIT License](LICENSE).

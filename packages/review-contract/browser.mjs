@@ -85,31 +85,31 @@ export function activeReviewStatusSet() {
 
 export const REVIEW_UI_COPY = Object.freeze({
   toolbarLabel: "Review tools",
-  comment: "Comment",
-  threads: "Threads",
-  save: "Save",
-  drawerLabel: "Review threads",
-  drawerTitle: "Review threads",
+  comment: "Add note",
+  threads: "Notes",
+  save: "Save review",
+  drawerLabel: "Open notes",
+  drawerTitle: "Open notes",
   close: "Close",
-  activeFilter: "Active",
+  activeFilter: "Open",
   allFilter: "All",
-  newNoteLabel: "New review note",
-  composerTitle: "New review note",
-  createNote: "Create note",
-  titleField: "Title",
-  severityField: "Severity",
-  commentField: "Comment",
+  newNoteLabel: "Add note",
+  composerTitle: "Add note",
+  createNote: "Add note",
+  titleField: "Summary",
+  severityField: "Priority",
+  commentField: "What should change",
   cancel: "Cancel",
   resolve: "Resolve",
   reopen: "Reopen",
   wontfix: "Won't fix",
-  focusTarget: "Focus target",
+  focusTarget: "Show on preview",
   openSource: "Open source",
-  exportAnnotations: "Export annotations",
-  exportTasks: "Agent tasks",
-  importAnnotations: "Import",
-  resetLocal: "Reset local",
-  emptyThreads: "No threads in this view.",
+  exportAnnotations: "Export JSON",
+  exportTasks: "Export tasks",
+  importAnnotations: "Import JSON",
+  resetLocal: "Reset local notes",
+  emptyThreads: "No notes in this view.",
 });
 
 export function reviewStatusLabel(status) {
@@ -120,7 +120,7 @@ export function reviewStatusLabel(status) {
   if (normalized === "in-progress") {
     return "In progress";
   }
-  return normalized;
+  return `${String(normalized).slice(0, 1).toUpperCase()}${String(normalized).slice(1)}`;
 }
 
 export function reviewThreadStatusAction(status) {
@@ -130,15 +130,83 @@ export function reviewThreadStatusAction(status) {
 }
 
 export function reviewThreadsButtonLabel(activeCount) {
-  return `${REVIEW_UI_COPY.threads} ${activeCount}`;
+  return `${REVIEW_UI_COPY.threads} (${activeCount})`;
 }
 
 export function reviewCountSummary(counts) {
-  return `${counts.active} active · ${counts.total} total`;
+  return `${counts.active} open · ${counts.total} total`;
 }
 
 export function reviewPinTitle(count) {
-  return `${count} active review ${count === 1 ? "thread" : "threads"}`;
+  return `${count} open ${count === 1 ? "note" : "notes"}`;
+}
+
+export function humanizeReviewToken(value) {
+  return String(value ?? "")
+    .replaceAll(/[+_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function reviewKindLabel(kind) {
+  const normalized = humanizeReviewToken(kind).toLowerCase();
+  if (!normalized) {
+    return "Target";
+  }
+  if (normalized === "x wireframe preview") {
+    return "Preview";
+  }
+  return `${normalized.slice(0, 1).toUpperCase()}${normalized.slice(1)}`;
+}
+
+export function reviewVariantLabel(variantKey) {
+  const normalized = humanizeReviewToken(variantKey).toLowerCase();
+  if (!normalized || normalized === "base") {
+    return "";
+  }
+  if (normalized === "mobile") {
+    return "mobile view";
+  }
+  if (normalized === "desktop") {
+    return "desktop view";
+  }
+  if (normalized === "tablet") {
+    return "tablet view";
+  }
+  return `${normalized} state`;
+}
+
+export function reviewTargetContextText(target, label) {
+  const resolvedLabel = String(label ?? target?.label ?? target?.wireId ?? target?.targetId ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+  let primary;
+
+  switch (target?.scope) {
+    case "screen":
+      primary = resolvedLabel ? `Page: ${resolvedLabel}` : "Page feedback";
+      break;
+    case "section":
+      primary = resolvedLabel ? `Section: ${resolvedLabel}` : "Section feedback";
+      break;
+    case "prose":
+      primary = resolvedLabel ? `Copy block: ${resolvedLabel}` : "Copy block";
+      break;
+    case "acceptance":
+      primary = resolvedLabel ? `Acceptance: ${resolvedLabel}` : "Acceptance criteria";
+      break;
+    case "region":
+      primary = resolvedLabel ? `Region: ${resolvedLabel}` : "Selected region";
+      break;
+    default:
+      primary = resolvedLabel
+        ? `${reviewKindLabel(target?.kind || target?.scope)}: ${resolvedLabel}`
+        : reviewKindLabel(target?.kind || target?.scope);
+      break;
+  }
+
+  const variant = reviewVariantLabel(target?.variantKey);
+  return variant ? `${primary} · ${variant}` : primary;
 }
 
 export function escapeReviewHtml(value) {
@@ -151,7 +219,7 @@ export function escapeReviewHtml(value) {
 }
 
 export function reviewDefaultDraftTitle(target) {
-  return `Review ${target?.label || "target"}`;
+  return `Review ${target?.label || "selection"}`;
 }
 
 export function reviewToolbarHtml(options = {}) {
@@ -182,11 +250,11 @@ export function reviewComposerHtml(options) {
   return `
     <div${headerClass}>
       <h2>${REVIEW_UI_COPY.composerTitle}</h2>
-      <p class="${escapeReviewHtml(metaClass)}">${escapeReviewHtml(target.scope)} · ${escapeReviewHtml(target.kind)} · ${escapeReviewHtml(target.label)}</p>
+      <p class="${escapeReviewHtml(metaClass)}">${escapeReviewHtml(reviewTargetContextText(target, target.label))}</p>
     </div>
     <label>
       <span>${REVIEW_UI_COPY.titleField}</span>
-      <input name="title" type="text" placeholder="Summarize the change">
+      <input name="title" type="text" placeholder="Summarize the issue or change">
     </label>
     <label>
       <span>${REVIEW_UI_COPY.severityField}</span>
@@ -199,7 +267,7 @@ export function reviewComposerHtml(options) {
     </label>
     <label>
       <span>${REVIEW_UI_COPY.commentField}</span>
-      <textarea name="body" placeholder="Describe what should change and why."></textarea>
+      <textarea name="body" placeholder="Describe the change and why it matters."></textarea>
     </label>
     <div class="${escapeReviewHtml(actionsClass)}">
       <button type="button" data-action="cancel">${REVIEW_UI_COPY.cancel}</button>
@@ -245,7 +313,7 @@ export function reviewSeverityBadgeHtml(severity, className = "ws-review-severit
 }
 
 export function reviewStatusBadgeHtml(status, className = "ws-review-status-pill") {
-  return `<span${reviewClassAttribute(className)}>${escapeReviewHtml(reviewStatusLabel(status))}</span>`;
+  return `<span${reviewClassAttribute(className)} data-status="${escapeReviewHtml(normalizeReviewStatus(status))}">${escapeReviewHtml(reviewStatusLabel(status))}</span>`;
 }
 
 export function reviewVariantPillHtml(variantKey, className = "ws-review-pill") {
@@ -426,6 +494,8 @@ const reviewContract = {
   reviewDrawerFooterHtml,
   reviewDrawerShellHtml,
   escapeReviewHtml,
+  humanizeReviewToken,
+  reviewKindLabel,
   reviewLatestMessageBody,
   reviewPinTitle,
   reviewScopeLabel,
@@ -433,6 +503,7 @@ const reviewContract = {
   reviewSeverityBadgeHtml,
   reviewStatusLabel,
   reviewStatusBadgeHtml,
+  reviewTargetContextText,
   reviewToolbarHtml,
   reviewThreadActionButtonHtml,
   reviewThreadActionLinkHtml,
@@ -440,6 +511,7 @@ const reviewContract = {
   reviewThreadStatusAction,
   reviewThreadSummary,
   reviewThreadsButtonLabel,
+  reviewVariantLabel,
   reviewVariantPillHtml,
 };
 

@@ -26,6 +26,61 @@ async function fileExists(filePath) {
   }
 }
 
+function firstPresentDocumentId(...values) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+  return "";
+}
+
+function requireDocumentId(...values) {
+  const raw = firstPresentDocumentId(...values);
+  const sanitized = sanitizeDocumentId(raw);
+  if (!sanitized) {
+    throw new Error("documentId is required and must sanitize to a non-empty id.");
+  }
+  return sanitized;
+}
+
+function assertObjectLike(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${label} must be an object.`);
+  }
+}
+
+function assertSidecarPayload(sidecar, documentId) {
+  assertObjectLike(sidecar, "sidecar");
+  const sidecarId = sanitizeDocumentId(sidecar.documentId);
+  if (!sidecarId) {
+    throw new Error("sidecar.documentId is required.");
+  }
+  if (sidecarId !== documentId) {
+    throw new Error(`sidecar.documentId "${sidecar.documentId}" does not match documentId "${documentId}".`);
+  }
+  if (!Array.isArray(sidecar.threads)) {
+    throw new Error("sidecar.threads must be an array.");
+  }
+  if (sidecar.source !== undefined && (typeof sidecar.source !== "object" || Array.isArray(sidecar.source))) {
+    throw new Error("sidecar.source must be an object when present.");
+  }
+}
+
+function assertSourceMapPayload(sourceMap, documentId) {
+  assertObjectLike(sourceMap, "sourceMap");
+  const sourceMapId = sanitizeDocumentId(sourceMap.documentId);
+  if (!sourceMapId) {
+    throw new Error("sourceMap.documentId is required.");
+  }
+  if (sourceMapId !== documentId) {
+    throw new Error(`sourceMap.documentId "${sourceMap.documentId}" does not match documentId "${documentId}".`);
+  }
+  if (!Array.isArray(sourceMap.targets)) {
+    throw new Error("sourceMap.targets must be an array.");
+  }
+}
+
 export class ReviewBridgeService extends EventEmitter {
   constructor(options) {
     super();
@@ -38,6 +93,9 @@ export class ReviewBridgeService extends EventEmitter {
 
   defaultPaths(documentId) {
     const safeId = sanitizeDocumentId(documentId);
+    if (!safeId) {
+      throw new Error("documentId is required to resolve review file paths.");
+    }
     return {
       annotationPath: `${this.reviewDir}/${safeId}.annotations.json`,
       taskPath: `${this.reviewDir}/${safeId}.agent-tasks.json`,
@@ -67,16 +125,19 @@ export class ReviewBridgeService extends EventEmitter {
   }
 
   async saveReview(payload) {
-    const documentId = sanitizeDocumentId(payload.documentId || payload.sidecar?.documentId || payload.sourceMap?.documentId);
-    if (!documentId) {
-      throw new Error("documentId is required.");
-    }
+    const documentId = requireDocumentId(
+      payload.documentId,
+      payload.sidecar?.documentId,
+      payload.sourceMap?.documentId,
+    );
     if (!payload.sidecar) {
       throw new Error("sidecar is required.");
     }
     if (!payload.sourceMap) {
       throw new Error("sourceMap is required.");
     }
+    assertSidecarPayload(payload.sidecar, documentId);
+    assertSourceMapPayload(payload.sourceMap, documentId);
 
     const paths = this.resolvePaths(documentId, payload);
     const store = relinkStoreAgainstSourceMap(sidecarToReviewStore(payload.sidecar), payload.sourceMap);
@@ -123,7 +184,10 @@ export class ReviewBridgeService extends EventEmitter {
   }
 
   async loadReview(payload) {
-    const documentId = sanitizeDocumentId(payload.documentId);
+    const documentId = requireDocumentId(payload.documentId);
+    if (payload.sourceMap) {
+      assertSourceMapPayload(payload.sourceMap, documentId);
+    }
     const paths = this.resolvePaths(documentId, payload);
     if (!(await fileExists(paths.annotation.absolute))) {
       return {
@@ -139,6 +203,7 @@ export class ReviewBridgeService extends EventEmitter {
     }
 
     const sidecar = await readJsonFile(paths.annotation.absolute);
+    assertSidecarPayload(sidecar, documentId);
     let store = sidecarToReviewStore(sidecar);
     if (payload.sourceMap) {
       store = relinkStoreAgainstSourceMap(store, payload.sourceMap);
@@ -168,6 +233,10 @@ export class ReviewBridgeService extends EventEmitter {
   }
 
   async setThreadStatus(payload) {
+    const documentId = requireDocumentId(payload.documentId);
+    if (payload.sourceMap) {
+      assertSourceMapPayload(payload.sourceMap, documentId);
+    }
     const loaded = await this.loadReview(payload);
     if (!loaded.found) {
       throw new Error(`No saved review was found for ${payload.documentId}.`);

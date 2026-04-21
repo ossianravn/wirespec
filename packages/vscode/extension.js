@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const cp = require("child_process");
 const vscode = require("vscode");
@@ -9,6 +10,8 @@ function getConfig() {
     autoOpenTaskFiles: config.get("autoOpenTaskFiles", true),
     autoRevealFirstTarget: config.get("autoRevealFirstTarget", false),
     nodeExecutable: config.get("nodeExecutable", "node"),
+    corePath: config.get("corePath", ""),
+    coreCommand: config.get("coreCommand", ["pnpm", "exec", "wirespec-ide-core"]),
   };
 }
 
@@ -16,20 +19,96 @@ function getWorkspaceRoot() {
   return vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath || "";
 }
 
-function coreScript(workspaceRoot) {
-  return path.join(workspaceRoot, "packages", "core", "bin", "wirespec-ide-core.js");
+function firstExistingPath(paths) {
+  return paths.find((candidate) => candidate && fs.existsSync(candidate)) || null;
 }
 
-function runCore(command, args = []) {
+function resolveCoreInvocation(context, workspaceRoot, config) {
+  const bundledScript = firstExistingPath([
+    path.join(context.extensionPath, "bin", "wirespec-ide-core.js"),
+    path.join(context.extensionPath, "dist", "wirespec-ide-core.js"),
+  ]);
+  if (bundledScript) {
+    return {
+      kind: "node-script",
+      label: "bundled extension asset",
+      executable: config.nodeExecutable,
+      args: [bundledScript],
+    };
+  }
+
+  const repoScript = firstExistingPath([
+    path.join(workspaceRoot, "packages", "core", "bin", "wirespec-ide-core.js"),
+  ]);
+  if (repoScript) {
+    return {
+      kind: "node-script",
+      label: "workspace repo checkout",
+      executable: config.nodeExecutable,
+      args: [repoScript],
+    };
+  }
+
+  const installedScript = firstExistingPath([
+    path.join(workspaceRoot, "node_modules", "wirespec", "packages", "core", "bin", "wirespec-ide-core.js"),
+  ]);
+  if (installedScript) {
+    return {
+      kind: "node-script",
+      label: "workspace node_modules package",
+      executable: config.nodeExecutable,
+      args: [installedScript],
+    };
+  }
+
+  if (typeof config.corePath === "string" && path.isAbsolute(config.corePath) && fs.existsSync(config.corePath)) {
+    return {
+      kind: "node-script",
+      label: "configured absolute core path",
+      executable: config.nodeExecutable,
+      args: [config.corePath],
+    };
+  }
+
+  const commandTokens = Array.isArray(config.coreCommand) && config.coreCommand.length > 0
+    ? config.coreCommand
+    : ["pnpm", "exec", "wirespec-ide-core"];
+  if (commandTokens.length > 0) {
+    const [executable, ...baseArgs] = commandTokens;
+    return {
+      kind: "command",
+      label: "configured core command",
+      executable,
+      args: baseArgs,
+    };
+  }
+
+  return null;
+}
+
+function missingCoreMessage(workspaceRoot) {
+  return [
+    "WireSpec core could not be found.",
+    `Checked the extension bundle, ${path.join(workspaceRoot, "packages", "core", "bin", "wirespec-ide-core.js")}, and ${path.join(workspaceRoot, "node_modules", "wirespec", "packages", "core", "bin", "wirespec-ide-core.js")}.`,
+    "Install wirespec in the workspace, package the extension with a bundled core, or configure wirespec.ide.coreCommand / wirespec.ide.corePath.",
+  ].join(" ");
+}
+
+function runCore(context, command, args = []) {
   const workspaceRoot = getWorkspaceRoot();
   if (!workspaceRoot) {
     return Promise.reject(new Error("No workspace folder is open."));
   }
   const config = getConfig();
+  const invocation = resolveCoreInvocation(context, workspaceRoot, config);
+  if (!invocation) {
+    return Promise.reject(new Error(missingCoreMessage(workspaceRoot)));
+  }
+
   return new Promise((resolve, reject) => {
     const child = cp.execFile(
-      config.nodeExecutable,
-      [coreScript(workspaceRoot), command, "--workspace", workspaceRoot, ...args],
+      invocation.executable,
+      [...invocation.args, command, "--workspace", workspaceRoot, ...args],
       { cwd: workspaceRoot },
       (error, stdout, stderr) => {
         if (error) {
@@ -70,7 +149,7 @@ function createController(context) {
 
   async function refreshSummary() {
     try {
-      const result = await runCore("summary");
+      const result = await runCore(context, "summary");
       const docLabel = result.summary.latestDocumentId ? ` · ${result.summary.latestDocumentId}` : "";
       statusBar.text = `WireSpec ${result.summary.openTasks} open${docLabel}`;
       statusBar.tooltip = `${result.summary.openTasks} open review tasks across ${result.summary.taskFiles} file(s)`;
@@ -85,7 +164,7 @@ function createController(context) {
 
   async function handleTaskFileChange(uri) {
     const config = getConfig();
-    const result = await runCore("task-change", ["--task-file", uri.fsPath]);
+    const result = await runCore(context, "task-change", ["--task-file", uri.fsPath]);
     output.appendLine(`[task-file-changed] ${uri.fsPath}`);
     await refreshSummary();
     if (config.autoOpenTaskFiles) {
@@ -98,7 +177,7 @@ function createController(context) {
   }
 
   async function openLatestTaskFile() {
-    const result = await runCore("open-latest");
+    const result = await runCore(context, "open-latest");
     if (!result.latestTaskFile) {
       vscode.window.showInformationMessage("No WireSpec task file found.");
       return;
@@ -108,7 +187,7 @@ function createController(context) {
   }
 
   async function openNextOpenTask() {
-    const result = await runCore("open-next");
+    const result = await runCore(context, "open-next");
     if (!result.nextTask?.openInEditor) {
       vscode.window.showInformationMessage("No open WireSpec task remains.");
       return;
@@ -125,7 +204,7 @@ function createController(context) {
       return 0;
     }
     const rangeSpec = changedRanges.map((range) => (range.start === range.end ? `${range.start}` : `${range.start}-${range.end}`)).join(",");
-    const result = await runCore("resolve-on-save", [
+    const result = await runCore(context, "resolve-on-save", [
       "--saved-file",
       document.uri.fsPath,
       "--ranges",

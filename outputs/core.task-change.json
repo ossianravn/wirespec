@@ -1,4 +1,6 @@
 {
+  "ok": true,
+  "command": "task-change",
   "latestTaskFile": "<workspace>/.wirespec/reviews/login.agent-tasks.json",
   "latestDocumentId": "login",
   "nextTask": {

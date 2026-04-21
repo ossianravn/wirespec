@@ -64,6 +64,10 @@ screen id=fulfillment-queue route="/warehouse/queue" title="Fulfillment queue"
             panel id=shipment-panel
               heading id=shipment-panel-title level=2 text="Selected shipment"
               text id=shipment-panel-copy text="Choose an order to see pick notes, handling requirements, and the next step."
+      tab-panel id=packing-panel
+        empty-state id=packing-empty title="No packing work assigned" description="Move an order into packing to review handling notes and claim the next task."
+      tab-panel id=exceptions-panel
+        empty-state id=exceptions-empty title="No exceptions waiting" description="Exception work appears here when an order needs a manual decision."
 ```
 
 ```wirespec v=1 kind=state name=loading

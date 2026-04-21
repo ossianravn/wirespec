@@ -25,24 +25,20 @@ class WireSpecProjectService(private val project: Project) {
     private var summary: SummaryPayload = SummaryPayload()
 
     fun start() {
-        if (!bridge.isAvailable()) {
-            return
-        }
-
-        refreshSummary()
+        refreshSummary(showErrors = false)
 
         val connection = project.messageBus.connect()
         connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkFileListener { events ->
             events
                 .mapNotNull { it.file }
                 .filter { it.path.endsWith(".agent-tasks.json") && it.path.contains("/.wirespec/reviews/") }
-                .forEach { handleTaskFileChange(it.path) }
+                .forEach { handleTaskFileChange(it.path, showErrors = false) }
         })
 
         connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, object : FileDocumentManagerListener {
             override fun beforeDocumentSaving(document: com.intellij.openapi.editor.Document) {
                 val virtualFile = FileDocumentManager.getInstance().getFile(document) ?: return
-                resolveOnSave(virtualFile.path)
+                resolveOnSave(virtualFile.path, showErrors = false)
             }
         })
 
@@ -51,8 +47,8 @@ class WireSpecProjectService(private val project: Project) {
         }, project)
     }
 
-    fun refreshSummary(): SummaryPayload {
-        val response = bridge.run("summary") ?: return summary
+    fun refreshSummary(showErrors: Boolean = true): SummaryPayload {
+        val response = runCore("summary", showErrors = showErrors) ?: return summary
         summary = response.summary
         updateStatusBar()
         return summary
@@ -60,15 +56,17 @@ class WireSpecProjectService(private val project: Project) {
 
     fun currentSummary(): SummaryPayload = summary
 
-    fun handleTaskFileChange(taskFilePath: String) {
-        val response = bridge.run("task-change", listOf("--task-file", taskFilePath)) ?: return
+    fun bridgeUnavailableReason(): String? = bridge.unavailableReason()
+
+    fun handleTaskFileChange(taskFilePath: String, showErrors: Boolean = true) {
+        val response = runCore("task-change", listOf("--task-file", taskFilePath), showErrors = showErrors) ?: return
         summary = response.summary
         updateStatusBar()
         openFile(taskFilePath)
     }
 
     fun openLatestTaskFile() {
-        val response = bridge.run("open-latest")
+        val response = runCore("open-latest") ?: return
         val taskFile = response?.latestTaskFile
         if (taskFile == null) {
             Messages.showInfoMessage(project, "No WireSpec task file found.", "WireSpec")
@@ -78,7 +76,7 @@ class WireSpecProjectService(private val project: Project) {
     }
 
     fun openNextOpenTask() {
-        val response = bridge.run("open-next")
+        val response = runCore("open-next") ?: return
         val target = response?.nextTask?.openInEditor
         if (target?.file == null) {
             Messages.showInfoMessage(project, "No open WireSpec task remains.", "WireSpec")
@@ -90,10 +88,10 @@ class WireSpecProjectService(private val project: Project) {
     fun resolveTouchedThreadsForCurrentFile() {
         val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return
         val virtualFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return
-        resolveOnSave(virtualFile.path)
+        resolveOnSave(virtualFile.path, showErrors = true)
     }
 
-    private fun resolveOnSave(savedPath: String) {
+    private fun resolveOnSave(savedPath: String, showErrors: Boolean) {
         val changedRanges = tracker.take(savedPath)
         if (changedRanges.isEmpty()) {
             return
@@ -101,13 +99,35 @@ class WireSpecProjectService(private val project: Project) {
         val rangeSpec = changedRanges.joinToString(",") { range ->
             if (range.start == range.end) range.start.toString() else "${range.start}-${range.end}"
         }
-        val response = bridge.run(
+        val response = runCore(
             "resolve-on-save",
-            listOf("--saved-file", savedPath, "--ranges", rangeSpec, "--author", "WireSpec JetBrains Companion")
+            listOf("--saved-file", savedPath, "--ranges", rangeSpec, "--author", "WireSpec JetBrains Companion"),
+            showErrors = showErrors,
         ) ?: return
 
         summary = response.summary
         updateStatusBar()
+    }
+
+    private fun runCore(command: String, args: List<String> = emptyList(), showErrors: Boolean = true): CoreResponse? {
+        val unavailableReason = bridge.unavailableReason()
+        if (unavailableReason != null) {
+            updateStatusBar()
+            if (showErrors) {
+                Messages.showWarningDialog(project, unavailableReason, "WireSpec")
+            }
+            return null
+        }
+
+        return try {
+            bridge.run(command, args)
+        } catch (error: Exception) {
+            updateStatusBar()
+            if (showErrors) {
+                Messages.showErrorDialog(project, error.message ?: "WireSpec core command failed.", "WireSpec")
+            }
+            null
+        }
     }
 
     private fun openFile(path: String, line: Int = 1, column: Int = 1) {

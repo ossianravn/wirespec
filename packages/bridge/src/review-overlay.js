@@ -4,13 +4,13 @@ const {
   REVIEW_UI_COPY,
   isActiveReviewStatus,
   isClosedReviewStatus,
-  reviewCountSummary,
   reviewComposerHtml,
+  reviewCountSummary,
   reviewDefaultDraftTitle,
   reviewDrawerEmptyHtml,
-  reviewDrawerFooterHtml,
   reviewDrawerShellHtml,
   reviewPinTitle,
+  reviewTargetContextText,
   reviewToolbarHtml,
   reviewThreadActionButtonHtml,
   reviewThreadCardHtml,
@@ -19,113 +19,151 @@ const {
 } = reviewContract;
 
 const css = `
+html.ws-review-drawer-open,
+html.ws-review-drawer-open body,
+html.ws-review-composer-open,
+html.ws-review-composer-open body {
+  overflow: hidden;
+}
 .ws-review-bar,
 .ws-review-bar *,
+.ws-review-scrim,
 .ws-review-drawer,
 .ws-review-drawer *,
 .ws-review-composer,
-.ws-review-composer * {
+.ws-review-composer *,
+.ws-review-pin {
   box-sizing: border-box;
+}
+.ws-review-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 10011;
+  display: none;
+  background: rgba(17,17,17,0.18);
+}
+.ws-review-scrim.is-open {
+  display: block;
 }
 .ws-review-bar {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   z-index: 10000;
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  max-width: min(560px, calc(100vw - 32px));
-  padding: 6px;
-  border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 8px;
-  background: #fff;
+  gap: 8px;
+  min-height: 46px;
+  max-width: min(40rem, calc(100vw - 24px));
+  padding: 7px 8px;
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(17,17,17,0.10);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(17,17,17,0.10);
+  backdrop-filter: blur(8px);
   color: #111;
-  box-shadow: 0 2px 8px rgba(17,17,17,0.10);
-  font: 500 13px/1.25 ui-sans-serif, system-ui, sans-serif;
+  font: 500 13px/1.2 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-bar button {
   appearance: none;
-  border: 1px solid rgba(17,17,17,0.16);
+  border: 1px solid rgba(17,17,17,0.12);
   background: #fff;
   color: #111;
-  border-radius: 6px;
-  min-height: 32px;
-  padding: 0 10px;
-  font: inherit;
+  border-radius: 7px;
+  min-height: 31px;
+  padding: 0 11px;
   cursor: pointer;
+  font: inherit;
 }
 .ws-review-bar button:hover,
-.ws-review-actions button:hover,
+.ws-review-composer-actions button:hover,
 .ws-review-drawer button:hover {
-  border-color: rgba(17,17,17,0.32);
-  background: #f7f7f7;
+  border-color: rgba(17,17,17,0.24);
+  background: #f5f5f3;
 }
 .ws-review-bar button:focus-visible,
-.ws-review-actions button:focus-visible,
+.ws-review-composer-actions button:focus-visible,
 .ws-review-drawer button:focus-visible,
 .ws-review-composer input:focus-visible,
 .ws-review-composer select:focus-visible,
 .ws-review-composer textarea:focus-visible {
-  outline: 2px solid rgba(17,17,17,0.70);
+  outline: 2px solid rgba(17,17,17,0.62);
   outline-offset: 2px;
 }
 .ws-review-bar button[aria-pressed="true"] {
-  border-color: rgba(17,17,17,0.40);
-  background: #eeeeee;
+  border-color: rgba(17,17,17,0.30);
+  background: #ededeb;
 }
 .ws-review-bar button[data-primary="true"],
-.ws-review-actions button[data-primary="true"] {
+.ws-review-composer-actions button[data-primary="true"] {
   background: #111;
   border-color: #111;
   color: #fff;
 }
-.ws-review-bar button[data-primary="true"]:hover,
-.ws-review-actions button[data-primary="true"]:hover {
-  background: #2a2a2a;
-}
 .ws-review-bar button:disabled,
-.ws-review-actions button:disabled {
-  opacity: 0.48;
+.ws-review-composer-actions button:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
 }
-.ws-review-bar-meta {
-  display: none;
+.ws-review-hint {
+  color: rgba(17,17,17,0.56);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
 }
 .ws-review-active [data-ws-target] {
   cursor: crosshair;
 }
 .ws-review-active [data-ws-target]:hover {
-  outline: 2px solid rgba(17,17,17,0.34);
+  outline: 2px solid rgba(17,17,17,0.26);
   outline-offset: 2px;
+}
+.ws-review-bridge-status {
+  margin-left: auto;
+  min-width: 0;
+  max-width: 10rem;
+  overflow: hidden;
+  color: rgba(17,17,17,0.56);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+.ws-review-bridge-status[data-tone="good"] {
+  color: rgba(31,102,61,0.92);
+}
+.ws-review-bridge-status[data-tone="warn"] {
+  color: rgba(148,78,18,0.92);
 }
 .ws-review-composer,
 .ws-review-drawer {
   position: fixed;
-  right: 16px;
-  width: min(420px, calc(100vw - 32px));
-  z-index: 10001;
-  border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 8px;
+  right: 12px;
+  width: min(24rem, calc(100vw - 24px));
   background: #fff;
+  border: 1px solid rgba(17,17,17,0.10);
   color: #111;
-  box-shadow: 0 2px 10px rgba(17,17,17,0.12);
+  box-shadow: 0 18px 40px rgba(17,17,17,0.16);
   font: 400 14px/1.45 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-composer {
-  bottom: 16px;
-  z-index: 10002;
-  max-height: calc(100vh - 88px);
+  bottom: 12px;
+  z-index: 10020;
+  max-height: min(36rem, calc(100vh - 92px));
   overflow: auto;
-  padding: 16px;
+  padding: 18px;
+  border-radius: 14px;
 }
 .ws-review-drawer {
-  top: 64px;
-  bottom: 16px;
+  top: 66px;
+  bottom: 12px;
+  z-index: 10012;
   display: none;
-  overflow: hidden;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: 14px;
 }
 .ws-review-drawer.is-open {
   display: flex;
@@ -134,79 +172,87 @@ const css = `
 .ws-review-drawer-footer {
   padding: 14px 16px;
   border-bottom: 1px solid rgba(17,17,17,0.08);
+  background: rgba(255,255,255,0.98);
 }
 .ws-review-drawer-footer {
+  border-bottom: 0;
   border-top: 1px solid rgba(17,17,17,0.08);
-  border-bottom: 0;
-  display: flex;
-  justify-content: flex-end;
 }
-.ws-review-drawer-body {
-  padding: 0;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-}
-.ws-review-drawer h2,
-.ws-review-composer h2,
-.ws-review-thread h3,
-.ws-review-thread p,
-.ws-review-composer p,
-.ws-review-empty p {
-  margin: 0;
-}
-.ws-review-drawer h2,
-.ws-review-composer h2 {
-  font-size: 17px;
-  line-height: 1.25;
-  font-weight: 650;
-}
-.ws-review-label,
-.ws-review-meta,
-.ws-review-status,
-.ws-review-empty {
-  color: rgba(17,17,17,0.62);
-}
-.ws-review-label {
-  margin-top: 4px;
-  font-size: 13px;
-}
-.ws-review-thread {
-  border-bottom: 1px solid rgba(17,17,17,0.08);
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  background: #fff;
-}
-.ws-review-thread:last-child {
-  border-bottom: 0;
-}
-.ws-review-thread-head,
+.ws-review-drawer-title-row,
 .ws-review-thread-actions,
 .ws-review-thread-state {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
+}
+.ws-review-drawer-title-row {
+  justify-content: space-between;
+}
+.ws-review-drawer h2,
+.ws-review-composer h2,
+.ws-review-thread-card h3,
+.ws-review-thread-card p {
+  margin: 0;
+}
+.ws-review-drawer-title,
+.ws-review-composer h2 {
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.ws-review-drawer-meta,
+.ws-review-thread-target,
+.ws-review-empty,
+.ws-review-target-meta {
+  color: rgba(17,17,17,0.56);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.ws-review-drawer-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ws-review-thread-card {
+  border-bottom: 1px solid rgba(17,17,17,0.08);
+  padding: 13px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+}
+.ws-review-thread-card:last-child {
+  border-bottom: 0;
 }
 .ws-review-thread-head {
+  display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 8px;
 }
-.ws-review-thread h3 {
+.ws-review-thread-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ws-review-thread-title {
   max-width: 30rem;
   font-size: 14px;
   line-height: 1.35;
-  font-weight: 650;
+  font-weight: 700;
 }
 .ws-review-thread-body {
   color: rgba(17,17,17,0.84);
   line-height: 1.5;
 }
-.ws-review-badge {
+.ws-review-severity-pill,
+.ws-review-status-text {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 22px;
   padding: 0 7px;
   border-radius: 6px;
@@ -217,18 +263,35 @@ const css = `
   line-height: 1;
   white-space: nowrap;
 }
-.ws-review-badge[data-severity="must"] {
+.ws-review-severity-pill[data-severity="must"] {
   background: #111;
   border-color: #111;
   color: #fff;
 }
+.ws-review-severity-pill[data-severity="should"] {
+  background: #f3f3f3;
+}
+.ws-review-severity-pill[data-severity="could"],
+.ws-review-severity-pill[data-severity="question"] {
+  color: rgba(17,17,17,0.72);
+}
+.ws-review-status-text {
+  background: transparent;
+}
+.ws-review-composer-header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
 .ws-review-composer label {
   display: grid;
   gap: 6px;
-  margin-top: 12px;
-  color: rgba(17,17,17,0.82);
-  font-size: 13px;
+  margin-top: 13px;
+  color: rgba(17,17,17,0.78);
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 .ws-review-composer input,
 .ws-review-composer select,
@@ -236,43 +299,44 @@ const css = `
   width: 100%;
   max-width: 100%;
   border: 1px solid rgba(17,17,17,0.14);
-  border-radius: 6px;
-  padding: 9px 10px;
+  border-radius: 8px;
   background: #fff;
   color: #111;
+  padding: 10px 11px;
   font: 400 14px/1.35 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-composer textarea {
-  min-height: 104px;
+  min-height: 112px;
   resize: vertical;
 }
-.ws-review-actions {
+.ws-review-composer-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
-.ws-review-actions button,
+.ws-review-composer-actions button,
 .ws-review-drawer button {
   appearance: none;
-  border: 1px solid rgba(17,17,17,0.16);
+  border: 1px solid rgba(17,17,17,0.14);
+  border-radius: 8px;
   background: #fff;
   color: #111;
-  border-radius: 6px;
-  min-height: 32px;
+  min-height: 31px;
   padding: 0 10px;
-  font: 500 13px/1 ui-sans-serif, system-ui, sans-serif;
   cursor: pointer;
+  font: 500 13px/1 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-pin {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  z-index: 6;
-  min-width: 20px;
-  min-height: 20px;
-  border-radius: 10px;
+  top: 8px;
+  right: 8px;
+  z-index: 10005;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0 4px;
   border: 1px solid rgba(17,17,17,0.12);
+  border-radius: 999px;
   background: #111;
   color: #fff;
   font: 650 11px/1 ui-sans-serif, system-ui, sans-serif;
@@ -289,29 +353,31 @@ const css = `
   .ws-review-bar {
     left: 8px;
     right: 8px;
+    top: 8px;
     width: auto;
     max-width: none;
   }
-  .ws-review-bar-meta {
-    display: none;
+  .ws-review-hint,
+  .ws-review-bridge-status {
+    max-width: 7.5rem;
   }
   .ws-review-drawer {
-    left: 8px;
-    right: 8px;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
-    top: 72px;
-    bottom: 8px;
-    max-height: none;
+    max-height: min(78vh, calc(100vh - 68px));
+    border-radius: 18px 18px 0 0;
   }
   .ws-review-composer {
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
-    max-height: calc(100vh - 88px);
-  }
-  .ws-review-thread-head {
-    display: block;
+    max-height: min(78vh, calc(100vh - 68px));
+    padding: 18px 16px 16px;
+    border-radius: 16px 16px 0 0;
   }
 }
 `;
@@ -363,6 +429,10 @@ function parentTarget(element) {
   return closestTarget(current.parentElement);
 }
 
+function selectorForTarget(targetId) {
+  return `[data-ws-target="${CSS.escape(targetId)}"]`;
+}
+
 export function mountReviewOverlay(options) {
   ensureStyle();
 
@@ -371,7 +441,9 @@ export function mountReviewOverlay(options) {
   let bridgeLabel = "bridge off";
   let bridgeTone = "muted";
   let activeHighlight = null;
+  let highlightTimer = null;
   let composer = null;
+  let drawerTargetId;
 
   const bar = document.createElement("aside");
   bar.className = "ws-review-bar";
@@ -380,37 +452,180 @@ export function mountReviewOverlay(options) {
     commentMode,
     includeThreads: true,
     includeSave: true,
+    hintText: options.hintText || "Alt-click targets a parent section",
   });
+  const bridgeStatus = document.createElement("span");
+  bridgeStatus.className = "ws-review-bridge-status";
+  bridgeStatus.setAttribute("aria-live", "polite");
+  bar.append(bridgeStatus);
   document.body.append(bar);
 
+  const scrim = document.createElement("div");
+  scrim.className = "ws-review-scrim";
+  document.body.append(scrim);
+
   const drawer = document.createElement("aside");
+  drawer.id = "ws-review-drawer";
   drawer.className = "ws-review-drawer";
   drawer.setAttribute("aria-label", REVIEW_UI_COPY.drawerLabel);
   document.body.append(drawer);
+  bar.querySelector('[data-action="threads"]')?.setAttribute("aria-controls", drawer.id);
 
-  function setHighlight(targetElement) {
+  function syncBridgeState() {
+    bridgeStatus.textContent = bridgeLabel;
+    bridgeStatus.dataset.tone = bridgeTone;
+  }
+
+  function syncCommentMode() {
+    document.documentElement.classList.toggle("ws-review-active", commentMode);
+    bar
+      .querySelector('[data-action="comment"]')
+      ?.setAttribute("aria-pressed", commentMode ? "true" : "false");
+  }
+
+  function syncLayers() {
+    const drawerOpen = drawer.classList.contains("is-open");
+    const composerOpen = Boolean(composer);
+    scrim.classList.toggle("is-open", drawerOpen || composerOpen);
+    document.documentElement.classList.toggle("ws-review-drawer-open", drawerOpen);
+    document.documentElement.classList.toggle("ws-review-composer-open", composerOpen);
+    bar
+      .querySelector('[data-action="threads"]')
+      ?.setAttribute("aria-expanded", drawerOpen ? "true" : "false");
+  }
+
+  function clearHighlight() {
+    if (highlightTimer) {
+      window.clearTimeout(highlightTimer);
+      highlightTimer = null;
+    }
     if (activeHighlight) {
       activeHighlight.classList.remove("ws-review-highlight");
+      activeHighlight = null;
     }
+  }
+
+  function setHighlight(targetElement) {
+    clearHighlight();
     activeHighlight = targetElement || null;
     activeHighlight?.classList.add("ws-review-highlight");
   }
 
-  function openDrawer(focusTargetId) {
-    drawer.classList.add("is-open");
-    bar.querySelector('[data-action="threads"]')?.setAttribute("aria-expanded", "true");
-    renderDrawer(focusTargetId);
+  function focusTarget(targetId, temporary = true) {
+    const targetElement = document.querySelector(selectorForTarget(targetId));
+    if (!targetElement) {
+      clearHighlight();
+      return;
+    }
+    targetElement.scrollIntoView({ block: "center", behavior: "smooth" });
+    setHighlight(targetElement);
+    if (!temporary) {
+      return;
+    }
+    highlightTimer = window.setTimeout(() => {
+      if (activeHighlight === targetElement) {
+        clearHighlight();
+      }
+    }, 1200);
   }
 
   function closeDrawer() {
     drawer.classList.remove("is-open");
-    bar.querySelector('[data-action="threads"]')?.setAttribute("aria-expanded", "false");
+    drawerTargetId = undefined;
+    syncLayers();
+  }
+
+  function labelForTarget(targetId) {
+    const target = options.sourceMap?.targets?.find((entry) => entry.targetId === targetId);
+    return target?.label || target?.wireId || target?.kind || targetId;
+  }
+
+  function renderDrawer() {
+    const filtered = drawerTargetId
+      ? threads.filter((thread) => thread.target.targetId === drawerTargetId)
+      : threads;
+
+    const cards = filtered.length
+      ? filtered
+          .map((thread) => {
+            const statusAction = reviewThreadStatusAction(thread.status);
+            const statusButtons = isClosedReviewStatus(thread.status)
+              ? reviewThreadActionButtonHtml({
+                  action: "toggle-status",
+                  actionAttribute: "data-thread-action",
+                  threadId: thread.id,
+                  label: statusAction.label,
+                })
+              : `${reviewThreadActionButtonHtml({
+                  action: "toggle-status",
+                  actionAttribute: "data-thread-action",
+                  threadId: thread.id,
+                  label: statusAction.label,
+                })}
+                ${reviewThreadActionButtonHtml({
+                  action: "wontfix",
+                  actionAttribute: "data-thread-action",
+                  threadId: thread.id,
+                  label: REVIEW_UI_COPY.wontfix,
+                })}`;
+
+            return reviewThreadCardHtml({
+              thread,
+              articleClass: "ws-review-thread-card",
+              title: reviewThreadSummary(thread),
+              titleClass: "ws-review-thread-title",
+              targetMeta: reviewTargetContextText(
+                thread.target,
+                labelForTarget(thread.target.targetId),
+              ),
+              targetClass: "ws-review-thread-target",
+              topMetaClass: "ws-review-thread-meta",
+              severityClass: "ws-review-severity-pill",
+              bodyClass: "ws-review-thread-body",
+              statusContainerClass: "ws-review-thread-state",
+              statusClass: "ws-review-status-text",
+              actionsClass: "ws-review-thread-actions",
+              actionsHtml: `
+                ${reviewThreadActionButtonHtml({
+                  action: "focus-target",
+                  threadId: thread.id,
+                  label: REVIEW_UI_COPY.focusTarget,
+                })}
+                ${statusButtons}
+              `,
+            });
+          })
+          .join("")
+      : reviewDrawerEmptyHtml();
+
+    drawer.innerHTML = reviewDrawerShellHtml({
+      titleClass: "ws-review-drawer-title",
+      titleRowClass: "ws-review-drawer-title-row",
+      metaClass: "ws-review-drawer-meta",
+      metaText: reviewCountSummary({
+        active: threads.filter((thread) => isActiveReviewStatus(thread.status)).length,
+        total: threads.length,
+      }),
+      includeHeaderClose: true,
+      closeAction: "close-drawer",
+      bodyRole: "body",
+      bodyHtml: cards,
+    });
+  }
+
+  function openDrawer(targetId) {
+    drawerTargetId = targetId;
+    closeComposer();
+    drawer.classList.add("is-open");
+    renderDrawer();
+    syncLayers();
   }
 
   function closeComposer() {
     composer?.remove();
     composer = null;
-    setHighlight(null);
+    clearHighlight();
+    syncLayers();
   }
 
   function renderPins() {
@@ -423,7 +638,7 @@ export function mountReviewOverlay(options) {
       counts.set(thread.target.targetId, (counts.get(thread.target.targetId) || 0) + 1);
     }
     for (const [targetId, count] of counts.entries()) {
-      const element = document.querySelector(`[data-ws-target="${CSS.escape(targetId)}"]`);
+      const element = document.querySelector(selectorForTarget(targetId));
       if (!element) {
         continue;
       }
@@ -433,8 +648,10 @@ export function mountReviewOverlay(options) {
       pin.textContent = String(count);
       pin.title = reviewPinTitle(count);
       pin.addEventListener("click", (event) => {
+        event.preventDefault();
         event.stopPropagation();
         openDrawer(targetId);
+        focusTarget(targetId);
       });
       const computedStyle = window.getComputedStyle(element);
       if (computedStyle.position === "static") {
@@ -444,84 +661,10 @@ export function mountReviewOverlay(options) {
     }
   }
 
-  function renderDrawer(focusTargetId) {
-    const filtered = focusTargetId
-      ? threads.filter((thread) => thread.target.targetId === focusTargetId)
-      : threads;
-
-    const cards = filtered.length
-      ? filtered
-          .map((thread) => {
-            const targetLabel = thread.target.wireId || thread.target.targetId;
-            const statusAction = reviewThreadStatusAction(thread.status);
-            const statusButtons = isClosedReviewStatus(thread.status)
-              ? reviewThreadActionButtonHtml({
-                action: "toggle-status",
-                actionAttribute: "data-thread-action",
-                threadId: thread.id,
-                label: statusAction.label,
-              })
-              : `${reviewThreadActionButtonHtml({
-                action: "toggle-status",
-                actionAttribute: "data-thread-action",
-                threadId: thread.id,
-                label: statusAction.label,
-              })}
-                 ${reviewThreadActionButtonHtml({
-                   action: "wontfix",
-                   actionAttribute: "data-thread-action",
-                   threadId: thread.id,
-                   label: REVIEW_UI_COPY.wontfix,
-                 })}`;
-            return reviewThreadCardHtml({
-              thread,
-              articleClass: "ws-review-thread",
-              title: reviewThreadSummary(thread),
-              targetMeta: `${targetLabel}${thread.target.variantKey ? ` · ${thread.target.variantKey}` : ""}`,
-              targetClass: "ws-review-meta",
-              severityClass: "ws-review-badge",
-              bodyClass: "ws-review-thread-body",
-              statusContainerClass: "ws-review-thread-state",
-              statusClass: "ws-review-status",
-              actionsHtml: statusButtons,
-            });
-          })
-          .join("")
-      : reviewDrawerEmptyHtml({
-        container: "div",
-        message: "No review notes yet.",
-      });
-
-    drawer.innerHTML = reviewDrawerShellHtml({
-      metaClass: "ws-review-label",
-      metaText: reviewCountSummary({
-        active: threads.filter((thread) => isActiveReviewStatus(thread.status)).length,
-        total: threads.length,
-      }),
-      bodyHtml: cards,
-      footerHtml: reviewDrawerFooterHtml({
-        actions: [{ action: "close-drawer", label: REVIEW_UI_COPY.close }],
-      }),
-    });
-
-    drawer.querySelector('[data-action="close-drawer"]')?.addEventListener("click", closeDrawer);
-    drawer.querySelectorAll("[data-thread-action]").forEach((button) => {
-      button.addEventListener("click", () => {
-        options.onStatusChange?.({
-          threadId: button.getAttribute("data-thread-id"),
-          status: button.getAttribute("data-thread-action") === "wontfix"
-            ? "wontfix"
-            : reviewThreadStatusAction(
-              threads.find((thread) => thread.id === button.getAttribute("data-thread-id"))?.status || "open",
-            ).nextStatus,
-        });
-      });
-    });
-  }
-
-  function showComposer(target) {
+  function showComposer(target, targetElement) {
     closeComposer();
     closeDrawer();
+    setHighlight(targetElement);
     composer = document.createElement("section");
     composer.className = "ws-review-composer";
     composer.setAttribute("role", "dialog");
@@ -529,8 +672,9 @@ export function mountReviewOverlay(options) {
     composer.setAttribute("aria-label", REVIEW_UI_COPY.newNoteLabel);
     composer.innerHTML = reviewComposerHtml({
       target,
-      metaClass: "ws-review-label",
-      actionsClass: "ws-review-actions",
+      headerClass: "ws-review-composer-header",
+      metaClass: "ws-review-target-meta",
+      actionsClass: "ws-review-composer-actions",
     });
     document.body.append(composer);
 
@@ -539,12 +683,12 @@ export function mountReviewOverlay(options) {
     const body = composer.querySelector('textarea[name="body"]');
     const submit = composer.querySelector('[data-action="submit"]');
 
-    const sync = () => {
+    const syncValidity = () => {
       submit.disabled = !body.value.trim();
     };
 
     composer.querySelector('[data-action="cancel"]')?.addEventListener("click", closeComposer);
-    body?.addEventListener("input", sync);
+    body?.addEventListener("input", syncValidity);
     submit?.addEventListener("click", () => {
       if (!body.value.trim()) {
         return;
@@ -559,7 +703,47 @@ export function mountReviewOverlay(options) {
       closeComposer();
       openDrawer(target.targetId);
     });
+
+    syncValidity();
     title?.focus();
+    syncLayers();
+  }
+
+  function onDrawerClick(event) {
+    const rawTarget = event.target instanceof HTMLElement ? event.target : null;
+    if (!rawTarget) {
+      return;
+    }
+
+    const action = rawTarget.getAttribute("data-action");
+    if (action === "close-drawer") {
+      closeDrawer();
+      return;
+    }
+    if (action === "focus-target") {
+      const threadId = rawTarget.getAttribute("data-thread-id");
+      const thread = threads.find((entry) => entry.id === threadId);
+      if (thread) {
+        focusTarget(thread.target.targetId);
+      }
+      return;
+    }
+
+    const threadAction = rawTarget.getAttribute("data-thread-action");
+    const threadId = rawTarget.getAttribute("data-thread-id");
+    if (!threadAction || !threadId) {
+      return;
+    }
+    const thread = threads.find((entry) => entry.id === threadId);
+    if (!thread) {
+      return;
+    }
+    options.onStatusChange?.({
+      threadId,
+      status: threadAction === "wontfix"
+        ? "wontfix"
+        : reviewThreadStatusAction(thread.status).nextStatus,
+    });
   }
 
   function onDocumentClick(event) {
@@ -577,29 +761,8 @@ export function mountReviewOverlay(options) {
     event.stopPropagation();
     const targetId = targetElement.getAttribute("data-ws-target");
     const target = lookupTarget(options.sourceMap, targetId, targetElement);
-    setHighlight(targetElement);
-    showComposer(target);
+    showComposer(target, targetElement);
   }
-
-  document.body.classList.toggle("ws-review-active", commentMode);
-  document.addEventListener("click", onDocumentClick, true);
-
-  bar.querySelector('[data-action="comment"]')?.addEventListener("click", () => {
-    commentMode = !commentMode;
-    document.body.classList.toggle("ws-review-active", commentMode);
-    bar.querySelector('[data-action="comment"]')?.setAttribute("aria-pressed", commentMode ? "true" : "false");
-    if (!commentMode) {
-      closeComposer();
-    }
-  });
-
-  bar.querySelector('[data-action="threads"]')?.addEventListener("click", () => {
-    if (drawer.classList.contains("is-open")) {
-      closeDrawer();
-    } else {
-      openDrawer();
-    }
-  });
 
   const onKeydown = (event) => {
     if (event.key !== "Escape") {
@@ -614,7 +777,21 @@ export function mountReviewOverlay(options) {
     }
   };
 
-  document.addEventListener("keydown", onKeydown);
+  bar.querySelector('[data-action="comment"]')?.addEventListener("click", () => {
+    commentMode = !commentMode;
+    syncCommentMode();
+    if (!commentMode) {
+      closeComposer();
+    }
+  });
+
+  bar.querySelector('[data-action="threads"]')?.addEventListener("click", () => {
+    if (drawer.classList.contains("is-open")) {
+      closeDrawer();
+      return;
+    }
+    openDrawer();
+  });
 
   bar.querySelector('[data-action="save"]')?.addEventListener("click", async () => {
     const button = bar.querySelector('[data-action="save"]');
@@ -629,6 +806,22 @@ export function mountReviewOverlay(options) {
     }
   });
 
+  drawer.addEventListener("click", onDrawerClick);
+  document.addEventListener("click", onDocumentClick, true);
+  document.addEventListener("keydown", onKeydown);
+  scrim.addEventListener("click", () => {
+    if (composer) {
+      closeComposer();
+      return;
+    }
+    if (drawer.classList.contains("is-open")) {
+      closeDrawer();
+    }
+  });
+
+  syncCommentMode();
+  syncBridgeState();
+  syncLayers();
   renderDrawer();
   renderPins();
 
@@ -643,22 +836,28 @@ export function mountReviewOverlay(options) {
     setBridgeState(nextState) {
       bridgeLabel = nextState.label || bridgeLabel;
       bridgeTone = nextState.tone || bridgeTone;
+      syncBridgeState();
     },
     flashMessage(message) {
       bridgeLabel = message;
+      syncBridgeState();
     },
     openDrawer,
     closeDrawer,
     dispose() {
       document.removeEventListener("click", onDocumentClick, true);
       document.removeEventListener("keydown", onKeydown);
+      drawer.removeEventListener("click", onDrawerClick);
       closeComposer();
+      closeDrawer();
       drawer.remove();
+      scrim.remove();
       bar.remove();
       document.querySelectorAll(".ws-review-pin").forEach((node) => node.remove());
-      if (activeHighlight) {
-        activeHighlight.classList.remove("ws-review-highlight");
-      }
+      clearHighlight();
+      document.documentElement.classList.remove("ws-review-active");
+      document.documentElement.classList.remove("ws-review-drawer-open");
+      document.documentElement.classList.remove("ws-review-composer-open");
     },
   };
 }

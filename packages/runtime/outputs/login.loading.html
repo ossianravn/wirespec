@@ -3,6 +3,7 @@
   --ws-bg: #f7f7f7;
   --ws-surface: #ffffff;
   --ws-border: #d8d8d8;
+  --ws-border-strong: #bbbbbb;
   --ws-text: #1f1f1f;
   --ws-muted: #666666;
   --ws-accent: #111111;
@@ -14,16 +15,16 @@
   --ws-radius: 10px;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--ws-bg); color: var(--ws-text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.4; }
+html, body { margin: 0; padding: 0; background: var(--ws-bg); color: var(--ws-text); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.4; }
 body { padding: var(--ws-space-lg); }
 .ws-node { min-width: 0; }
 .ws-screen { width: 100%; min-height: calc(100vh - 48px); display: flex; flex-direction: column; gap: var(--ws-space-lg); }
-.ws-main, .ws-header, .ws-footer, .ws-section, .ws-panel, .ws-card, .ws-form, .ws-dialog, .ws-drawer, .ws-column, .ws-stack {
+.ws-main, .ws-header, .ws-footer, .ws-section, .ws-panel, .ws-card, .ws-form, .ws-dialog, .ws-drawer, .ws-column, .ws-stack, .ws-empty-state {
   display: flex;
   flex-direction: column;
   gap: var(--ws-space-md);
 }
-.ws-row, .ws-actions, .ws-toolbar {
+.ws-row, .ws-actions, .ws-toolbar, .ws-nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -33,7 +34,7 @@ body { padding: var(--ws-space-lg); }
   display: grid;
   gap: var(--ws-space-md);
 }
-.ws-card, .ws-panel, .ws-dialog, .ws-drawer, .ws-form, .ws-section {
+.ws-card, .ws-panel, .ws-dialog, .ws-drawer, .ws-form, .ws-section, .ws-empty-state {
   background: var(--ws-surface);
   border: 1px solid var(--ws-border);
   border-radius: var(--ws-radius);
@@ -42,28 +43,50 @@ body { padding: var(--ws-space-lg); }
 .ws-heading, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 .ws-text, .ws-helper, .ws-status, .ws-badge, .ws-alert, p { margin: 0; }
 .ws-helper, .ws-status { color: var(--ws-muted); }
+.ws-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 8px;
+  border: 1px solid var(--ws-border);
+  border-radius: 999px;
+}
 .ws-alert {
   border: 1px solid var(--ws-border);
   background: #fafafa;
   border-radius: 8px;
   padding: var(--ws-space-sm);
 }
-.ws-field, .ws-select {
+.ws-field, .ws-select, .ws-radio-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.ws-label { font-size: 0.95rem; font-weight: 500; }
-.ws-input, .ws-select select, .ws-select, select, input[type="text"], input[type="email"], input[type="password"] {
+.ws-label, .ws-legend {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.ws-input, .ws-textarea, .ws-select, select, input[type="text"], input[type="email"], input[type="password"], input[type="search"], textarea {
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--ws-border);
   border-radius: 8px;
   background: #fff;
-  padding: 0 12px;
+  padding: 10px 12px;
   color: var(--ws-text);
+  font: inherit;
+}
+.ws-textarea, textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 .ws-check { margin-right: 8px; }
+fieldset {
+  margin: 0;
+  padding: var(--ws-space-sm);
+  border: 1px solid var(--ws-border);
+  border-radius: 8px;
+}
 button, .ws-button {
   min-height: 40px;
   border-radius: 8px;
@@ -80,7 +103,79 @@ button.is-primary, .ws-button.is-primary {
   border-color: #111;
 }
 a { color: inherit; text-decoration: none; }
-.ws-list { list-style: none; margin: 0; padding: 0; }
+.ws-list, .ws-stepper, .ws-breadcrumbs-list {
+  margin: 0;
+  padding: 0;
+}
+.ws-list {
+  list-style: none;
+}
+.ws-stepper {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-space-sm);
+}
+.ws-step {
+  padding: 6px 10px;
+  border: 1px solid var(--ws-border);
+  border-radius: 999px;
+}
+.ws-breadcrumbs-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ws-breadcrumb-item + .ws-breadcrumb-item::before {
+  content: "/";
+  color: var(--ws-muted);
+  margin-right: 8px;
+}
+.ws-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-space-sm);
+}
+.ws-tab {
+  border-style: dashed;
+}
+.ws-tab-panel {
+  border: 1px dashed var(--ws-border);
+  border-radius: 8px;
+  padding: var(--ws-space-md);
+}
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ws-surface);
+}
+.ws-table th,
+.ws-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ws-border);
+  vertical-align: top;
+}
+.ws-table th {
+  font-weight: 600;
+}
+.ws-pagination {
+  display: flex;
+  justify-content: flex-end;
+}
+.ws-avatar, .ws-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px dashed var(--ws-border-strong);
+  border-radius: 8px;
+  background: #fbfbfb;
+  color: var(--ws-muted);
+}
 [data-ws-id], [data-ws-target] {
   position: relative;
 }
@@ -89,6 +184,13 @@ a { color: inherit; text-decoration: none; }
   outline-offset: 2px;
 }
 .is-hidden { display: none !important; }
+.is-selected {
+  border-color: var(--ws-border-strong);
+  background: #f2f2f2;
+}
+.is-invalid {
+  border-color: #b75b5b;
+}
 .ws-doc-meta {
   display: flex;
   justify-content: space-between;
@@ -108,4 +210,4 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
   padding-left: 20px;
 }
-</style></head><body><div class="ws-doc-meta"><span>Login</span><span>{&quot;state&quot;:&quot;loading&quot;}</span></div><main class="ws-screen ws-node" data-ws-kind="screen" data-ws-screen="login" data-ws-target="screen:login" data-ws-id="login"><section class="ws-main ws-node" data-ws-kind="main" data-ws-screen="login" data-ws-target="node:content" data-ws-id="content" style="width:100%;align-items:center;justify-content:center;padding:24px"><section class="ws-card ws-node" data-ws-kind="card" data-ws-screen="login" data-ws-target="node:auth-card" data-ws-id="auth-card" style="width:100%;max-width:12px"><h1 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="login" data-ws-target="node:title" data-ws-id="title">Welcome back</h1><p class="ws-text ws-node" data-ws-kind="text" data-ws-screen="login" data-ws-target="node:intro" data-ws-id="intro">Use your work email and password.</p><form class="ws-form ws-node" data-ws-kind="form" data-ws-screen="login" data-ws-target="node:login-form" data-ws-id="login-form"><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:email" data-ws-id="email" data-ws-role="textbox"><span class="ws-label">Work email</span><input class="ws-input" type="email" name="email" required=""></label><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:password" data-ws-id="password" data-ws-role="textbox"><span class="ws-label">Password</span><input class="ws-input" type="password" name="password" required=""></label><section class="ws-row ws-node" data-ws-kind="row" data-ws-screen="login" data-ws-target="node:assistive-row" data-ws-id="assistive-row" style="align-items:center;justify-content:space-between"><label class="ws-checkbox ws-node" data-ws-kind="checkbox" data-ws-screen="login" data-ws-target="node:remember" data-ws-id="remember" data-ws-role="checkbox"><input class="ws-check" type="checkbox" name="remember"><span>Remember me</span></label><a class="ws-link ws-node" data-ws-kind="link" data-ws-screen="login" data-ws-target="node:forgot" data-ws-id="forgot" data-ws-role="link" href="/forgot-password">Forgot password?</a></section><div class="ws-alert ws-node tone-critical is-hidden" data-ws-kind="alert" data-ws-screen="login" data-ws-target="node:form-error" data-ws-id="form-error" data-ws-role="alert" hidden="" aria-hidden="true" role="alert">Incorrect email or password.</div><section class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="login" data-ws-target="node:primary-actions" data-ws-id="primary-actions"><button class="ws-button ws-node is-primary" data-ws-kind="button" data-ws-screen="login" data-ws-target="node:submit" data-ws-id="submit" data-ws-role="button" type="button" disabled="" aria-busy="true">Signing in…</button></section></form></section></section></main><section class="ws-acceptance"><h2>Acceptance</h2><ul><li>Keyboard-only user can complete sign-in and trigger password recovery.</li><li>Inline error stays close to the password field and does not replace the field label.</li><li>Primary action remains visible without scrolling on common mobile widths.</li></ul></section></body></html>
+</style></head><body><div class="ws-doc-meta"><span>Login</span><span>{&quot;state&quot;:&quot;loading&quot;}</span></div><div class="ws-screen ws-node" data-ws-kind="screen" data-ws-screen="login" data-ws-target="screen:login" data-ws-id="login" id="ws-login-login"><main class="ws-main ws-node" data-ws-kind="main" data-ws-screen="login" data-ws-target="node:content" data-ws-id="content" id="ws-login-content" style="width:100%;align-items:center;justify-content:center;padding:24px"><section class="ws-card ws-node" data-ws-kind="card" data-ws-screen="login" data-ws-target="node:auth-card" data-ws-id="auth-card" id="ws-login-auth-card" style="width:100%;max-width:26rem"><h1 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="login" data-ws-target="node:title" data-ws-id="title" id="ws-login-title">Welcome back</h1><p class="ws-text ws-node" data-ws-kind="text" data-ws-screen="login" data-ws-target="node:intro" data-ws-id="intro" id="ws-login-intro">Use your work email and password.</p><form class="ws-form ws-node is-disabled" data-ws-kind="form" data-ws-screen="login" data-ws-target="node:login-form" data-ws-id="login-form" id="ws-login-login-form" data-ws-submit="sign-in"><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:email" data-ws-id="email" id="ws-login-email" data-ws-role="textbox"><span class="ws-label">Work email</span><input id="ws-input-login-email" class="ws-input" type="email" name="email" autocomplete="email" required=""></label><label class="ws-field ws-node" data-ws-kind="field" data-ws-screen="login" data-ws-target="node:password" data-ws-id="password" id="ws-login-password" data-ws-role="textbox"><span class="ws-label">Password</span><input id="ws-input-login-password" class="ws-input" type="password" name="password" autocomplete="current-password" required=""></label><div class="ws-row ws-node" data-ws-kind="row" data-ws-screen="login" data-ws-target="node:assistive-row" data-ws-id="assistive-row" id="ws-login-assistive-row" style="align-items:center;justify-content:space-between"><label class="ws-checkbox ws-node" data-ws-kind="checkbox" data-ws-screen="login" data-ws-target="node:remember" data-ws-id="remember" id="ws-login-remember" data-ws-role="checkbox"><input class="ws-check" type="checkbox" name="remember"><span>Remember me</span></label><a class="ws-link ws-node" data-ws-kind="link" data-ws-screen="login" data-ws-target="node:forgot" data-ws-id="forgot" id="ws-login-forgot" data-ws-role="link" href="/forgot-password">Forgot password?</a></div><div class="ws-alert ws-node tone-critical is-hidden" data-ws-kind="alert" data-ws-screen="login" data-ws-target="node:form-error" data-ws-id="form-error" id="ws-login-form-error" data-ws-role="alert" hidden="" aria-hidden="true" role="alert">Incorrect email or password.</div><div class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="login" data-ws-target="node:primary-actions" data-ws-id="primary-actions" id="ws-login-primary-actions"><button class="ws-button ws-node is-primary is-disabled is-busy" data-ws-kind="button" data-ws-screen="login" data-ws-target="node:submit" data-ws-id="submit" id="ws-login-submit" data-ws-role="button" type="submit" disabled="" aria-busy="true">Signing in…</button></div></form></section></main></div><section class="ws-acceptance"><h2>Acceptance</h2><ul><li>Keyboard-only user can complete sign-in and trigger password recovery.</li><li>Inline error stays close to the password field and does not replace the field label.</li><li>Primary action remains visible without scrolling on common mobile widths.</li></ul></section></body></html>

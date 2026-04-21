@@ -1,4 +1,6 @@
 {
+  "ok": true,
+  "command": "resolve-on-save",
   "savedFile": "<workspace>/src/features/auth/LoginCard.tsx",
   "changedRanges": [
     {

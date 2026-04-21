@@ -80,6 +80,29 @@ export interface VariantBlock {
   span: SourceSpan;
 }
 
+export interface LintDiagnostic {
+  code: string;
+  level: "error" | "warning" | "info";
+  message: string;
+  span?: SourceSpan;
+  targetId?: string;
+  fixHint?: string;
+}
+
+export interface LintResult {
+  ok: boolean;
+  diagnostics: LintDiagnostic[];
+}
+
+export interface LintOptions {
+  requireStableIdsOnInteractiveNodes?: boolean;
+  includeQualityWarnings?: boolean;
+}
+
+export interface FormatOptions {
+  lineEnding?: "\n" | "\r\n";
+}
+
 export interface ParsedWireSpecDocument {
   schemaVersion: "1.0.0-rc0";
   sourceFormat: "markdown+wirespec";

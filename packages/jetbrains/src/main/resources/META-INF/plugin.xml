@@ -14,6 +14,12 @@
     <statusBarWidgetFactory
       id="WireSpecStatusBar"
       implementation="com.wirespec.ide.WireSpecStatusBarWidgetFactory"/>
+    <projectConfigurable
+      parentId="tools"
+      id="dev.wirespec.ide.settings"
+      displayName="WireSpec"
+      nonDefaultProject="true"
+      instance="com.wirespec.ide.WireSpecSettingsConfigurable"/>
   </extensions>
 
   <actions>

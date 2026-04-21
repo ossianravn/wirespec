@@ -3,6 +3,7 @@
   "displayName": "WireSpec IDE Companion",
   "description": "Thin VS Code wrapper around the shared WireSpec core.",
   "version": "0.5.0",
+  "license": "MIT",
   "main": "./extension.js",
   "engines": {
     "vscode": "^1.97.0"
@@ -45,7 +46,25 @@
         },
         "wirespec.ide.nodeExecutable": {
           "type": "string",
-          "default": "node"
+          "default": "node",
+          "description": "Node executable used when launching a discovered wirespec-ide-core.js script."
+        },
+        "wirespec.ide.corePath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional absolute path to wirespec-ide-core.js when auto-discovery from the extension bundle, repo checkout, or node_modules is unavailable."
+        },
+        "wirespec.ide.coreCommand": {
+          "type": "array",
+          "default": [
+            "pnpm",
+            "exec",
+            "wirespec-ide-core"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Fallback command tokens used to launch the shared WireSpec core when no local script path is available."
         }
       }
     }

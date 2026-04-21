@@ -1,0 +1,12 @@
+{
+  "name": "@wirespec/studio-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm --dir ../runtime run build && pnpm --dir ../studio-core run build && node ./scripts/build-demo.mjs",
+    "generate:examples": "pnpm run build",
+    "test": "pnpm run build && node ./scripts/smoke-test.mjs"
+  }
+}

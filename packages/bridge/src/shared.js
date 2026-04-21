@@ -3,12 +3,15 @@ import path from "node:path";
 export { escapeHtml, nowIso, shortId, textQuoteForTarget } from "./browser-shared.js";
 
 export function sanitizeDocumentId(value) {
-  const safe = String(value || "document")
+  if (typeof value !== "string" || value.trim() === "") {
+    return "";
+  }
+  const safe = String(value)
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
-  return safe || "document";
+  return safe;
 }
 
 export async function ensureDirForFile(filePath) {

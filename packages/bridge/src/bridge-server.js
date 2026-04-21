@@ -21,6 +21,7 @@ async function readJsonBody(req) {
 }
 
 function createSseClient(res, origin) {
+  let closed = false;
   res.writeHead(200, {
     "content-type": "text/event-stream; charset=utf-8",
     "cache-control": "no-cache, no-transform",
@@ -30,10 +31,26 @@ function createSseClient(res, origin) {
   res.write(": connected\n\n");
   return {
     send(event) {
-      res.write(`data: ${JSON.stringify(event)}\n\n`);
+      if (closed || res.destroyed || res.writableEnded) {
+        closed = true;
+        return false;
+      }
+      try {
+        res.write(`data: ${JSON.stringify(event)}\n\n`);
+        return true;
+      } catch {
+        closed = true;
+        return false;
+      }
     },
     close() {
-      res.end();
+      if (closed) {
+        return;
+      }
+      closed = true;
+      if (!res.destroyed && !res.writableEnded) {
+        res.end();
+      }
     },
   };
 }
@@ -43,8 +60,11 @@ export function startReviewBridgeServer(options) {
   const clients = new Set();
 
   service.on("event", (event) => {
-    for (const client of clients) {
-      client.send(event);
+    for (const client of Array.from(clients)) {
+      if (!client.send(event)) {
+        clients.delete(client);
+        client.close();
+      }
     }
   });
 
@@ -80,6 +100,10 @@ export function startReviewBridgeServer(options) {
         const client = createSseClient(res, origin || "*");
         clients.add(client);
         req.on("close", () => {
+          clients.delete(client);
+          client.close();
+        });
+        res.on("close", () => {
           clients.delete(client);
           client.close();
         });

@@ -123,7 +123,7 @@
         "columnEnd": 80
       },
       "dom": {
-        "selector": "[data-ws-id='review-header']",
+        "selector": "[data-ws-target='node:review-header']",
         "screenId": "review-surface",
         "wireId": "review-header",
         "kind": "header",
@@ -163,14 +163,15 @@
         "columnEnd": 80
       },
       "dom": {
-        "selector": "[data-ws-id='review-toolbar']",
+        "selector": "[data-ws-target='node:review-toolbar']",
         "screenId": "review-surface",
         "wireId": "review-toolbar",
         "kind": "toolbar",
         "path": "screen:review-surface/node:review-header/node:review-toolbar"
       },
       "signature": {
-        "kind": "toolbar"
+        "kind": "toolbar",
+        "role": "toolbar"
       },
       "variants": [
         "base",
@@ -204,7 +205,7 @@
         "columnEnd": 47
       },
       "dom": {
-        "selector": "[data-ws-id='review-context']",
+        "selector": "[data-ws-target='node:review-context']",
         "screenId": "review-surface",
         "wireId": "review-context",
         "kind": "row",
@@ -247,7 +248,7 @@
         "columnEnd": 52
       },
       "dom": {
-        "selector": "[data-ws-id='review-title']",
+        "selector": "[data-ws-target='node:review-title']",
         "screenId": "review-surface",
         "wireId": "review-title",
         "kind": "heading",
@@ -291,7 +292,7 @@
         "columnEnd": 47
       },
       "dom": {
-        "selector": "[data-ws-id='variant-status']",
+        "selector": "[data-ws-target='node:variant-status']",
         "screenId": "review-surface",
         "wireId": "variant-status",
         "kind": "status",
@@ -333,7 +334,7 @@
         "columnEnd": 80
       },
       "dom": {
-        "selector": "[data-ws-id='review-actions']",
+        "selector": "[data-ws-target='node:review-actions']",
         "screenId": "review-surface",
         "wireId": "review-actions",
         "kind": "actions",
@@ -376,7 +377,7 @@
         "columnEnd": 51
       },
       "dom": {
-        "selector": "[data-ws-id='screen-picker']",
+        "selector": "[data-ws-target='node:screen-picker']",
         "screenId": "review-surface",
         "wireId": "screen-picker",
         "kind": "select",
@@ -384,7 +385,7 @@
       },
       "signature": {
         "kind": "select",
-        "role": "textbox",
+        "role": "combobox",
         "text": "Screen"
       },
       "variants": [
@@ -421,7 +422,7 @@
         "columnEnd": 54
       },
       "dom": {
-        "selector": "[data-ws-id='variant-picker']",
+        "selector": "[data-ws-target='node:variant-picker']",
         "screenId": "review-surface",
         "wireId": "variant-picker",
         "kind": "select",
@@ -429,7 +430,7 @@
       },
       "signature": {
         "kind": "select",
-        "role": "textbox",
+        "role": "combobox",
         "text": "Variant"
       },
       "variants": [
@@ -466,7 +467,7 @@
         "columnEnd": 62
       },
       "dom": {
-        "selector": "[data-ws-id='comment-mode']",
+        "selector": "[data-ws-target='node:comment-mode']",
         "screenId": "review-surface",
         "wireId": "comment-mode",
         "kind": "switch",
@@ -474,7 +475,7 @@
       },
       "signature": {
         "kind": "switch",
-        "role": "checkbox",
+        "role": "switch",
         "text": "Comment mode"
       },
       "variants": [
@@ -511,7 +512,7 @@
         "columnEnd": 82
       },
       "dom": {
-        "selector": "[data-ws-id='open-threads']",
+        "selector": "[data-ws-target='node:open-threads']",
         "screenId": "review-surface",
         "wireId": "open-threads",
         "kind": "button",
@@ -556,7 +557,7 @@
         "columnEnd": 80
       },
       "dom": {
-        "selector": "[data-ws-id='copy-link']",
+        "selector": "[data-ws-target='node:copy-link']",
         "screenId": "review-surface",
         "wireId": "copy-link",
         "kind": "button",
@@ -597,7 +598,7 @@
         "columnEnd": 96
       },
       "dom": {
-        "selector": "[data-ws-id='review-main']",
+        "selector": "[data-ws-target='node:review-main']",
         "screenId": "review-surface",
         "wireId": "review-main",
         "kind": "main",
@@ -637,7 +638,7 @@
         "columnEnd": 90
       },
       "dom": {
-        "selector": "[data-ws-id='preview-stage']",
+        "selector": "[data-ws-target='node:preview-stage']",
         "screenId": "review-surface",
         "wireId": "preview-stage",
         "kind": "section",
@@ -678,7 +679,7 @@
         "columnEnd": 90
       },
       "dom": {
-        "selector": "[data-ws-id='preview-panel']",
+        "selector": "[data-ws-target='node:preview-panel']",
         "screenId": "review-surface",
         "wireId": "preview-panel",
         "kind": "panel",
@@ -721,7 +722,7 @@
         "columnEnd": 133
       },
       "dom": {
-        "selector": "[data-ws-id='preview-help']",
+        "selector": "[data-ws-target='node:preview-help']",
         "screenId": "review-surface",
         "wireId": "preview-help",
         "kind": "helper",
@@ -764,7 +765,7 @@
         "columnEnd": 90
       },
       "dom": {
-        "selector": "[data-ws-id='preview-canvas']",
+        "selector": "[data-ws-target='node:preview-canvas']",
         "screenId": "review-surface",
         "wireId": "preview-canvas",
         "kind": "x-wireframe-preview",
@@ -805,7 +806,7 @@
         "columnEnd": 96
       },
       "dom": {
-        "selector": "[data-ws-id='thread-drawer']",
+        "selector": "[data-ws-target='node:thread-drawer']",
         "screenId": "review-surface",
         "wireId": "thread-drawer",
         "kind": "drawer",
@@ -849,7 +850,7 @@
         "columnEnd": 53
       },
       "dom": {
-        "selector": "[data-ws-id='thread-title']",
+        "selector": "[data-ws-target='node:thread-title']",
         "screenId": "review-surface",
         "wireId": "thread-title",
         "kind": "heading",
@@ -891,14 +892,15 @@
         "columnEnd": 92
       },
       "dom": {
-        "selector": "[data-ws-id='thread-list']",
+        "selector": "[data-ws-target='node:thread-list']",
         "screenId": "review-surface",
         "wireId": "thread-list",
         "kind": "list",
         "path": "screen:review-surface/node:review-main/node:thread-drawer/node:thread-list"
       },
       "signature": {
-        "kind": "list"
+        "kind": "list",
+        "role": "list"
       },
       "variants": [
         "base",
@@ -933,14 +935,15 @@
         "columnEnd": 92
       },
       "dom": {
-        "selector": "[data-ws-id='thread-1']",
+        "selector": "[data-ws-target='node:thread-1']",
         "screenId": "review-surface",
         "wireId": "thread-1",
         "kind": "list-item",
         "path": "screen:review-surface/node:review-main/node:thread-drawer/node:thread-list/node:thread-1"
       },
       "signature": {
-        "kind": "list-item"
+        "kind": "list-item",
+        "role": "listitem"
       },
       "variants": [
         "base",
@@ -977,7 +980,7 @@
         "columnEnd": 92
       },
       "dom": {
-        "selector": "[data-ws-id='thread-1-summary']",
+        "selector": "[data-ws-target='node:thread-1-summary']",
         "screenId": "review-surface",
         "wireId": "thread-1-summary",
         "kind": "text",
@@ -1019,7 +1022,7 @@
         "columnEnd": 96
       },
       "dom": {
-        "selector": "[data-ws-id='drawer-actions']",
+        "selector": "[data-ws-target='node:drawer-actions']",
         "screenId": "review-surface",
         "wireId": "drawer-actions",
         "kind": "actions",
@@ -1062,7 +1065,7 @@
         "columnEnd": 96
       },
       "dom": {
-        "selector": "[data-ws-id='export-to-agent']",
+        "selector": "[data-ws-target='node:export-to-agent']",
         "screenId": "review-surface",
         "wireId": "export-to-agent",
         "kind": "button",
@@ -1105,7 +1108,7 @@
         "columnEnd": 104
       },
       "dom": {
-        "selector": "[data-ws-id='stale-warning']",
+        "selector": "[data-ws-target='node:stale-warning']",
         "screenId": "review-surface",
         "wireId": "stale-warning",
         "kind": "alert",

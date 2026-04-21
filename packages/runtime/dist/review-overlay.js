@@ -3,86 +3,104 @@ const { REVIEW_UI_COPY, reviewComposerHtml, reviewDefaultDraftTitle, reviewToolb
 const overlayCss = `
 .ws-review-bar,
 .ws-review-bar *,
+.ws-review-scrim,
 .ws-review-composer,
 .ws-review-composer * {
   box-sizing: border-box;
 }
+.ws-review-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 10011;
+  display: none;
+  background: rgba(17,17,17,0.18);
+}
+.ws-review-scrim.is-open {
+  display: block;
+}
 .ws-review-bar {
   position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 9999;
+  top: 12px;
+  right: 12px;
+  z-index: 10000;
   display: flex;
-  gap: 6px;
   align-items: center;
-  min-height: 44px;
-  max-width: min(560px, calc(100vw - 32px));
-  padding: 6px;
-  background: #fff;
-  border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(17,17,17,0.10);
+  gap: 8px;
+  min-height: 46px;
+  max-width: min(34rem, calc(100vw - 24px));
+  padding: 7px 8px;
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(17,17,17,0.10);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(17,17,17,0.10);
+  backdrop-filter: blur(8px);
   color: #111;
-  font: 500 13px/1.25 ui-sans-serif, system-ui, sans-serif;
+  font: 500 13px/1.2 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-bar button {
   appearance: none;
-  border: 1px solid rgba(17,17,17,0.16);
+  border: 1px solid rgba(17,17,17,0.12);
   background: #fff;
   color: #111;
-  border-radius: 6px;
-  min-height: 32px;
-  padding: 0 10px;
+  border-radius: 7px;
+  min-height: 31px;
+  padding: 0 11px;
   cursor: pointer;
   font: inherit;
 }
 .ws-review-bar button:hover,
 .ws-review-composer-actions button:hover {
-  border-color: rgba(17,17,17,0.32);
-  background: #f7f7f7;
+  border-color: rgba(17,17,17,0.24);
+  background: #f5f5f3;
 }
 .ws-review-bar button:focus-visible,
 .ws-review-composer-actions button:focus-visible,
 .ws-review-composer input:focus-visible,
 .ws-review-composer select:focus-visible,
 .ws-review-composer textarea:focus-visible {
-  outline: 2px solid rgba(17,17,17,0.70);
+  outline: 2px solid rgba(17,17,17,0.62);
   outline-offset: 2px;
 }
 .ws-review-bar button[aria-pressed="true"] {
-  border-color: rgba(17,17,17,0.40);
-  background: #eeeeee;
+  border-color: rgba(17,17,17,0.30);
+  background: #ededeb;
 }
 .ws-review-bar [data-ws-review-bar-actions] {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .ws-review-hint {
-  color: rgba(17,17,17,0.68);
+  display: none;
+  color: rgba(17,17,17,0.56);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 400;
+}
+.ws-review-active .ws-review-hint {
+  display: inline-block;
 }
 .ws-review-active [data-ws-target] {
   cursor: crosshair;
 }
 .ws-review-active [data-ws-target]:hover {
-  outline: 2px solid rgba(17,17,17,0.34);
+  outline: 2px solid rgba(17,17,17,0.26);
   outline-offset: 2px;
 }
 .ws-review-composer {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
-  width: min(420px, calc(100vw - 32px));
-  z-index: 10000;
-  max-height: calc(100vh - 88px);
+  right: 12px;
+  bottom: 12px;
+  width: min(24rem, calc(100vw - 24px));
+  z-index: 10020;
+  max-height: min(36rem, calc(100vh - 92px));
   overflow: auto;
-  padding: 16px;
+  padding: 18px;
   background: #fff;
-  border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(17,17,17,0.12);
+  border: 1px solid rgba(17,17,17,0.10);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(17,17,17,0.16);
   font: 400 14px/1.45 ui-sans-serif, system-ui, sans-serif;
   color: #111;
 }
@@ -93,56 +111,58 @@ const overlayCss = `
 .ws-review-composer-header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 5px;
+  margin-bottom: 14px;
 }
 .ws-review-composer h2 {
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 700;
 }
 .ws-review-target-meta {
-  color: rgba(17,17,17,0.62);
-  font-size: 13px;
+  color: rgba(17,17,17,0.56);
+  font-size: 12px;
+  line-height: 1.4;
 }
 .ws-review-composer label {
   display: grid;
   gap: 6px;
-  margin-top: 12px;
-  color: rgba(17,17,17,0.82);
-  font-size: 13px;
+  margin-top: 13px;
+  color: rgba(17,17,17,0.78);
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 .ws-review-composer input,
 .ws-review-composer select,
 .ws-review-composer textarea {
   width: 100%;
   max-width: 100%;
-  border: 1px solid rgba(17,17,17,0.16);
-  border-radius: 6px;
+  border: 1px solid rgba(17,17,17,0.14);
+  border-radius: 8px;
   background: #fff;
   color: #111;
-  padding: 9px 10px;
+  padding: 10px 11px;
   font: 400 14px/1.35 ui-sans-serif, system-ui, sans-serif;
 }
 .ws-review-composer textarea {
-  min-height: 96px;
+  min-height: 112px;
   resize: vertical;
 }
 .ws-review-composer-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 .ws-review-composer-actions button {
   appearance: none;
-  border: 1px solid rgba(17,17,17,0.16);
-  border-radius: 6px;
+  border: 1px solid rgba(17,17,17,0.14);
+  border-radius: 8px;
   background: #fff;
   color: #111;
-  min-height: 32px;
-  padding: 0 10px;
+  min-height: 34px;
+  padding: 0 12px;
   cursor: pointer;
   font: 500 13px/1 ui-sans-serif, system-ui, sans-serif;
 }
@@ -159,18 +179,18 @@ const overlayCss = `
   .ws-review-bar {
     left: 8px;
     right: 8px;
+    top: 8px;
     width: auto;
     max-width: none;
   }
-  .ws-review-hint {
-    display: none;
-  }
   .ws-review-composer {
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
-    max-height: calc(100vh - 88px);
+    max-height: min(78vh, calc(100vh - 68px));
+    padding: 18px 16px 16px;
+    border-radius: 16px 16px 0 0;
   }
 }
 `;
@@ -276,6 +296,9 @@ export function mountReviewOverlay(options = {}) {
         hintText: options.hintText ?? "Alt-click targets a parent section",
     });
     document.body.append(bar);
+    const scrim = document.createElement("div");
+    scrim.className = "ws-review-scrim";
+    document.body.append(scrim);
     const toggleButton = bar.querySelector('[data-action="toggle"]');
     let active = Boolean(options.commentModeDefault);
     let composer = null;
@@ -288,11 +311,15 @@ export function mountReviewOverlay(options = {}) {
     const closeComposer = () => {
         composer?.remove();
         composer = null;
+        scrim.classList.remove("is-open");
+        document.documentElement.classList.remove("ws-review-composer-open");
     };
     const openComposer = (target) => {
         closeComposer();
         composer = createComposer(target, closeComposer);
         document.body.append(composer);
+        scrim.classList.add("is-open");
+        document.documentElement.classList.add("ws-review-composer-open");
         dispatch("wirespec.review.targetSelected", target);
     };
     const onDocumentClick = (event) => {
@@ -330,13 +357,17 @@ export function mountReviewOverlay(options = {}) {
     });
     document.addEventListener("click", onDocumentClick, true);
     document.addEventListener("keydown", onKeydown);
+    scrim.addEventListener("click", closeComposer);
     syncActive();
     return () => {
         closeComposer();
         document.removeEventListener("click", onDocumentClick, true);
         document.removeEventListener("keydown", onKeydown);
+        scrim.removeEventListener("click", closeComposer);
         bar.remove();
+        scrim.remove();
         document.documentElement.classList.remove("ws-review-active");
+        document.documentElement.classList.remove("ws-review-composer-open");
     };
 }
 export function targetFromEvent(event, sourceMap) {

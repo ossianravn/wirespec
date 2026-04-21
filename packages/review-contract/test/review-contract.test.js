@@ -39,15 +39,22 @@ test("review UI helpers keep status labels and transitions consistent", () => {
     label: "Reopen",
     nextStatus: "open",
   });
-  assert.equal(contract.reviewCountSummary({ active: 2, total: 3 }), "2 active · 3 total");
-  assert.equal(contract.reviewPinTitle(1), "1 active review thread");
-  assert.equal(contract.reviewPinTitle(2), "2 active review threads");
+  assert.equal(contract.reviewCountSummary({ active: 2, total: 3 }), "2 open · 3 total");
+  assert.equal(contract.reviewPinTitle(1), "1 open note");
+  assert.equal(contract.reviewPinTitle(2), "2 open notes");
   assert.match(contract.reviewToolbarHtml({ includeThreads: true }), /data-action="threads"/);
   assert.match(
     contract.reviewComposerHtml({
       target: { scope: "element", kind: "button", label: "<Sign in>" },
     }),
     /&lt;Sign in&gt;/,
+  );
+  assert.equal(
+    contract.reviewTargetContextText(
+      { scope: "screen", kind: "screen", variantKey: "mobile" },
+      "Checkout",
+    ),
+    "Page: Checkout · mobile view",
   );
   assert.equal(contract.reviewLatestMessageBody(thread), "Fix <button>");
   assert.equal(contract.reviewThreadSummary(thread), "Fix <button>");
@@ -134,7 +141,7 @@ test("browser ESM contract exposes the same UI primitives", async () => {
       messages: [],
     },
   }), /Browser/);
-  assert.match(browserContract.default.reviewDrawerEmptyHtml(), /No threads in this view/);
+  assert.match(browserContract.default.reviewDrawerEmptyHtml(), /No notes in this view/);
   assert.match(browserContract.default.reviewDrawerShellHtml({ bodyHtml: "Body" }), /ws-review-drawer-body/);
 });
 

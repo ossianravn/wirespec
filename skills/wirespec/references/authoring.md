@@ -99,3 +99,37 @@ patch target=primary-actions direction=column width=fill
 - Use variants for state and breakpoint changes.
 - Avoid raw CSS, utility classes, pixel values, and component-library leakage.
 - Verify the primary action, error/empty/loading states, and mobile behavior.
+- Avoid generic dashboard shells, KPI filler, ornamental side rails, placeholder copy, and developer-context text in visible UI labels.
+
+## Quality Warnings
+
+`wirespec lint` now warns about common AI-slop patterns before approval:
+
+- generic dashboard shells and fake KPI strips
+- repeated filler cards or ornamental rails
+- placeholder or vague end-user copy
+- missing or buried primary actions
+- missing loading, error, or empty states where the task needs them
+- missing narrow-screen breakpoint coverage for complex screens
+- missing or vague acceptance criteria
+- React/API/agent/debug language leaking into visible UI text
+
+## Validation And Formatting
+
+Lint a document before handing it to a coding agent:
+
+```bash
+pnpm exec wirespec lint path/to/screen.wirespec.md
+```
+
+Print canonical formatting:
+
+```bash
+pnpm exec wirespec format path/to/screen.wirespec.md
+```
+
+Rewrite a file in canonical form:
+
+```bash
+pnpm exec wirespec format --write path/to/screen.wirespec.md
+```

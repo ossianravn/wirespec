@@ -29,7 +29,7 @@
           },
           {
             "type": "selector",
-            "value": "[data-ws-id='primary-actions']"
+            "value": "[data-ws-target='node:primary-actions']"
           },
           {
             "type": "source-span",
@@ -76,7 +76,7 @@
           },
           {
             "type": "selector",
-            "value": "[data-ws-id='form-error']"
+            "value": "[data-ws-target='node:form-error']"
           },
           {
             "type": "source-span",

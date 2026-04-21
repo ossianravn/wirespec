@@ -179,13 +179,18 @@ export function roleForNode(node: WireNode): string | undefined {
     case "link":
       return "link";
     case "field":
+      return "textbox";
     case "textarea":
+      return "textbox";
     case "select":
     case "combobox":
-      return "textbox";
+      return "combobox";
     case "checkbox":
-    case "switch":
       return "checkbox";
+    case "switch":
+      return "switch";
+    case "radio-group":
+      return "radiogroup";
     case "radio":
       return "radio";
     case "dialog":
@@ -194,9 +199,44 @@ export function roleForNode(node: WireNode): string | undefined {
       return "complementary";
     case "alert":
       return "alert";
+    case "nav":
+    case "breadcrumbs":
+    case "pagination":
+      return "navigation";
+    case "toolbar":
+      return "toolbar";
+    case "tabs":
+      return "tablist";
+    case "tab":
+      return "tab";
+    case "tab-panel":
+      return "tabpanel";
+    case "list":
+    case "stepper":
+      return "list";
+    case "list-item":
+    case "step":
+      return "listitem";
+    case "table":
+      return "table";
+    case "table-header":
+    case "table-body":
+      return "rowgroup";
+    case "table-row":
+      return "row";
+    case "table-cell":
+      return "cell";
+    case "empty-state":
+      return "region";
+    case "avatar":
+    case "icon":
+      return "img";
     default:
       if (type === "checkbox") {
         return "checkbox";
+      }
+      if (type === "radio") {
+        return "radio";
       }
       return undefined;
   }
@@ -233,6 +273,11 @@ export function classifyScope(kind: string, hasChildren: boolean): "screen" | "s
     "tab-panel",
     "toolbar",
     "empty-state",
+    "nav",
+    "breadcrumbs",
+    "pagination",
+    "stepper",
+    "radio-group",
   ]);
   if (sectionKinds.has(kind) || hasChildren) {
     return "section";
@@ -244,5 +289,8 @@ export function semanticTargetId(scope: "screen" | "section" | "element", node: 
   if (scope === "screen") {
     return `screen:${screenIdFromNode(node)}`;
   }
-  return `node:${node.id ?? toKebab(node.kind)}`;
+  if (node.id) {
+    return `node:${node.id}`;
+  }
+  return `node:auto:${toKebab(node.kind)}-${node.span.lineStart}-${node.span.columnStart}`;
 }

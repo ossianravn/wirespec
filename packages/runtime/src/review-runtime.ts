@@ -33,14 +33,13 @@ const {
   reviewDrawerFooterHtml,
   reviewDrawerShellHtml,
   reviewPinTitle,
-  reviewScopeLabel,
+  reviewTargetContextText,
   reviewThreadActionButtonHtml,
   reviewThreadActionLinkHtml,
   reviewThreadCardHtml,
   reviewThreadStatusAction,
   reviewThreadSummary,
   reviewThreadsButtonLabel,
-  reviewVariantPillHtml,
 } = reviewContract;
 
 export interface ReviewRuntimeOptions {
@@ -66,24 +65,33 @@ export interface ReviewRuntimeController {
 }
 
 const runtimeCss = `
+html.ws-review-drawer-open,
+html.ws-review-drawer-open body,
+html.ws-review-composer-open,
+html.ws-review-composer-open body {
+  overflow: hidden;
+}
 .ws-review-drawer,
 .ws-review-drawer *,
 .ws-review-pin {
   box-sizing: border-box;
 }
+.ws-review-drawer-scrim {
+  z-index: 10010;
+}
 .ws-review-drawer {
   position: fixed;
-  top: 64px;
-  right: 16px;
-  bottom: 16px;
-  width: min(420px, calc(100vw - 32px));
-  z-index: 10001;
+  top: 66px;
+  right: 12px;
+  bottom: 12px;
+  width: min(23rem, calc(100vw - 24px));
+  z-index: 10012;
   display: none;
   flex-direction: column;
   background: #fff;
-  border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(17,17,17,0.12);
+  border: 1px solid rgba(17,17,17,0.10);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(17,17,17,0.16);
   color: #111;
   overflow: hidden;
   font: 400 14px/1.45 ui-sans-serif, system-ui, sans-serif;
@@ -95,6 +103,7 @@ const runtimeCss = `
 .ws-review-drawer-footer {
   padding: 14px 16px;
   border-bottom: 1px solid rgba(17,17,17,0.08);
+  background: rgba(255,255,255,0.98);
 }
 .ws-review-drawer-footer {
   border-bottom: 0;
@@ -114,16 +123,17 @@ const runtimeCss = `
 }
 .ws-review-drawer-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 700;
 }
 .ws-review-drawer-meta,
-.ws-review-thread-meta,
 .ws-review-thread-target,
 .ws-review-empty,
 .ws-review-thread-orphaned {
-  color: rgba(17,17,17,0.68);
+  color: rgba(17,17,17,0.56);
+  font-size: 12px;
+  line-height: 1.4;
 }
 .ws-review-drawer-header p,
 .ws-review-thread-card p,
@@ -131,6 +141,7 @@ const runtimeCss = `
   margin: 0;
 }
 .ws-review-drawer-body {
+  flex: 1 1 auto;
   overflow: auto;
   padding: 0;
   display: flex;
@@ -138,18 +149,17 @@ const runtimeCss = `
 }
 .ws-review-thread-card {
   border-bottom: 1px solid rgba(17,17,17,0.08);
-  padding: 14px 16px;
+  padding: 13px 16px;
   background: #fff;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 .ws-review-thread-card:last-child {
   border-bottom: 0;
 }
 .ws-review-thread-card[data-orphaned="true"] {
-  background: #fafafa;
-  border-style: dashed;
+  background: #fbfbfa;
 }
 .ws-review-thread-head {
   display: flex;
@@ -157,14 +167,18 @@ const runtimeCss = `
   gap: 8px;
   align-items: flex-start;
 }
+.ws-review-thread-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .ws-review-thread-title {
   font-size: 14px;
   line-height: 1.35;
-  font-weight: 650;
+  font-weight: 700;
 }
-.ws-review-pill,
 .ws-review-severity-pill,
-.ws-review-status-pill {
+.ws-review-status-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -190,15 +204,28 @@ const runtimeCss = `
 .ws-review-severity-pill[data-severity="question"] {
   color: rgba(17,17,17,0.72);
 }
+.ws-review-thread-body {
+  color: rgba(17,17,17,0.84);
+  line-height: 1.5;
+}
+.ws-review-thread-state {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ws-review-status-text {
+  background: transparent;
+}
 .ws-review-drawer button,
 .ws-review-drawer a,
 .ws-review-bar [data-ws-review-runtime-button] {
   appearance: none;
-  border: 1px solid rgba(17,17,17,0.16);
+  border: 1px solid rgba(17,17,17,0.14);
   background: #fff;
   color: #111;
-  border-radius: 6px;
-  min-height: 32px;
+  border-radius: 8px;
+  min-height: 31px;
   padding: 0 10px;
   font: 500 13px/1 ui-sans-serif, system-ui, sans-serif;
   cursor: pointer;
@@ -209,13 +236,13 @@ const runtimeCss = `
 .ws-review-drawer button:hover,
 .ws-review-drawer a:hover,
 .ws-review-bar [data-ws-review-runtime-button]:hover {
-  border-color: rgba(17,17,17,0.32);
-  background: #f7f7f7;
+  border-color: rgba(17,17,17,0.24);
+  background: #f5f5f3;
 }
 .ws-review-drawer button:focus-visible,
 .ws-review-drawer a:focus-visible,
 .ws-review-bar [data-ws-review-runtime-button]:focus-visible {
-  outline: 2px solid rgba(17,17,17,0.70);
+  outline: 2px solid rgba(17,17,17,0.62);
   outline-offset: 2px;
 }
 .ws-review-drawer button[data-primary="true"] {
@@ -224,20 +251,20 @@ const runtimeCss = `
   color: #fff;
 }
 .ws-review-filter-chip[aria-pressed="true"] {
-  border-color: rgba(17,17,17,0.40);
-  background: #eeeeee;
+  border-color: rgba(17,17,17,0.30);
+  background: #ededeb;
   color: #111;
 }
 .ws-review-pin {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  z-index: 5;
-  min-width: 20px;
-  min-height: 20px;
-  padding: 0 5px;
+  top: 8px;
+  right: 8px;
+  z-index: 10005;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0 4px;
   border: 1px solid rgba(17,17,17,0.12);
-  border-radius: 10px;
+  border-radius: 999px;
   background: #111;
   color: #fff;
   font: 650 11px/1 ui-sans-serif, system-ui, sans-serif;
@@ -252,12 +279,16 @@ const runtimeCss = `
 }
 @media (max-width: 767px) {
   .ws-review-drawer {
-    inset: 72px 8px 8px 8px;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: auto;
-    max-height: none;
+    max-height: min(78vh, calc(100vh - 68px));
+    border-radius: 18px 18px 0 0;
   }
-  .ws-review-thread-head {
-    display: block;
+  .ws-review-drawer-footer {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 }
 `;
@@ -376,6 +407,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
   actionSlot?.append(threadsButton);
 
   const drawer = document.createElement("aside");
+  drawer.id = "ws-review-drawer";
   drawer.className = "ws-review-drawer";
   drawer.setAttribute("aria-label", REVIEW_UI_COPY.drawerLabel);
   drawer.innerHTML = reviewDrawerShellHtml({
@@ -398,6 +430,10 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     }),
   });
   document.body.append(drawer);
+  const drawerScrim = document.createElement("div");
+  drawerScrim.className = "ws-review-scrim ws-review-drawer-scrim";
+  document.body.append(drawerScrim);
+  threadsButton.setAttribute("aria-controls", drawer.id);
 
   const importInput = document.createElement("input");
   importInput.type = "file";
@@ -475,19 +511,37 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       ? `<p class="ws-review-thread-orphaned">Target needs relinking.</p>`
       : "";
     const statusAction = reviewThreadStatusAction(thread.status);
+    const statusButtons = isClosedReviewStatus(thread.status)
+      ? reviewThreadActionButtonHtml({
+          action: "toggle-status",
+          threadId: thread.id,
+          label: statusAction.label,
+        })
+      : `
+          ${reviewThreadActionButtonHtml({
+            action: "toggle-status",
+            threadId: thread.id,
+            label: statusAction.label,
+          })}
+          ${reviewThreadActionButtonHtml({
+            action: "wontfix",
+            threadId: thread.id,
+            label: REVIEW_UI_COPY.wontfix,
+          })}
+        `;
     return reviewThreadCardHtml({
       thread,
       articleClass: "ws-review-thread-card",
       dataOrphaned: Boolean(thread.orphaned),
       title: reviewThreadSummary(thread),
       titleClass: "ws-review-thread-title",
-      targetMeta: `${reviewScopeLabel(thread.target.scope)} · ${targetLabel}`,
+      targetMeta: reviewTargetContextText(thread.target, targetLabel),
       targetClass: "ws-review-thread-target",
       topMetaClass: "ws-review-thread-meta",
       severityClass: "ws-review-severity-pill",
-      statusContainerClass: "ws-review-thread-meta",
-      statusClass: "ws-review-status-pill",
-      variantHtml: reviewVariantPillHtml(thread.target.variantKey, "ws-review-pill"),
+      bodyClass: "ws-review-thread-body",
+      statusContainerClass: "ws-review-thread-state",
+      statusClass: "ws-review-status-text",
       trailingHtml: orphaned,
       actionsClass: "ws-review-thread-actions",
       actionsHtml: `
@@ -497,11 +551,7 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
             label: REVIEW_UI_COPY.focusTarget,
           })}
           ${reviewThreadActionLinkHtml({ href: uri, label: REVIEW_UI_COPY.openSource })}
-          ${reviewThreadActionButtonHtml({
-            action: "toggle-status",
-            threadId: thread.id,
-            label: statusAction.label,
-          })}
+          ${statusButtons}
         `,
     });
   };
@@ -548,6 +598,10 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       if (!target) {
         continue;
       }
+      const computedStyle = window.getComputedStyle(target);
+      if (computedStyle.position === "static") {
+        target.style.position = "relative";
+      }
       const pin = makeButton(String(count));
       pin.className = "ws-review-pin";
       pin.title = reviewPinTitle(count);
@@ -565,6 +619,8 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     threadsButton.textContent = reviewThreadsButtonLabel(activeThreadCount(store));
     threadsButton.setAttribute("aria-expanded", drawerOpen ? "true" : "false");
     drawer.classList.toggle("is-open", drawerOpen);
+    drawerScrim.classList.toggle("is-open", drawerOpen);
+    document.documentElement.classList.toggle("ws-review-drawer-open", drawerOpen);
     renderDrawer();
     renderPins();
   };
@@ -598,6 +654,10 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     }
     if (action === "toggle-status") {
       setStore(updateThreadStatus(store, thread.id, reviewThreadStatusAction(thread.status).nextStatus));
+      return;
+    }
+    if (action === "wontfix") {
+      setStore(updateThreadStatus(store, thread.id, "wontfix"));
     }
   };
 
@@ -666,6 +726,9 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
     }
     render();
   });
+  drawerScrim.addEventListener("click", () => {
+    controller.closeDrawer();
+  });
   bodyNode?.addEventListener("click", onDrawerBodyClick);
   drawer.addEventListener("click", onDrawerClick);
   const onImportInputChange = (): void => {
@@ -687,8 +750,10 @@ export function mountReviewRuntime(options: ReviewRuntimeOptions): ReviewRuntime
       cleanupOverlay();
       clearPins();
       drawer.remove();
+      drawerScrim.remove();
       importInput.remove();
       threadsButton.remove();
+      document.documentElement.classList.remove("ws-review-drawer-open");
       bodyNode?.removeEventListener("click", onDrawerBodyClick);
       drawer.removeEventListener("click", onDrawerClick);
       importInput.removeEventListener("change", onImportInputChange);

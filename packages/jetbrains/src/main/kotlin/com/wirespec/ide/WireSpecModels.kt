@@ -1,6 +1,5 @@
 package com.wirespec.ide
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable

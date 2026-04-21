@@ -29,7 +29,7 @@
           },
           {
             "type": "selector",
-            "value": "[data-ws-id='preview-panel']"
+            "value": "[data-ws-target='node:preview-panel']"
           },
           {
             "type": "source-span",
@@ -76,7 +76,7 @@
           },
           {
             "type": "selector",
-            "value": "[data-ws-id='open-threads']"
+            "value": "[data-ws-target='node:open-threads']"
           },
           {
             "type": "source-span",

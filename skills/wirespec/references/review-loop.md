@@ -44,6 +44,16 @@ node packages/core/bin/wirespec-ide-core.js open-next --workspace <workspace>
 node packages/core/bin/wirespec-ide-core.js resolve-on-save --workspace <workspace> --saved-file <file> --ranges <start-end>
 ```
 
+If WireSpec is installed as a package in a consumer repo, the equivalent commands are:
+
+```bash
+pnpm exec wirespec lint path/to/screen.wirespec.md
+pnpm exec wirespec format path/to/screen.wirespec.md
+pnpm exec wirespec summary --workspace <workspace>
+pnpm exec wirespec open-next --workspace <workspace>
+pnpm exec wirespec resolve-on-save --workspace <workspace> --saved-file <file> --ranges <start-end>
+```
+
 Do not hand-remove tasks unless no resolver exists and the user explicitly accepts manual maintenance.
 
 ## Bridge Pattern

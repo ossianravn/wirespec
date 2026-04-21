@@ -3,6 +3,7 @@
   --ws-bg: #f7f7f7;
   --ws-surface: #ffffff;
   --ws-border: #d8d8d8;
+  --ws-border-strong: #bbbbbb;
   --ws-text: #1f1f1f;
   --ws-muted: #666666;
   --ws-accent: #111111;
@@ -14,16 +15,16 @@
   --ws-radius: 10px;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--ws-bg); color: var(--ws-text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.4; }
+html, body { margin: 0; padding: 0; background: var(--ws-bg); color: var(--ws-text); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.4; }
 body { padding: var(--ws-space-lg); }
 .ws-node { min-width: 0; }
 .ws-screen { width: 100%; min-height: calc(100vh - 48px); display: flex; flex-direction: column; gap: var(--ws-space-lg); }
-.ws-main, .ws-header, .ws-footer, .ws-section, .ws-panel, .ws-card, .ws-form, .ws-dialog, .ws-drawer, .ws-column, .ws-stack {
+.ws-main, .ws-header, .ws-footer, .ws-section, .ws-panel, .ws-card, .ws-form, .ws-dialog, .ws-drawer, .ws-column, .ws-stack, .ws-empty-state {
   display: flex;
   flex-direction: column;
   gap: var(--ws-space-md);
 }
-.ws-row, .ws-actions, .ws-toolbar {
+.ws-row, .ws-actions, .ws-toolbar, .ws-nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -33,7 +34,7 @@ body { padding: var(--ws-space-lg); }
   display: grid;
   gap: var(--ws-space-md);
 }
-.ws-card, .ws-panel, .ws-dialog, .ws-drawer, .ws-form, .ws-section {
+.ws-card, .ws-panel, .ws-dialog, .ws-drawer, .ws-form, .ws-section, .ws-empty-state {
   background: var(--ws-surface);
   border: 1px solid var(--ws-border);
   border-radius: var(--ws-radius);
@@ -42,28 +43,50 @@ body { padding: var(--ws-space-lg); }
 .ws-heading, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 .ws-text, .ws-helper, .ws-status, .ws-badge, .ws-alert, p { margin: 0; }
 .ws-helper, .ws-status { color: var(--ws-muted); }
+.ws-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 8px;
+  border: 1px solid var(--ws-border);
+  border-radius: 999px;
+}
 .ws-alert {
   border: 1px solid var(--ws-border);
   background: #fafafa;
   border-radius: 8px;
   padding: var(--ws-space-sm);
 }
-.ws-field, .ws-select {
+.ws-field, .ws-select, .ws-radio-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.ws-label { font-size: 0.95rem; font-weight: 500; }
-.ws-input, .ws-select select, .ws-select, select, input[type="text"], input[type="email"], input[type="password"] {
+.ws-label, .ws-legend {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.ws-input, .ws-textarea, .ws-select, select, input[type="text"], input[type="email"], input[type="password"], input[type="search"], textarea {
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--ws-border);
   border-radius: 8px;
   background: #fff;
-  padding: 0 12px;
+  padding: 10px 12px;
   color: var(--ws-text);
+  font: inherit;
+}
+.ws-textarea, textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 .ws-check { margin-right: 8px; }
+fieldset {
+  margin: 0;
+  padding: var(--ws-space-sm);
+  border: 1px solid var(--ws-border);
+  border-radius: 8px;
+}
 button, .ws-button {
   min-height: 40px;
   border-radius: 8px;
@@ -80,7 +103,79 @@ button.is-primary, .ws-button.is-primary {
   border-color: #111;
 }
 a { color: inherit; text-decoration: none; }
-.ws-list { list-style: none; margin: 0; padding: 0; }
+.ws-list, .ws-stepper, .ws-breadcrumbs-list {
+  margin: 0;
+  padding: 0;
+}
+.ws-list {
+  list-style: none;
+}
+.ws-stepper {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-space-sm);
+}
+.ws-step {
+  padding: 6px 10px;
+  border: 1px solid var(--ws-border);
+  border-radius: 999px;
+}
+.ws-breadcrumbs-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ws-breadcrumb-item + .ws-breadcrumb-item::before {
+  content: "/";
+  color: var(--ws-muted);
+  margin-right: 8px;
+}
+.ws-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-space-sm);
+}
+.ws-tab {
+  border-style: dashed;
+}
+.ws-tab-panel {
+  border: 1px dashed var(--ws-border);
+  border-radius: 8px;
+  padding: var(--ws-space-md);
+}
+.ws-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ws-surface);
+}
+.ws-table th,
+.ws-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ws-border);
+  vertical-align: top;
+}
+.ws-table th {
+  font-weight: 600;
+}
+.ws-pagination {
+  display: flex;
+  justify-content: flex-end;
+}
+.ws-avatar, .ws-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px dashed var(--ws-border-strong);
+  border-radius: 8px;
+  background: #fbfbfb;
+  color: var(--ws-muted);
+}
 [data-ws-id], [data-ws-target] {
   position: relative;
 }
@@ -89,6 +184,13 @@ a { color: inherit; text-decoration: none; }
   outline-offset: 2px;
 }
 .is-hidden { display: none !important; }
+.is-selected {
+  border-color: var(--ws-border-strong);
+  background: #f2f2f2;
+}
+.is-invalid {
+  border-color: #b75b5b;
+}
 .ws-doc-meta {
   display: flex;
   justify-content: space-between;
@@ -108,4 +210,4 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
   padding-left: 20px;
 }
-</style></head><body><div class="ws-doc-meta"><span>Review surface</span><span>{&quot;state&quot;:&quot;stale-preview&quot;}</span></div><main class="ws-screen ws-node" data-ws-kind="screen" data-ws-screen="review-surface" data-ws-target="screen:review-surface" data-ws-id="review-surface"><section class="ws-header ws-node" data-ws-kind="header" data-ws-screen="review-surface" data-ws-target="node:review-header" data-ws-id="review-header" style="padding:12px"><section class="ws-toolbar ws-node" data-ws-kind="toolbar" data-ws-screen="review-surface" data-ws-target="node:review-toolbar" data-ws-id="review-toolbar" style="align-items:center;justify-content:space-between;gap:12px"><section class="ws-row ws-node" data-ws-kind="row" data-ws-screen="review-surface" data-ws-target="node:review-context" data-ws-id="review-context" style="align-items:center;gap:12px"><h1 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="review-surface" data-ws-target="node:review-title" data-ws-id="review-title">Review login</h1><p class="ws-status ws-node" data-ws-kind="status" data-ws-screen="review-surface" data-ws-target="node:variant-status" data-ws-id="variant-status">error · mobile</p></section><section class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="review-surface" data-ws-target="node:review-actions" data-ws-id="review-actions" style="gap:12px"><label class="ws-select ws-node" data-ws-kind="select" data-ws-screen="review-surface" data-ws-target="node:screen-picker" data-ws-id="screen-picker" data-ws-role="textbox"><span class="ws-label">Screen</span><select class="ws-select" name="screen"><option>Screen</option></select></label><label class="ws-select ws-node" data-ws-kind="select" data-ws-screen="review-surface" data-ws-target="node:variant-picker" data-ws-id="variant-picker" data-ws-role="textbox"><span class="ws-label">Variant</span><select class="ws-select" name="variant"><option>Variant</option></select></label><label class="ws-switch ws-node" data-ws-kind="switch" data-ws-screen="review-surface" data-ws-target="node:comment-mode" data-ws-id="comment-mode" data-ws-role="checkbox"><input class="ws-check" type="checkbox" name="comment-mode" role="switch"><span>Comment mode</span></label><button class="ws-button ws-node is-secondary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:open-threads" data-ws-id="open-threads" data-ws-role="button" type="button">Open threads</button><button class="ws-button ws-node is-secondary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:copy-link" data-ws-id="copy-link" data-ws-role="button" type="button">Copy review link</button></section></section></section><section class="ws-main ws-node dir-column" data-ws-kind="main" data-ws-screen="review-surface" data-ws-target="node:review-main" data-ws-id="review-main" style="gap:16px;padding:16px"><div class="ws-alert ws-node tone-warning" data-ws-kind="alert" data-ws-screen="review-surface" data-ws-target="node:stale-warning" data-ws-id="stale-warning" data-ws-role="alert" role="alert">Preview is out of date. Refresh before leaving new feedback.</div><section class="ws-section ws-node" data-ws-kind="section" data-ws-screen="review-surface" data-ws-target="node:preview-stage" data-ws-id="preview-stage" style="width:100%"><section class="ws-panel ws-node" data-ws-kind="panel" data-ws-screen="review-surface" data-ws-target="node:preview-panel" data-ws-id="preview-panel" style="width:100%;padding:12px"><p class="ws-helper ws-node" data-ws-kind="helper" data-ws-screen="review-surface" data-ws-target="node:preview-help" data-ws-id="preview-help">Click the page background for page feedback. Click a highlighted node for section or element feedback.</p><div class="ws-x-wireframe-preview ws-node is-error+mobile" data-ws-kind="x-wireframe-preview" data-ws-screen="review-surface" data-ws-target="node:preview-canvas" data-ws-id="preview-canvas"></div></section></section><aside class="ws-drawer ws-node is-hidden" data-ws-kind="drawer" data-ws-screen="review-surface" data-ws-target="node:thread-drawer" data-ws-id="thread-drawer" data-ws-role="complementary" hidden="" aria-hidden="true"><h2 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="review-surface" data-ws-target="node:thread-title" data-ws-id="thread-title">Open feedback</h2><ul class="ws-list ws-node" data-ws-kind="list" data-ws-screen="review-surface" data-ws-target="node:thread-list" data-ws-id="thread-list"><li class="ws-list-item ws-node" data-ws-kind="list-item" data-ws-screen="review-surface" data-ws-target="node:thread-1" data-ws-id="thread-1"><p class="ws-text ws-node" data-ws-kind="text" data-ws-screen="review-surface" data-ws-target="node:thread-1-summary" data-ws-id="thread-1-summary">Submit button falls below the fold on short mobile heights.</p></li></ul><section class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="review-surface" data-ws-target="node:drawer-actions" data-ws-id="drawer-actions"><button class="ws-button ws-node is-primary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:export-to-agent" data-ws-id="export-to-agent" data-ws-role="button" type="button">Send open threads to agent</button></section></aside></section></main><section class="ws-acceptance"><h2>Acceptance</h2><ul><li>The preview stays visually primary in every state.</li><li>Reviewers can leave page, section, or element feedback in one click after entering comment mode.</li><li>The thread drawer stays optional and does not permanently reduce preview width.</li><li>Stale preview is visible without replacing the page with a large empty shell.</li></ul></section></body></html>
+</style></head><body><div class="ws-doc-meta"><span>Review surface</span><span>{&quot;state&quot;:&quot;stale-preview&quot;}</span></div><div class="ws-screen ws-node" data-ws-kind="screen" data-ws-screen="review-surface" data-ws-target="screen:review-surface" data-ws-id="review-surface" id="ws-review-surface-review-surface"><header class="ws-header ws-node" data-ws-kind="header" data-ws-screen="review-surface" data-ws-target="node:review-header" data-ws-id="review-header" id="ws-review-surface-review-header" style="padding:12px"><div class="ws-toolbar ws-node" data-ws-kind="toolbar" data-ws-screen="review-surface" data-ws-target="node:review-toolbar" data-ws-id="review-toolbar" id="ws-review-surface-review-toolbar" data-ws-role="toolbar" style="align-items:center;justify-content:space-between;gap:12px" role="toolbar"><div class="ws-row ws-node" data-ws-kind="row" data-ws-screen="review-surface" data-ws-target="node:review-context" data-ws-id="review-context" id="ws-review-surface-review-context" style="align-items:center;gap:12px"><h1 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="review-surface" data-ws-target="node:review-title" data-ws-id="review-title" id="ws-review-surface-review-title">Review login</h1><p class="ws-status ws-node" data-ws-kind="status" data-ws-screen="review-surface" data-ws-target="node:variant-status" data-ws-id="variant-status" id="ws-review-surface-variant-status">error · mobile</p></div><div class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="review-surface" data-ws-target="node:review-actions" data-ws-id="review-actions" id="ws-review-surface-review-actions" style="gap:12px"><label class="ws-select ws-node" data-ws-kind="select" data-ws-screen="review-surface" data-ws-target="node:screen-picker" data-ws-id="screen-picker" id="ws-review-surface-screen-picker" data-ws-role="combobox"><span class="ws-label">Screen</span><select id="ws-input-review-surface-screen-picker" class="ws-select" name="screen"><option value="">Screen</option></select></label><label class="ws-select ws-node" data-ws-kind="select" data-ws-screen="review-surface" data-ws-target="node:variant-picker" data-ws-id="variant-picker" id="ws-review-surface-variant-picker" data-ws-role="combobox"><span class="ws-label">Variant</span><select id="ws-input-review-surface-variant-picker" class="ws-select" name="variant"><option value="">Variant</option></select></label><label class="ws-switch ws-node" data-ws-kind="switch" data-ws-screen="review-surface" data-ws-target="node:comment-mode" data-ws-id="comment-mode" id="ws-review-surface-comment-mode" data-ws-role="switch"><input class="ws-check" type="checkbox" name="comment-mode" role="switch" aria-checked="false"><span>Comment mode</span></label><button class="ws-button ws-node is-secondary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:open-threads" data-ws-id="open-threads" id="ws-review-surface-open-threads" data-ws-role="button" type="button" data-ws-action="open-threads">Open threads</button><button class="ws-button ws-node is-secondary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:copy-link" data-ws-id="copy-link" id="ws-review-surface-copy-link" data-ws-role="button" type="button" data-ws-action="copy-link">Copy review link</button></div></div></header><main class="ws-main ws-node dir-column" data-ws-kind="main" data-ws-screen="review-surface" data-ws-target="node:review-main" data-ws-id="review-main" id="ws-review-surface-review-main" style="flex-direction:column;gap:16px;padding:16px"><div class="ws-alert ws-node tone-warning" data-ws-kind="alert" data-ws-screen="review-surface" data-ws-target="node:stale-warning" data-ws-id="stale-warning" id="ws-review-surface-stale-warning" data-ws-role="alert" role="alert">Preview is out of date. Refresh before leaving new feedback.</div><section class="ws-section ws-node" data-ws-kind="section" data-ws-screen="review-surface" data-ws-target="node:preview-stage" data-ws-id="preview-stage" id="ws-review-surface-preview-stage" style="width:100%"><section class="ws-panel ws-node" data-ws-kind="panel" data-ws-screen="review-surface" data-ws-target="node:preview-panel" data-ws-id="preview-panel" id="ws-review-surface-preview-panel" style="width:100%;padding:12px"><p class="ws-helper ws-node" data-ws-kind="helper" data-ws-screen="review-surface" data-ws-target="node:preview-help" data-ws-id="preview-help" id="ws-review-surface-preview-help">Click the page background for page feedback. Click a highlighted node for section or element feedback.</p><div class="ws-x-wireframe-preview ws-node is-error+mobile" data-ws-kind="x-wireframe-preview" data-ws-screen="review-surface" data-ws-target="node:preview-canvas" data-ws-id="preview-canvas" id="ws-review-surface-preview-canvas"></div></section></section><aside class="ws-drawer ws-node is-hidden" data-ws-kind="drawer" data-ws-screen="review-surface" data-ws-target="node:thread-drawer" data-ws-id="thread-drawer" id="ws-review-surface-thread-drawer" data-ws-role="complementary" style="width:min(100%,26rem)" hidden="" aria-hidden="true" aria-labelledby="ws-review-surface-thread-title"><h2 class="ws-heading ws-node" data-ws-kind="heading" data-ws-screen="review-surface" data-ws-target="node:thread-title" data-ws-id="thread-title" id="ws-review-surface-thread-title">Open feedback</h2><ul class="ws-list ws-node" data-ws-kind="list" data-ws-screen="review-surface" data-ws-target="node:thread-list" data-ws-id="thread-list" id="ws-review-surface-thread-list" data-ws-role="list"><li class="ws-list-item ws-node" data-ws-kind="list-item" data-ws-screen="review-surface" data-ws-target="node:thread-1" data-ws-id="thread-1" id="ws-review-surface-thread-1" data-ws-role="listitem"><p class="ws-text ws-node" data-ws-kind="text" data-ws-screen="review-surface" data-ws-target="node:thread-1-summary" data-ws-id="thread-1-summary" id="ws-review-surface-thread-1-summary">Submit button falls below the fold on short mobile heights.</p></li></ul><div class="ws-actions ws-node" data-ws-kind="actions" data-ws-screen="review-surface" data-ws-target="node:drawer-actions" data-ws-id="drawer-actions" id="ws-review-surface-drawer-actions"><button class="ws-button ws-node is-primary" data-ws-kind="button" data-ws-screen="review-surface" data-ws-target="node:export-to-agent" data-ws-id="export-to-agent" id="ws-review-surface-export-to-agent" data-ws-role="button" type="button" data-ws-action="export-open">Send open threads to agent</button></div></aside></main></div><section class="ws-acceptance"><h2>Acceptance</h2><ul><li>The preview stays visually primary in every state.</li><li>Reviewers can leave page, section, or element feedback in one click after entering comment mode.</li><li>The thread drawer stays optional and does not permanently reduce preview width.</li><li>Stale preview is visible without replacing the page with a large empty shell.</li></ul></section></body></html>

@@ -113,7 +113,7 @@ function walkTargets(node, screenId, parentTargetId, semanticPath, callback) {
                 kind: node.kind,
             }
             : {
-                selector: `[data-ws-id='${node.id ?? node.kind}']`,
+                selector: `[data-ws-target='${targetId}']`,
                 screenId,
                 wireId: node.id,
                 kind: node.kind,

@@ -43,11 +43,24 @@ function parseFrontmatter(lines: string[], sourceFile: string): {
   }
 
   const metadata: Record<string, string> = {};
+  let lastKey: string | undefined;
   let index = 1;
   for (; index < lines.length; index += 1) {
     const raw = lines[index];
     if (raw === "---") {
       return { metadata, nextLineIndex: index + 1 };
+    }
+    if (/^\s+- /.test(raw)) {
+      if (!lastKey) {
+        throw new WireSpecParseError(
+          `Invalid frontmatter list item: ${raw}`,
+          sourceSpan(sourceFile, index + 1, 1, index + 1, raw.length + 1),
+        );
+      }
+      metadata[lastKey] = metadata[lastKey]
+        ? `${metadata[lastKey]}\n${raw.trimEnd()}`
+        : raw.trimEnd();
+      continue;
     }
     const separator = raw.indexOf(":");
     if (separator === -1) {
@@ -59,6 +72,7 @@ function parseFrontmatter(lines: string[], sourceFile: string): {
     const key = raw.slice(0, separator).trim();
     const value = raw.slice(separator + 1).trim();
     metadata[key] = value;
+    lastKey = key;
   }
 
   throw new WireSpecParseError(

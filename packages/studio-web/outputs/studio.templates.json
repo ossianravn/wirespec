@@ -1,0 +1,72 @@
+[
+  {
+    "id": "login",
+    "label": "Login",
+    "category": "Auth",
+    "summary": "Returning-user sign in with inline recovery and mobile submit visibility.",
+    "sourceFile": "docs/spec/v1-rc0/screens/01-login.md"
+  },
+  {
+    "id": "workspace-onboarding",
+    "label": "Workspace onboarding",
+    "category": "Onboarding",
+    "summary": "Short setup form with stepper context and validation.",
+    "sourceFile": "docs/spec/v1-rc0/screens/02-workspace-onboarding.md"
+  },
+  {
+    "id": "knowledge-search",
+    "label": "Knowledge search",
+    "category": "Search",
+    "summary": "Task-first search with filters, results, empty state, and mobile drawer behavior.",
+    "sourceFile": "docs/spec/v1-rc0/screens/03-knowledge-search.md"
+  },
+  {
+    "id": "fulfillment-queue",
+    "label": "Fulfillment queue",
+    "category": "Operations",
+    "summary": "Queue table with tabs, SLA context, and operator actions.",
+    "sourceFile": "docs/spec/v1-rc0/screens/04-fulfillment-queue.md"
+  },
+  {
+    "id": "case-detail",
+    "label": "Case detail",
+    "category": "Detail",
+    "summary": "Split-layout case triage with breadcrumbs, summary, timeline, and actions.",
+    "sourceFile": "docs/spec/v1-rc0/screens/05-case-detail.md"
+  },
+  {
+    "id": "security-settings",
+    "label": "Security settings",
+    "category": "Settings",
+    "summary": "Policy-first settings with tabs, switches, and access management.",
+    "sourceFile": "docs/spec/v1-rc0/screens/06-security-settings.md"
+  },
+  {
+    "id": "checkout",
+    "label": "Checkout",
+    "category": "Commerce",
+    "summary": "Shipping form with order summary and recovery state.",
+    "sourceFile": "docs/spec/v1-rc0/screens/07-checkout.md"
+  },
+  {
+    "id": "clinic-scheduler",
+    "label": "Clinic scheduler",
+    "category": "Scheduling",
+    "summary": "Day schedule grid with provider filters and mobile agenda fallback.",
+    "sourceFile": "docs/spec/v1-rc0/screens/08-clinic-scheduler.md"
+  },
+  {
+    "id": "support-conversation",
+    "label": "Support conversation",
+    "category": "Conversation",
+    "summary": "Thread-first support workflow with composer and details drawer.",
+    "sourceFile": "docs/spec/v1-rc0/screens/09-support-conversation.md"
+  },
+  {
+    "id": "article-editor",
+    "label": "Article editor",
+    "category": "Editor",
+    "summary": "Focused writing surface with tabs, preview, and publishing settings.",
+    "sourceFile": "docs/spec/v1-rc0/screens/10-article-editor.md"
+  }
+]

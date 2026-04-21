@@ -1,11 +1,12 @@
 {
-  "name": "wirespec-review-runtime-v0.2",
+  "name": "@wirespec/runtime",
   "version": "0.2.0",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "generate:examples": "node ./scripts/build-examples.mjs",
-    "test": "node ./scripts/smoke-test.mjs"
+    "generate:examples": "pnpm run build && node ./scripts/build-examples.mjs",
+    "test": "pnpm run build && node ./scripts/smoke-test.mjs"
   }
 }

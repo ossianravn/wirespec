@@ -1,6 +1,8 @@
+import org.gradle.api.tasks.wrapper.Wrapper
+
 plugins {
-  kotlin("jvm") version "1.9.24"
-  kotlin("plugin.serialization") version "1.9.24"
+  kotlin("jvm") version "2.2.20"
+  kotlin("plugin.serialization") version "2.2.20"
   id("org.jetbrains.intellij.platform") version "2.5.0"
 }
 
@@ -31,4 +33,9 @@ intellijPlatform {
       sinceBuild = "253"
     }
   }
+}
+
+tasks.wrapper {
+  gradleVersion = "8.13"
+  distributionType = Wrapper.DistributionType.BIN
 }

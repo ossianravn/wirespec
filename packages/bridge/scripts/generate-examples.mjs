@@ -24,29 +24,49 @@ const bridge = startReviewBridgeServer({
 const listener = await bridge.listen(0);
 
 const captured = [];
-const watcher = watchBridgeEvents({
-  url: `${listener.url}/api/events`,
-  maxEvents: 1,
-  onEvent(event) {
-    captured.push(event);
-  },
+let resolveConnected;
+let rejectConnected;
+const connected = new Promise((resolve, reject) => {
+  resolveConnected = resolve;
+  rejectConnected = reject;
 });
 
-const saveResponse = await fetch(`${listener.url}/api/reviews/save`, {
-  method: "POST",
-  headers: {
-    "content-type": "application/json",
-  },
-  body: JSON.stringify({
-    documentId: "login",
-    sidecar,
-    sourceMap,
-    wireFile: sourceMap.entryFile,
-  }),
-});
-const savePayload = await saveResponse.json();
-await watcher;
-await bridge.close();
+let savePayload;
+try {
+  const watcher = watchBridgeEvents({
+    url: `${listener.url}/api/events`,
+    maxEvents: 1,
+    timeoutMs: 5000,
+    async onConnected() {
+      resolveConnected();
+    },
+    onEvent(event) {
+      captured.push(event);
+    },
+  });
+  const watchedConnection = watcher.catch((error) => {
+    rejectConnected(error);
+    throw error;
+  });
+  await connected;
+
+  const saveResponse = await fetch(`${listener.url}/api/reviews/save`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      documentId: "login",
+      sidecar,
+      sourceMap,
+      wireFile: sourceMap.entryFile,
+    }),
+  });
+  savePayload = await saveResponse.json();
+  await watchedConnection;
+} finally {
+  await bridge.close();
+}
 
 const annotationPath = path.join(workspace, savePayload.paths.annotationPath);
 const taskPath = path.join(workspace, savePayload.paths.taskPath);

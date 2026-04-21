@@ -110,7 +110,7 @@
         "columnEnd": 63
       },
       "dom": {
-        "selector": "[data-ws-id='content']",
+        "selector": "[data-ws-target='node:content']",
         "screenId": "login",
         "wireId": "content",
         "kind": "main",
@@ -148,7 +148,7 @@
         "columnEnd": 63
       },
       "dom": {
-        "selector": "[data-ws-id='auth-card']",
+        "selector": "[data-ws-target='node:auth-card']",
         "screenId": "login",
         "wireId": "auth-card",
         "kind": "card",
@@ -188,7 +188,7 @@
         "columnEnd": 45
       },
       "dom": {
-        "selector": "[data-ws-id='title']",
+        "selector": "[data-ws-target='node:title']",
         "screenId": "login",
         "wireId": "title",
         "kind": "heading",
@@ -229,7 +229,7 @@
         "columnEnd": 55
       },
       "dom": {
-        "selector": "[data-ws-id='intro']",
+        "selector": "[data-ws-target='node:intro']",
         "screenId": "login",
         "wireId": "intro",
         "kind": "text",
@@ -269,7 +269,7 @@
         "columnEnd": 63
       },
       "dom": {
-        "selector": "[data-ws-id='login-form']",
+        "selector": "[data-ws-target='node:login-form']",
         "screenId": "login",
         "wireId": "login-form",
         "kind": "form",
@@ -310,7 +310,7 @@
         "columnEnd": 89
       },
       "dom": {
-        "selector": "[data-ws-id='email']",
+        "selector": "[data-ws-target='node:email']",
         "screenId": "login",
         "wireId": "email",
         "kind": "field",
@@ -353,7 +353,7 @@
         "columnEnd": 107
       },
       "dom": {
-        "selector": "[data-ws-id='password']",
+        "selector": "[data-ws-target='node:password']",
         "screenId": "login",
         "wireId": "password",
         "kind": "field",
@@ -395,7 +395,7 @@
         "columnEnd": 64
       },
       "dom": {
-        "selector": "[data-ws-id='assistive-row']",
+        "selector": "[data-ws-target='node:assistive-row']",
         "screenId": "login",
         "wireId": "assistive-row",
         "kind": "row",
@@ -437,7 +437,7 @@
         "columnEnd": 55
       },
       "dom": {
-        "selector": "[data-ws-id='remember']",
+        "selector": "[data-ws-target='node:remember']",
         "screenId": "login",
         "wireId": "remember",
         "kind": "checkbox",
@@ -481,7 +481,7 @@
         "columnEnd": 64
       },
       "dom": {
-        "selector": "[data-ws-id='forgot']",
+        "selector": "[data-ws-target='node:forgot']",
         "screenId": "login",
         "wireId": "forgot",
         "kind": "link",
@@ -524,7 +524,7 @@
         "columnEnd": 84
       },
       "dom": {
-        "selector": "[data-ws-id='form-error']",
+        "selector": "[data-ws-target='node:form-error']",
         "screenId": "login",
         "wireId": "form-error",
         "kind": "alert",
@@ -566,7 +566,7 @@
         "columnEnd": 63
       },
       "dom": {
-        "selector": "[data-ws-id='primary-actions']",
+        "selector": "[data-ws-target='node:primary-actions']",
         "screenId": "login",
         "wireId": "primary-actions",
         "kind": "actions",
@@ -608,7 +608,7 @@
         "columnEnd": 63
       },
       "dom": {
-        "selector": "[data-ws-id='submit']",
+        "selector": "[data-ws-target='node:submit']",
         "screenId": "login",
         "wireId": "submit",
         "kind": "button",

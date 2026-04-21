@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-require("../src/cli").main();
+const { emitCliError, main } = require("../src/cli");
+
+main().catch((error) => emitCliError(process.argv.slice(2), error));

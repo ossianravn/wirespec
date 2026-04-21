@@ -1,15 +1,20 @@
+const fs = require("fs");
 const path = require("path");
+const { pathToFileURL } = require("url");
 const { workspaceSnapshot, handleTaskFileChange, openLatestTaskFile, openNextTask, resolveOnSave } = require("./core-service");
 const { parseRangeSpec } = require("./changed-ranges");
 
+const IDE_JSON_COMMANDS = new Set(["summary", "task-change", "open-latest", "open-next", "resolve-on-save"]);
+
 function parseArgs(argv) {
   const args = { _: [] };
+  const booleanFlags = new Set(["write", "json", "keep-resolved-tasks"]);
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (token.startsWith("--")) {
       const key = token.slice(2);
       const next = argv[index + 1];
-      if (!next || next.startsWith("--")) {
+      if (booleanFlags.has(key) || !next || next.startsWith("--")) {
         args[key] = true;
       } else {
         args[key] = next;
@@ -22,10 +27,119 @@ function parseArgs(argv) {
   return args;
 }
 
+async function loadRuntime() {
+  const runtimePath = path.resolve(__dirname, "../../runtime/dist/index.js");
+  return import(pathToFileURL(runtimePath).href);
+}
+
+function relativeToWorkspace(workspaceRoot, filePath) {
+  const relative = path.relative(workspaceRoot, filePath);
+  return relative && !relative.startsWith("..") ? relative : filePath;
+}
+
+function formatDiagnosticLine(filePath, diagnostic) {
+  const line = diagnostic.span?.lineStart ?? 1;
+  const column = diagnostic.span?.columnStart ?? 1;
+  return `${filePath}:${line}:${column} ${diagnostic.level} ${diagnostic.message} [${diagnostic.code}]`;
+}
+
+async function runLintCommand(workspaceRoot, filePath, args) {
+  const runtime = await loadRuntime();
+  const absolutePath = path.resolve(filePath);
+  const displayPath = relativeToWorkspace(workspaceRoot, absolutePath);
+  const source = fs.readFileSync(absolutePath, "utf8");
+  const document = runtime.parseWireSpecDocument(source, displayPath);
+  const result = runtime.lintWireSpecDocument(document);
+  const payload = {
+    file: absolutePath,
+    ...result,
+  };
+
+  if (args.json) {
+    process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
+  } else if (result.diagnostics.length === 0) {
+    process.stdout.write(`${displayPath}: OK\n`);
+  } else {
+    process.stdout.write(
+      `${result.diagnostics.map((diagnostic) => formatDiagnosticLine(displayPath, diagnostic)).join("\n")}\n`,
+    );
+  }
+
+  if (!result.ok) {
+    process.exitCode = 1;
+  }
+}
+
+async function runFormatCommand(workspaceRoot, filePath, args) {
+  const runtime = await loadRuntime();
+  const absolutePath = path.resolve(filePath);
+  const displayPath = relativeToWorkspace(workspaceRoot, absolutePath);
+  const source = fs.readFileSync(absolutePath, "utf8");
+  const document = runtime.parseWireSpecDocument(source, displayPath);
+  const formatted = runtime.formatWireSpecDocument(document);
+
+  if (args.write) {
+    fs.writeFileSync(absolutePath, formatted, "utf8");
+    process.stdout.write(`${displayPath}\n`);
+    return;
+  }
+
+  process.stdout.write(formatted);
+}
+
+function wrapCommandResult(command, result) {
+  return {
+    ok: true,
+    command,
+    ...result,
+  };
+}
+
+function writeJson(payload, stream = process.stdout) {
+  stream.write(`${JSON.stringify(payload, null, 2)}\n`);
+}
+
+function emitCliError(argv, error) {
+  const args = parseArgs(argv);
+  const command = args._[0] || null;
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (args.json || IDE_JSON_COMMANDS.has(command)) {
+    writeJson({
+      ok: false,
+      command,
+      error: {
+        message,
+      },
+    });
+  } else {
+    process.stderr.write(`${error instanceof Error ? error.stack || error.message : String(error)}\n`);
+  }
+  process.exit(1);
+}
+
 async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
   const command = args._[0];
   const workspaceRoot = path.resolve(args.workspace || process.cwd());
+
+  if (command === "lint") {
+    const targetFile = args._[1];
+    if (!targetFile) {
+      throw new Error("lint requires a path to a .wirespec.md file");
+    }
+    await runLintCommand(workspaceRoot, targetFile, args);
+    return;
+  }
+
+  if (command === "format") {
+    const targetFile = args._[1];
+    if (!targetFile) {
+      throw new Error("format requires a path to a .wirespec.md file");
+    }
+    await runFormatCommand(workspaceRoot, targetFile, args);
+    return;
+  }
 
   let result;
   switch (command) {
@@ -65,14 +179,11 @@ async function main(argv = process.argv.slice(2)) {
       throw new Error(`Unknown command: ${command}`);
   }
 
-  process.stdout.write(JSON.stringify(result, null, 2) + "\n");
+  writeJson(wrapCommandResult(command, result));
 }
 
-module.exports = { main };
+module.exports = { emitCliError, main, parseArgs, wrapCommandResult };
 
 if (require.main === module) {
-  main().catch((error) => {
-    process.stderr.write(`${error.stack || error.message}\n`);
-    process.exit(1);
-  });
+  main().catch((error) => emitCliError(process.argv.slice(2), error));
 }

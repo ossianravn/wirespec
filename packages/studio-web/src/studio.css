@@ -1,0 +1,623 @@
+:root {
+  color-scheme: light;
+  --ws-paper: #f3eee4;
+  --ws-paper-2: #fbf8f2;
+  --ws-ink: #1f1c17;
+  --ws-muted: #6f685f;
+  --ws-line: rgba(31, 28, 23, 0.14);
+  --ws-line-strong: rgba(31, 28, 23, 0.22);
+  --ws-panel: rgba(255, 252, 246, 0.96);
+  --ws-panel-strong: #fffdf8;
+  --ws-accent: #146b67;
+  --ws-accent-soft: rgba(20, 107, 103, 0.12);
+  --ws-warn: #b35925;
+  --ws-error: #a13e2f;
+  --ws-success: #2f6b43;
+  --ws-shadow: 0 18px 44px rgba(38, 30, 16, 0.08);
+  --ws-radius-lg: 18px;
+  --ws-radius-md: 12px;
+  --ws-radius-sm: 8px;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(20, 107, 103, 0.06), transparent 28%),
+    radial-gradient(circle at top right, rgba(179, 89, 37, 0.08), transparent 24%),
+    linear-gradient(180deg, #efe6d9 0%, #f4efe6 42%, #f1ece4 100%);
+  color: var(--ws-ink);
+  font: 400 14px/1.45 "Avenir Next", "Segoe UI Variable", "Segoe UI", sans-serif;
+}
+
+body {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.ws-studio-shell {
+  display: grid;
+  grid-template-columns: 18.5rem minmax(0, 1fr) 22rem;
+  gap: 14px;
+  min-height: 100vh;
+  padding: 14px;
+}
+
+.ws-studio-pane,
+.ws-studio-stage,
+.ws-studio-sidebar {
+  min-width: 0;
+}
+
+.ws-studio-card {
+  background: var(--ws-panel);
+  border: 1px solid var(--ws-line);
+  border-radius: var(--ws-radius-lg);
+  box-shadow: var(--ws-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.ws-studio-pane,
+.ws-studio-sidebar {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.ws-studio-pane-section,
+.ws-studio-sidebar-section,
+.ws-studio-stage-section {
+  padding: 14px;
+}
+
+.ws-studio-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ws-studio-section-head h2,
+.ws-studio-section-head h3,
+.ws-studio-stage-header h1,
+.ws-studio-stage-header h2 {
+  margin: 0;
+}
+
+.ws-studio-section-head p,
+.ws-studio-stage-header p,
+.ws-studio-note,
+.ws-studio-field-help,
+.ws-studio-target-meta,
+.ws-studio-status-line {
+  margin: 0;
+  color: var(--ws-muted);
+}
+
+.ws-studio-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) minmax(11rem, 14rem);
+  gap: 12px;
+}
+
+.ws-studio-stage-header {
+  padding: 16px 18px;
+}
+
+.ws-studio-stage-header h1 {
+  font: 700 22px/1.05 "Iowan Old Style", "Palatino Linotype", serif;
+  letter-spacing: -0.02em;
+}
+
+.ws-studio-topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ws-studio-chip-row,
+.ws-studio-action-row,
+.ws-studio-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ws-studio-chip,
+.ws-studio-ghost,
+.ws-studio-solid,
+.ws-studio-dropzone,
+.ws-studio-node-button,
+.ws-studio-template-button,
+.ws-studio-palette-button {
+  appearance: none;
+  border: 1px solid var(--ws-line-strong);
+  background: var(--ws-panel-strong);
+  color: var(--ws-ink);
+  border-radius: 999px;
+  min-height: 34px;
+  padding: 0 12px;
+  text-align: left;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.ws-studio-chip:hover,
+.ws-studio-ghost:hover,
+.ws-studio-solid:hover,
+.ws-studio-node-button:hover,
+.ws-studio-template-button:hover,
+.ws-studio-palette-button:hover,
+.ws-studio-dropzone:hover {
+  border-color: rgba(31, 28, 23, 0.34);
+  transform: translateY(-1px);
+}
+
+.ws-studio-chip.is-active,
+.ws-studio-solid,
+.ws-studio-node-row.is-selected .ws-studio-node-button {
+  border-color: rgba(20, 107, 103, 0.34);
+  background: var(--ws-accent-soft);
+  color: #0d4f4b;
+}
+
+.ws-studio-solid {
+  background: var(--ws-accent);
+  color: #fff;
+  border-color: rgba(20, 107, 103, 0.8);
+}
+
+.ws-studio-chip[data-tone="warn"] {
+  border-color: rgba(179, 89, 37, 0.28);
+  color: #8c461c;
+}
+
+.ws-studio-chip[data-tone="error"] {
+  border-color: rgba(161, 62, 47, 0.3);
+  color: #843224;
+}
+
+.ws-studio-banner {
+  margin-top: 10px;
+  border-radius: var(--ws-radius-md);
+  padding: 10px 12px;
+  border: 1px solid var(--ws-line);
+  background: rgba(255, 250, 242, 0.92);
+}
+
+.ws-studio-banner[data-tone="error"] {
+  border-color: rgba(161, 62, 47, 0.22);
+  color: #772f23;
+}
+
+.ws-studio-banner[data-tone="success"] {
+  border-color: rgba(47, 107, 67, 0.24);
+  color: #255537;
+}
+
+.ws-studio-stage-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+}
+
+.ws-studio-canvas-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ws-studio-canvas-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ws-line);
+}
+
+.ws-studio-canvas-shell {
+  min-height: 0;
+  overflow: auto;
+  padding: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.26)),
+    radial-gradient(circle at 1px 1px, rgba(31, 28, 23, 0.08) 1px, transparent 0);
+  background-size: auto, 18px 18px;
+}
+
+.ws-studio-canvas-frame {
+  width: min(100%, var(--ws-preview-width, 1180px));
+  margin: 0 auto;
+  border-radius: 22px;
+  border: 1px solid rgba(31, 28, 23, 0.18);
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 26px 56px rgba(28, 22, 12, 0.11);
+  transition: width 180ms ease;
+}
+
+.ws-studio-canvas-frame [data-ws-id][data-ws-studio-selected="true"] {
+  outline: 2px solid rgba(20, 107, 103, 0.72);
+  outline-offset: 3px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 7px rgba(20, 107, 103, 0.12);
+}
+
+.ws-studio-source-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+}
+
+.ws-studio-source-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ws-line);
+}
+
+.ws-studio-source {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 16px;
+  resize: none;
+  background: #fffdfa;
+  color: #2a261f;
+  font: 400 12px/1.55 "SFMono-Regular", "Cascadia Code", "Liberation Mono", monospace;
+}
+
+.ws-studio-template-grid,
+.ws-studio-palette-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.ws-studio-template-button,
+.ws-studio-palette-button {
+  display: grid;
+  gap: 2px;
+  border-radius: var(--ws-radius-md);
+  padding: 10px 12px;
+}
+
+.ws-studio-template-button strong,
+.ws-studio-palette-button strong {
+  font-weight: 700;
+}
+
+.ws-studio-outline-list {
+  display: grid;
+  gap: 6px;
+}
+
+.ws-studio-node-row {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+
+.ws-studio-node-button {
+  width: 100%;
+  border-radius: var(--ws-radius-md);
+  min-height: 0;
+  padding: 8px 10px;
+}
+
+.ws-studio-node-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.ws-studio-node-kind {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ws-muted);
+}
+
+.ws-studio-node-title {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.ws-studio-dropzones {
+  display: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding-left: calc(var(--ws-depth, 0) * 14px);
+}
+
+body[data-ws-studio-dragging="true"] .ws-studio-dropzones {
+  display: grid;
+}
+
+.ws-studio-dropzone {
+  min-height: 28px;
+  padding: 0 8px;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.ws-studio-inspector-form,
+.ws-studio-acceptance-form {
+  display: grid;
+  gap: 10px;
+}
+
+.ws-studio-field {
+  display: grid;
+  gap: 6px;
+}
+
+.ws-studio-field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4f4a42;
+}
+
+.ws-studio-field input,
+.ws-studio-field select,
+.ws-studio-field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ws-line-strong);
+  border-radius: var(--ws-radius-sm);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 9px 10px;
+  color: var(--ws-ink);
+}
+
+.ws-studio-field textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.ws-studio-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.ws-studio-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--ws-radius-sm);
+  border: 1px solid var(--ws-line);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.ws-studio-inline-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-top: 10px;
+}
+
+.ws-studio-inline-field {
+  margin: 0;
+}
+
+.ws-studio-review-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ws-studio-review-stat {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: var(--ws-radius-md);
+  border: 1px solid var(--ws-line);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.ws-studio-review-stat strong {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ws-studio-review-stat span {
+  color: var(--ws-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ws-studio-review-status {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: var(--ws-radius-md);
+  border: 1px solid var(--ws-line);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--ws-ink);
+}
+
+.ws-studio-review-status[data-tone="good"] {
+  border-color: rgba(47, 107, 67, 0.24);
+  color: #255537;
+}
+
+.ws-studio-review-status[data-tone="warn"] {
+  border-color: rgba(179, 89, 37, 0.24);
+  color: #8c461c;
+}
+
+.ws-studio-review-status[data-tone="muted"] {
+  color: var(--ws-muted);
+}
+
+.ws-studio-import-preview-shell,
+.ws-studio-import-result {
+  margin-top: 12px;
+  border: 1px solid var(--ws-line);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.66);
+  padding: 12px;
+}
+
+.ws-studio-implementation-preview {
+  width: 100%;
+  min-height: 220px;
+  border: 1px solid var(--ws-line);
+  border-radius: var(--ws-radius-sm);
+  background: #fff;
+}
+
+.ws-studio-drift-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ws-studio-drift-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--ws-line);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ws-studio-drift-card[data-severity="must"] {
+  border-color: rgba(161, 62, 47, 0.22);
+}
+
+.ws-studio-drift-card[data-severity="should"] {
+  border-color: rgba(179, 89, 37, 0.22);
+}
+
+.ws-studio-drift-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px;
+}
+
+.ws-studio-import-source {
+  min-height: 220px;
+  margin-top: 12px;
+}
+
+.ws-studio-summary-list,
+.ws-studio-diagnostic-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ws-studio-summary-item,
+.ws-studio-diagnostic-item {
+  border: 1px solid var(--ws-line);
+  border-radius: var(--ws-radius-md);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.ws-studio-diagnostic-item[data-level="error"] {
+  border-color: rgba(161, 62, 47, 0.22);
+}
+
+.ws-studio-diagnostic-item[data-level="warning"] {
+  border-color: rgba(179, 89, 37, 0.22);
+}
+
+.ws-studio-empty {
+  border: 1px dashed var(--ws-line-strong);
+  border-radius: var(--ws-radius-md);
+  padding: 12px;
+  color: var(--ws-muted);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.ws-studio-meta-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.ws-studio-meta-pair {
+  display: grid;
+  gap: 2px;
+}
+
+.ws-studio-meta-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ws-muted);
+}
+
+.ws-studio-meta-value {
+  font-weight: 600;
+}
+
+@media (max-width: 1180px) {
+  .ws-studio-shell {
+    grid-template-columns: 17rem minmax(0, 1fr);
+  }
+
+  .ws-studio-sidebar {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .ws-studio-shell,
+  .ws-studio-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ws-studio-shell {
+    padding: 10px;
+  }
+
+  .ws-studio-canvas-shell {
+    padding: 14px;
+  }
+
+  .ws-studio-inline-form,
+  .ws-studio-review-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ws-studio-source-head,
+  .ws-studio-canvas-head,
+  .ws-studio-stage-header,
+  .ws-studio-pane-section,
+  .ws-studio-sidebar-section {
+    padding-inline: 12px;
+  }
+}
