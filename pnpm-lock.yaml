@@ -14,4 +14,10 @@ importers:
 
   packages/runtime: {}
 
+  packages/studio-core: {}
+
+  packages/studio-import-dom: {}
+
+  packages/studio-web: {}
+
   packages/vscode: {}
